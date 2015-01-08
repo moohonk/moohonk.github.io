@@ -4,7 +4,11 @@
     <input type = "text" name = base64 onkeypress = "convert(this.value);">
     <script>
        function convert(value){
-           var newvalue =  ascii85.decode(value);
+           try{
+           var newvalue =  ascii85.decode(value);}
+           catch(err){
+               window.alert("your thing dun work");
+           }
            document.getElementById("output").innerHTML = newvalue;
        } 
     </script>
