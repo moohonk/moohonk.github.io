@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <p id = "output">Hello world</p><br>
-    <input type = "text" name = base64 onchange = "convert(this.value);">
+    <input type = "text" name = base64 onkeypress = "convert(this.value);">
     <script>
        function convert(value){
            var newvalue =  ascii85.decode(value);
