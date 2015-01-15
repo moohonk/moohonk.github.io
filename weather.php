@@ -38,7 +38,7 @@
     {
         function __construct()
         {
-            $this->open('myWeather.db', SQLITE3_OPEN_READWRITE);
+            $this->open('myWeather.db'/*, SQLITE3_OPEN_READWRITE*/);
         }
     }
 	//$bool = array_key_exists('myStr', $_REQUEST);
