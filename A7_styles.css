@@ -1,0 +1,68 @@
+h1 {
+	text-align  : center;
+	font-family :  "Helvetica Neue",Helvetica, Arial, Sans-serif;
+}
+h2 {
+	text-align  : center;
+	font-family :  "Helvetica Neue",Helvetica, Arial, Sans-serif;
+}
+body {
+	background : #A9F5F2;
+	font-family:  "Helvetica Neue",Helvetica, Arial, Sans-serif;
+	color	   : black;
+	text-align : center;
+	/*text-indent:100px;*/
+}
+p
+{
+font-size   : 14px;
+border-width:  1px;
+}
+
+table{
+	text-align:center;
+   /*border: 1px solid black;
+   border-spacing: 1px;*/
+   border-collapse: collapse;
+}
+tr{
+	border-width:1px;
+	border-style:solid;
+	border-color:black;
+}
+td
+{
+	margin-right:100px;
+	min-width:50px;
+	text-indent:25px;
+	border-top   : 1px solid black;
+	border-right : 1px solid black;
+	border-bottom: 1px solid black;
+	border-left  : 1px solid black;
+	/*border-width		: thin;
+	border-style		: dashed;
+	border-color		: black;*/
+}
+.price{
+	text-align   : right;
+	text-indent  : 0px;
+	border-top   : 1px solid black;
+	border-right : 1px solid black;
+	border-bottom: 1px solid black;
+	border-left  : 0px none  black;
+}
+.first{
+	min-width    : 0px;
+	border-left  : 1px solid black;
+	border-top   : 1px solid black;
+	border-bottom: 1px solid black;
+	border-right : 0px none  black;
+	text-indent  : 0px;
+/*	border-width		: thin;
+	border-style		: dashed;
+	border-color		: black;*/
+}
+div{
+	text-align:left;
+	margin-left: 200px;
+}
