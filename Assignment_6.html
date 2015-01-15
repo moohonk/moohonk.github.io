@@ -1,0 +1,411 @@
+<html style = "overflow: hidden;">
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=10">
+	<title>Assignment 6</title>
+	<link rel = "stylesheet" href = "A6_styles.css">
+</head>
+<body id = "theBody"  onload = "load();">
+	<table>
+		<tr>
+			<th colspan = 2>Make CS Graphs</th>
+		</tr>
+		<tr>
+			<td>
+				<div>
+					<button type = "button" id = "resetButton"    accesskey = "r" onclick = "reset();"      ><u>R</u>eset graph  </button><br><br><br>
+					<button type = "button" id = "deselectButton" accesskey = "e" onclick = "deselectAll();">D<u>e</u>select all </button><br><br><br>
+					<button type = "button" id = "selectButton"   accesskey = "s" onclick = "selectAll();"  ><u>S</u>elect all   </button><br><br><br>
+					<button type = "button" id = "randomizer"     accesskey = "i" onclick = "randomPoint();">Random Po<u>i</u>nt </button><br><br><br>
+					<button type = "button" id = "undoButton"     accesskey = "n" onclick = "undo();"       >U<u>n</u>do         </button><br><br><br>
+					<div>connections:</div>
+					<input  type = "range"  id = "connectons" min = "0" max = "10" step = "1" onchange = "neighbors(this.value);" onmousemove = "this.onchange();">
+					<div id = "numNeighbors">5</div><br><br>
+					<button type = "button" id = "pathButton" accesskey = "t" onclick = "togglePath();" ><u>T</u>oggle path</button>
+					<div id="pathStatus" style="font-size: 15;"> Not drawing a path</div>
+				</div>
+			</td>
+			<td>
+				<canvas id="myCanvas" onMouseDown = "recordClick(event);" onMouseUp = "addPtOrSelectNodes(event);" style="border: 1px solid #000000;" onmousemove="mouseMoved(event)"></canvas>
+				<!--  position: fixed; left: 0px; -->
+			</td>
+		</tr>
+	</table>
+	<!-- <input  type = "text"   id="selectColor"> -->
+	<br>
+	
+<script type="text/javascript">
+document.documentElement.style.overflow = 'hidden';
+document.body.scroll = "no";
+var canvas				= document.getElementById("myCanvas");
+var pathStatus 		= document.getElementById("pathStatus");
+var close 				= document.getElementById("numNeighbors");
+var menuWidth 			= 149;
+var menuHeight 		= 50;
+// alert(typeof(canvas));
+canvas.left				= 0;
+var canvWidth   		= window.innerWidth - menuWidth /** 3 / 4*/;
+var canvHeight  		= (window.innerHeight - menuHeight) /** 3 / 4*/;
+canvas.width			= canvWidth;/*window.innerWidth;*/
+canvas.height			= canvHeight;/*window.innerHeight - menuSize;*/
+var c						= canvas.getContext("2d");
+var background			= "#202020";
+var stroke      		= "#ff6600";
+var canGenerateRandomPoint = 1;
+var hasClicked			= 0;
+var hasSelected 		= 0;
+var selectedAll 		= 0;
+var xClick				= 0;
+var yClick				= 0;
+var numClos    		= 5;
+var dPoint 				= 0;
+var shouldDrawPath 	= 0;
+var xC 					= [];
+var yC 					= [];
+var selected 			= [];
+var selColor 			= [];
+var closestPoints 	= [[]];
+var indexList 			= [];
+var rect					= canvas.getBoundingClientRect();
+var interval;
+c.strokeStyle   		= stroke;
+var xa = 0;
+var ya = 0;
+canvas.onmouseout = function(){hasClicked = 0; resetCanvas();}
+resetCanvas();
+// updateClosest(5);
+function overlap(x, y){
+	for(index = 0; index < xC.length; index++){
+		if(sqr(xC[index] - x) + sqr(yC[index] - y) < 10) return 1; //Yes, there is overlap
+	}
+	return 0; //No, there is no overlap
+}
+
+//*****start of functions for debugging purposes only*****
+function fillRow(){
+	if(xa > canvWidth){window.clearInterval(interval);}
+	ya = 0;
+	while(ya < canvHeight){
+		var theColor = color(xa, ya);
+		c.fillStyle = theColor;
+		c.fillRect(xa, ya, 1, 1);
+		c.fill();
+		ya = ya + 2;
+	}
+	xa = xa + 2;
+}
+window.onload = function(){
+	console.log("loaded");
+	var elms = document.getElementsByTagName('button');
+	// search for element with class myclass
+	for (var i = 0; i < elms.length; i++){
+		if (elms[i].getAttribute('type') === 'button'){
+			elms[i].onmouseover = function(){this.className='ui-state-hover'  }
+			elms[i].onmouseout  = function(){this.className='ui-state-default'}
+}}}
+	// updateClosest(5);
+	/*fillRow();
+	interval = window.setInterval("fillRow();", 5);*/
+
+function alert1(obj){
+	//alert(obj);
+}
+
+//*****end of debugging functions*****
+
+function closestPts(p, amount){
+	var theList = [];
+	for(x = 0; x < xC.length; x++)theList[x] = x;
+	dPoint = p;
+	var sortArr = theList;
+	sortArr.splice(p, 1);
+	sortArr.sort(dSort);
+	sortArr.splice(amount);
+	return sortArr;
+}
+
+function dist(p1, p2){
+	var xp1 = xC[p1];
+	var yp1 = yC[p1];
+	var xp2 = xC[p2];
+	var yp2 = yC[p2];
+	return Math.pow(xp1 - xp2, 2) + Math.pow(yp1-yp2, 2);
+}
+
+function dSort(a, b){
+	return dist(a, dPoint) - dist(b, dPoint);
+}
+
+function reverseDSort(a, b){
+	return dist(b, dPoint) - dist(a, dPoint);
+}
+
+function neighbors(numPoints){
+	numClos = numPoints;
+	close.innerHTML = numClos;
+	updateClosest();
+	resetCanvas();
+}
+		
+function updateClosest(){
+	//loop over points
+	for(index1 = 0; index1 < xC.length; index1++){
+		closestPoints[index1] = closestPts(index1, numClos);
+}}
+//removes the last node placed in the graph
+
+function undo(){
+	if(xC.length > 0){
+		xLen = xC.length;
+		xC           .pop();
+		yC           .pop();
+		selColor     .pop();
+		indexList    .pop();
+		selected     .pop();
+		closestPoints.pop();
+		newLength = xLen - 1;
+		for(index = 0; index < newLength; index++){
+			indexOfLast = closestPoints[index].indexOf(newLength);
+			if(indexOfLast != -1) closestPoints[index] = closestPts(index, numClos);
+			// console.log(index, closestPoints[index]);
+		}
+
+		resetCanvas();
+}
+}
+
+//toggles the connections between nodes based on order of placement
+
+function togglePath(){
+	shouldDrawPath = !shouldDrawPath;
+	var msg = "";
+	if(!shouldDrawPath) msg = msg + "Not d";
+	else msg = msg + "D";
+	pathStatus.innerHTML = msg + "rawing a path";
+	resetCanvas();
+}
+
+function sqr(x){
+	return Math.pow(x, 2);
+}
+//determines the color of a point on the canvas
+
+function color(x, y){
+	var red, grn, blu;
+	canvWidth    = window.innerWidth  - menuWidth ;
+	canvHeight   = window.innerHeight - menuHeight;
+	var cornersX = [(1/2) * canvWidth - 50, 0, canvWidth];
+	var cornersY = [canvHeight            , 0, 0        ];
+	var colorMultFactor = [900, 500, 500];/*750, 800];*/
+	var colNums = [];
+	for(a = 0; a < 3; a++){
+		colNums[a] = Math.floor( 256 / ( ( Math.sqrt( sqr( x - cornersX[a] ) + sqr( y - cornersY[a] ) ) / colorMultFactor[a] ) + 1  ) );
+	}
+	red = colNums[0].toString(16);
+	grn = colNums[1].toString(16);
+	blu = colNums[2].toString(16);
+	if(red.length != 2) red = "0" + red;
+	if(grn.length != 2) grn = "0" + grn;
+	if(blu.length != 2) blu = "0" + blu;
+	var colorString = "#" + red + grn + blu;
+	// console.log(index, colorString);
+	return colorString;
+}
+
+function deselectAll(){
+	selected = [];
+	selectedAll = 0;
+	resetCanvas();
+}
+
+function selectAll(){
+	selected = [];
+	selectedAll = 1;
+	for(x = 0; x < xC.length; x++) selected.push(x);
+	resetCanvas();
+}
+
+//returns the upper-left and lower-right corners 
+//given two arbitrary corners
+function getCorners(c1x, c1y, c2x, c2y){
+	alert1("getCorners");
+	var uLx = Math.min(c1x, c2x);
+	var uLy = Math.min(c1y, c2y);
+	var lRx = Math.max(c1x, c2x);
+	var lRy = Math.max(c1y, c2y);
+	return [uLx, uLy, lRx, lRy];
+}
+
+function getSelectedNodes(pts){
+	alert1("getSelected");
+	for(x = 0; x < xC.length; x++){
+		if((pts[0] <= xC[x])&&(xC[x] <= pts[2])){
+			if((pts[1] <= yC[x])&&(yC[x] <= pts[3])){
+				selected[selected.length] = x;
+				// console.log(x);
+}}}}
+
+function recordClick(event){
+	alert1("recordClick");
+	hasClicked 	= 1;
+	xClick 		= event.clientX - rect.left;
+	yClick 		= event.clientY - rect.top;
+	resetCanvas();
+}
+
+function mouseMoved(event){
+	if(hasClicked){
+		resetCanvas();
+		var x 	= event.clientX - rect.left;
+		var y 	= event.clientY - rect.top;
+		var pts 	= getCorners(xClick, yClick, x, y);
+		if(!selectedAll){
+			selected = [];
+			getSelectedNodes(pts);
+		}
+		else selectAll();
+		console.log(pts);
+		c.strokeRect(pts[0], pts[1], pts[2] - pts[0], pts[3] - pts[1]);
+}}
+
+function addPtOrSelectNodes(event){
+	alert1("add select nodes");
+	var x 		= event.clientX - rect.left;
+	var y 		= event.clientY - rect.top;
+	var pts 		= getCorners(xClick, yClick, x, y);
+	selected 	= [];
+	hasSelected = 0;
+	getSelectedNodes(pts);
+	if(selected.length > 0)	hasSelected = 1;
+	else{
+		if(Math.abs(x-xClick) < 10){
+			if(Math.abs(y-yClick) < 10) {
+				addPoint(x, y);
+				selected = [];
+	}}}
+	if(!hasSelected && selectedAll) selectAll();
+	else selectedAll = 0;
+	resetCanvas();
+	hasClicked = 0;
+}
+
+function resetCanvas(){
+	canvas.left 	= 0;
+	canvas.top 		= 0;
+	canvWidth    	= window.innerWidth  - menuWidth ;
+	canvHeight   	= window.innerHeight - menuHeight;
+	canvas.width 	= canvWidth ;
+	canvas.height 	= canvHeight;
+	c.fillStyle 	= background;
+	c.fillRect(0, 0, canvWidth, canvHeight);
+	drawGraph();
+}
+
+function drawGraph(){
+	if(xC.length > 0){
+		// updateClosest();
+		c.strokeStyle = stroke;
+		alert1("drawGraph");
+		// if(selected)
+// console.log(closestPoints);
+		for(x1 = 0; x1 < selected.length; x1++){
+			// console.log(selected[x1], closestPoints[selected[x1]]);
+			for(x2 = 0; x2 < closestPoints[selected[x1]].length; x2++){
+				selLine(selected[x1], closestPoints[selected[x1]][x2]);
+		}}
+		for(x = 0; x < xC.length; x++){
+			c.fillStyle   = "White";
+			c.strokeStyle = "White";
+			if(shouldDrawPath) line(x);
+			drawPointAt(x);
+	}}
+	c.strokeStyle = stroke;
+	c.fillStyle   = background;
+}
+
+function addPoint(x, y){
+	alert1("addPoint");
+	hasSelected     = 0;
+	var xLen        = xC.length;
+	xC[xLen] 	    = x;
+	yC[xLen] 	    = y;
+	selColor[xLen]  = color(x, y);
+	closestPoints[xLen] = closestPts(xLen, numClos);
+	toBeRefreshed = closestPoints[xLen];
+	for(index = 0; index < numClos; index++){
+		pointIndex = toBeRefreshed[index];
+		closestPoints[pointIndex] = closestPts(pointIndex, numClos);
+	}
+	resetCanvas();
+}
+
+function drawPointAt(index){
+	alert1("pointAt");
+	c.beginPath();
+	c.fillStyle = "White";
+	/*if(selected.indexOf(index) > -1) */c.fillStyle = selColor[index];
+	c.arc(xC[index], yC[index], 5, 0, 2*Math.PI);
+	c.fill();
+	c.closePath();
+}
+
+function selLine(x1, x2){
+	alert1("SelLine");
+	c.beginPath();
+	var xC1 = xC[x1];
+	var xC2 = xC[x2];
+	// console.log(x1, xC1, x2, xC2);
+	var gradient = c.createLinearGradient(xC1, yC[x1], xC2, yC[x2]);
+	gradient.addColorStop(0, selColor[x1]);
+	gradient.addColorStop(1, selColor[x2]);
+	c.strokeStyle = gradient;
+	c.moveTo(xC[x1], yC[x1]);
+	c.lineTo(xC[x2], yC[x2]);
+	c.stroke();
+	c.closePath();
+}
+
+function line(x){
+	alert1("Line");
+	if(x > 0){
+		//if(selected.indexOf(x) > -1){
+		c.beginPath();
+		c.moveTo(xC[x-1], yC[x-1]);
+		c.lineTo(xC[x  ], yC[x  ]);
+		c.stroke();
+		c.closePath();
+}}
+
+function randomPoint(){
+	if(canGenerateRandomPoint){
+		var x = Math.floor(Math.random() * (canvWidth  - 20)) + 10;
+		var y = Math.floor(Math.random() * (canvHeight - 20)) + 10;
+		addPoint(x, y);
+		if(!selectedAll) selected = [];
+		else selectAll();
+		resetCanvas();
+		canGenerateRandomPoint = 0;
+		window.setTimeout(function(){canGenerateRandomPoint = 1;}, 125);
+}}
+
+function reset(){
+	alert1("reset");
+	c.closePath();
+	xC 				= [];
+	yC 				= [];
+	indexList 		= [];
+	selected 		= [];
+	canvas.left 	= 0;
+	canvas.top 		= 0;
+	canvWidth    	= window.innerWidth  - menuWidth ;
+	canvHeight   	= window.innerHeight - menuHeight;
+	canvas.width 	= canvWidth;/*window.innerWidth;*/
+	canvas.height 	= canvHeight
+	c.strokeStyle 	= stroke;
+	c.fillStyle 	= background;
+	closestPoints 	= [];
+	resetCanvas();
+}
+</script>
+	</body>
+</html>
