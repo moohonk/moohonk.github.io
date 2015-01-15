@@ -1,0 +1,60 @@
+h1 {
+	text-align  : center ;
+	font-size   : 20px   ;
+	font-family : inherit;
+	margin:1px;
+}
+th{
+	text-align  : center ;
+	font-size   : 25px   ;
+	font-family : inherit;
+}
+h2 {
+	text-align  : center;
+	font-family: inherit;
+}
+body {
+	background : #000000;
+	font-family: 'Segoe UI', Frutiger, 'Frutiger Linotype', 'Dejavu Sans', 'Helvetica Neue', Arial, sans-serif;
+	color	   : #00FFCC;
+
+}
+p{
+	font-size   : 18px;
+	border-width:  3px;
+}
+input{
+	width:131px;
+	text-align: center;
+}
+div{
+	max-width:  	100%;
+	text-align: center;
+	border-left:12.5%;
+	border-right:12.5%;	
+}
+button{
+	background-color:#00ccff;
+	border-color 	:#00ccff;
+	color 			:#000066;
+	width 			:  131px;
+	height 			:   30px;
+	font-weight 	:   bold;
+	font-size 		:   16px;
+
+}
+.ui-state-hover{
+	background-color:#00ffff;
+	border-color:#00ffff;
+}
+.ui-state-default{
+	background-color:#00ccff;
+	border-color:#00ccff;
+}
+td{
+	vertical-align: top;
+}
+/*.canv{
+	height:800;
+	width: 800;
+}*/
