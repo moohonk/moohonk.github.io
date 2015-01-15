@@ -5,13 +5,13 @@
 	</head>
 	<body>
         <h1>Retrieve daily weather for 20121</h1>
-        <!-- <form name = "form1" method = "get" action = "weather.php">
-			Enter zip code:
+        <form name = "form1" method = "get" action = "weather.php">
+			<!--Enter zip code:
             
-                <input type = "text" name = "myStr"><span>     </span>
-                <button type = "submit" accessKey = "s" name = "Submit"><u>S</u>ubmit</button>
+                <input type = "text" name = "myStr"><span>     </span>-->
+                <button type = "submit" accessKey = "s" name = "Submit"><u>S</u>ee weather</button>
         
-		</form> -->
+		</form>
         <div>
 <?php
     $ch = curl_init();
