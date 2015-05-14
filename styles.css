@@ -1,0 +1,90 @@
+h1{
+	color				: red;
+	text-align			: center;
+	letter-spacing		: 3;
+	font-size			: 30px;
+	margin-bottom		: 10px;
+	margin-top			: 30px; 	 
+}
+
+h2{
+	font-size			: 20px;
+	color				: #66FF33;
+	text-indent			: 50px;
+	width				: 100%; 
+	font-weight			: normal;
+	text-align			: center;
+}
+
+h3{
+	font-size			: 50px;
+}
+
+body{	
+	background			: black;
+	font-family			: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+	text-align			: left;
+	text-align			: center;
+}
+
+.top{
+	color				: #D7E0E6;
+	background-color	: black;
+}
+
+a{	
+	color				: #47FFFF;
+	/*font-family		: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;*/
+	/*font-weight		: bold;*/
+	text-indent			: 100px;
+	margin-left			: 175px;
+	text-decoration		: none;
+	text-align			: center;
+	/*border-spacing: 10px;*/
+}
+
+.wrapper{
+	margin				:  -5px;
+	margin-top			: -10px;
+	margin-bottom		:   0px;
+	/*border-width		: thin;
+	border-style		: dashed;
+	border-color		: white;*/
+}
+
+.about{
+	display				: inline-block;
+	height				: 50px;
+}
+
+.column{	
+	background-color	: black;
+	width				:  33%;
+	float				: left;
+	text-align			: left;
+}
+
+
+table{
+	table-layout		: fixed;
+	width				: 1339px;
+	min-width			: 25%;
+	text-align			: justify;
+}
+li{
+	border-spacing: 10px;
+	/*border:10px;*/
+	margin-top:10px;
+}
+td{	
+	min-width			: 332.25px;
+    border-width		: thin;
+}
+
+span{
+	color				: white;
+	font-weight			: bold ;
+	text-indent			: 100px;
+	margin-left			: 100px;
+	text-decoration 	: none ;
+}
