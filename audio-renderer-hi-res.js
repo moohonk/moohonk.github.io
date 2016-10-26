@@ -102,7 +102,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     //console.log("scaled:\t" + scaledW + "\t" + scaledH);
 
 
-    ctx.fillStyle = '#111';
+    ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, width, height);
     ctx.globalCompositeOperation = "lighter";
 
