@@ -22,7 +22,7 @@ function AudioRenderer() {
   console.log(REFLECT_SCALAR);
   var TAU = Math.PI * 2;
 
-  var SHOULD_DRAW_GUIDELINES = false;
+  var SHOULD_DRAW_STUFF = false;
   var canvas = document.getElementById('render-area');
   var ctx = canvas.getContext('2d');
   var maxDist = 0;
@@ -169,7 +169,7 @@ function AudioRenderer() {
         };
 
         ctx.globalAlpha = renderVals.alpha;
-        if (flag < a && volume > 0.675)
+        if (flag < a && volume > 0.675 && SHOULD_DRAW_STUFF)
         {
           ctx.fillStyle = 'hsl(' + renderVals.color + ', 80%, 50%)';
           flag = a;
@@ -207,7 +207,7 @@ function AudioRenderer() {
           prevMax = maxDist;
           console.log("maxDist:\t" + maxDist + '\tmaxSize:\t' + maxSize);
         }
-      if(stuffHappened && SHOULD_DRAW_GUIDELINES)
+      if(stuffHappened && SHOULD_DRAW_STUFF)
       {
         ctx.globalAlpha = 0.5;
         ctx.fillStyle = 'hsl(200, 100%, 100%)';
