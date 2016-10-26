@@ -90,134 +90,136 @@ function AudioRenderer() {
     var rectY = 0.0;
     var stuffHappened = false;
     
-
-    /*
-    var x = Math.sin(angle);
-    var y = Math.cos(angle);
-    var midX = width * 0.5;
-    var midY = height * 0.5;
-    */
-    // There is so much number hackery in here.
-    // Number fishing is HOW YOU WIN AT LIFE.
-    //for (var a = 1023; a >= 8; a--) {
-      
-
-    for (var a =  850; a >= 0; a--) {
-      volume = audioData[a] / 255;
-
-      if (volume < 0.675)
-        continue;
-
-      //color = normalizedPosition - 0.12 + Math.random() * 0.24;
-
-      color = (a / 1024);
-      color = Math.round(color * 360);
-      
-      //lnDataDistance = (Math.log(a - 2.81) / LOG_MAX) - BASE;
-      //lnDataDistance = (Math.log(a - 11  ) / LOG_MAX) - BASE;
-
-      lnDataDistance = Math.log(a) / LOG_MAX - BASE;
-      rectY = yStart - imageHeight * (lnDataDistance / maxLogVal);
-      if (a < MID_INDEX)
-      {
-        // Move the start to the middle
-        rectY = yStart - .5 * imageHeight;
-
-        //rectY = yStart - REFLECT_NUM * imageHeight;
-        // Set the index used in position calculations 
-        //  to be the index reflected along y = MID_INDEX
-        var newInd = a + 2 * (MID_INDEX - a);
-
-        lnDataDistance = (Math.log(newInd) / LOG_MAX - BASE) / maxLogVal; 
-
-        // move away from the middle
-        rectY += imageHeight * ((lnDataDistance - REFLECT_NUM) * REFLECT_SCALAR + REFLECT_NUM);
-      }
+    if (normalizedPosition <= 1)
+    {
       /*
-      distance = a / 850 * imageHeight;
-      rectY = yStart - distance;
+      var x = Math.sin(angle);
+      var y = Math.cos(angle);
+      var midX = width * 0.5;
+      var midY = height * 0.5;
       */
-      
-      //Make the dot's distance from the center vary exponentially with frequency
-      //distance = lnDataDistance * outerRadius;
+      // There is so much number hackery in here.
+      // Number fishing is HOW YOU WIN AT LIFE.
+      //for (var a = 1023; a >= 8; a--) {
 
-      
-      //maxDist = Math.max(maxDist,  (lnDataDistance / maxLogVal));
-      
-      //Make the dot's distance from the center vary linearly with frequency
-      //distance = (a / audioData.length) * outerRadius;
-      size = volume * MAX_DOT_SIZE + Math.random() * 2;
-      size = (volume+0.125) * (volume+0.125) * MAX_DOT_SIZE + Math.random() * 2;
-      size *= 0.56;
-      //Make some of the circles very big
-      //Action: deactivate, see if abolutely essential (probs not)
-      /*if (Math.random() > 0.995) {
-        size *= (audioData[a] * 0.2) * Math.random();
-        volume *= Math.random() * 0.25;
-      }*/
 
-      var renderVals = {
-        //alpha: volume * 0.09,
-        alpha: volume * volume * 0.09,
-        color: color,
-        //x: normalizedPosition,
-        x: rectX,
-        //y: lnDataDistance / maxLogVal,
-        y: rectY,
-        size: size
-      };
+      for (var a =  850; a >= 0; a--) {
+        volume = audioData[a] / 255;
 
-      ctx.globalAlpha = renderVals.alpha;
-      if (flag < a && volume > 0.675)
-      {
-        ctx.fillStyle = 'hsl(' + renderVals.color + ', 80%, 50%)';
-        flag = a;
-        ctx.globalAlpha = 0.1;
-        maxDist = a;
+        if (volume < 0.675)
+          continue;
 
+        //color = normalizedPosition - 0.12 + Math.random() * 0.24;
+
+        color = (a / 1024);
+        color = Math.round(color * 360);
+
+        //lnDataDistance = (Math.log(a - 2.81) / LOG_MAX) - BASE;
+        //lnDataDistance = (Math.log(a - 11  ) / LOG_MAX) - BASE;
+
+        lnDataDistance = Math.log(a) / LOG_MAX - BASE;
+        rectY = yStart - imageHeight * (lnDataDistance / maxLogVal);
+        if (a < MID_INDEX)
+        {
+          // Move the start to the middle
+          rectY = yStart - .5 * imageHeight;
+
+          //rectY = yStart - REFLECT_NUM * imageHeight;
+          // Set the index used in position calculations 
+          //  to be the index reflected along y = MID_INDEX
+          var newInd = a + 2 * (MID_INDEX - a);
+
+          lnDataDistance = (Math.log(newInd) / LOG_MAX - BASE) / maxLogVal; 
+
+          // move away from the middle
+          rectY += imageHeight * ((lnDataDistance - REFLECT_NUM) * REFLECT_SCALAR + REFLECT_NUM);
+        }
+        /*
+        distance = a / 850 * imageHeight;
+        rectY = yStart - distance;
+        */
+
+        //Make the dot's distance from the center vary exponentially with frequency
+        //distance = lnDataDistance * outerRadius;
+
+
+        //maxDist = Math.max(maxDist,  (lnDataDistance / maxLogVal));
+
+        //Make the dot's distance from the center vary linearly with frequency
+        //distance = (a / audioData.length) * outerRadius;
+        size = volume * MAX_DOT_SIZE + Math.random() * 2;
+        size = (volume+0.125) * (volume+0.125) * MAX_DOT_SIZE + Math.random() * 2;
+        size *= 0.56;
+        //Make some of the circles very big
+        //Action: deactivate, see if abolutely essential (probs not)
+        /*if (Math.random() > 0.995) {
+          size *= (audioData[a] * 0.2) * Math.random();
+          volume *= Math.random() * 0.25;
+        }*/
+
+        var renderVals = {
+          //alpha: volume * 0.09,
+          alpha: volume * volume * 0.09,
+          color: color,
+          //x: normalizedPosition,
+          x: rectX,
+          //y: lnDataDistance / maxLogVal,
+          y: rectY,
+          size: size
+        };
+
+        ctx.globalAlpha = renderVals.alpha;
+        if (flag < a && volume > 0.675)
+        {
+          ctx.fillStyle = 'hsl(' + renderVals.color + ', 80%, 50%)';
+          flag = a;
+          ctx.globalAlpha = 0.1;
+          maxDist = a;
+
+          ctx.beginPath();
+          ctx.arc(rectX, rectY, 5, 0, TAU, false);
+          ctx.closePath();
+          ctx.fill();
+
+        }
+        else
+        {
+          ctx.fillStyle = 'hsl(' + renderVals.color + ', 80%, 50%)';
+          maxSize = Math.max(maxSize, renderVals.size);
+        }
+        //ctx.fillStyle = 'hsl(' + renderVals.color + ', 80%, 100%)';
         ctx.beginPath();
-        ctx.arc(rectX, rectY, 5, 0, TAU, false);
+        /*ctx.arc(
+          midX + renderVals.x,
+          midY + renderVals.y,
+          renderVals.size, 0, TAU, false);*/
+
+  // Make the DNA thing a biiiig rectangle
+
+        ctx.arc(rectX, rectY, renderVals.size, 0, TAU, false);
         ctx.closePath();
         ctx.fill();
-
+        stuffHappened = true;
+        renderData.values.push(renderVals);
       }
-      else
+      if(prevMax != maxDist)
+        {
+          prevMax = maxDist;
+          console.log("maxDist:\t" + maxDist + '\tmaxSize:\t' + maxSize);
+        }
+      if(stuffHappened && SHOULD_DRAW_GUIDELINES)
       {
-        ctx.fillStyle = 'hsl(' + renderVals.color + ', 80%, 50%)';
-        maxSize = Math.max(maxSize, renderVals.size);
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = 'hsl(200, 100%, 100%)';
+        ctx.beginPath();
+        ctx.arc(rectX, yStart - .25*imageHeight, 0.5, 0, TAU, false);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(rectX, yStart, 0.5, 0, TAU, false);
+        ctx.closePath();
+        ctx.fill();
       }
-      //ctx.fillStyle = 'hsl(' + renderVals.color + ', 80%, 100%)';
-      ctx.beginPath();
-      /*ctx.arc(
-        midX + renderVals.x,
-        midY + renderVals.y,
-        renderVals.size, 0, TAU, false);*/
-
-// Make the DNA thing a biiiig rectangle
-
-      ctx.arc(rectX, rectY, renderVals.size, 0, TAU, false);
-      ctx.closePath();
-      ctx.fill();
-      stuffHappened = true;
-      renderData.values.push(renderVals);
-    }
-    if(prevMax != maxDist)
-      {
-        prevMax = maxDist;
-        console.log("maxDist:\t" + maxDist + '\tmaxSize:\t' + maxSize);
-      }
-    if(stuffHappened && SHOULD_DRAW_GUIDELINES)
-    {
-      ctx.globalAlpha = 0.5;
-      ctx.fillStyle = 'hsl(200, 100%, 100%)';
-      ctx.beginPath();
-      ctx.arc(rectX, yStart - .25*imageHeight, 0.5, 0, TAU, false);
-      ctx.closePath();
-      ctx.fill();
-      ctx.beginPath();
-      ctx.arc(rectX, yStart, 0.5, 0, TAU, false);
-      ctx.closePath();
-      ctx.fill();
     }
   };
 
