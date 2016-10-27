@@ -9,7 +9,7 @@ function AudioRenderer() {
   var LOWERBOUND = 8;
   var LOG_MAX = Math.log(207);
   LOG_MAX = Math.log(LOGBASE);
-  var REFLECT_NUM = 0.25; // Percent of the image to reflect
+  var REFLECT_NUM = 0.30; // Percent of the image to reflect
 
   
   var MAX_DOT_SIZE = 1;
@@ -122,7 +122,7 @@ function AudioRenderer() {
         if (a < MID_INDEX)
         {
           // Move the start to the middle
-          rectY = yStart - .5 * imageHeight;
+          rectY = yStart - 2 * REFLECT_NUM * imageHeight;
 
           //rectY = yStart - REFLECT_NUM * imageHeight;
           // Set the index used in position calculations 
