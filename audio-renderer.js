@@ -151,11 +151,10 @@ function AudioRenderer() {
         size = (volume+0.125) * (volume+0.125) * MAX_DOT_SIZE + Math.random() * 2;
         size *= 0.56;
         //Make some of the circles very big
-        //Action: deactivate, see if abolutely essential (probs not)
-        /*if (Math.random() > 0.995) {
+        if (Math.random() > 0.995) {
           size *= (audioData[a] * 0.2) * Math.random();
           volume *= Math.random() * 0.25;
-        }*/
+        }
 
         var renderVals = {
           //alpha: volume * 0.09,
