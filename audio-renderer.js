@@ -30,6 +30,7 @@ function AudioRenderer()
   var SHOULD_DRAW_STUFF = false;
   var canvas = document.getElementById('render-area');
   var ctx = canvas.getContext('2d');
+  var hasDrawnBackground = false;
   var maxDist = 0;
   var maxSize = 0;
   var prevMax = 0;
@@ -69,10 +70,6 @@ function AudioRenderer()
     renderData.maxHgt = canvas.offsetHeight * (1 - 4 * borderPercentX);
 
     ctx.globalCompositeOperation = "lighter";
-    
-    ctx.fillStyle = '#111';
-    ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
-
   }
 
   function clamp(val, min, max) {
@@ -86,6 +83,12 @@ function AudioRenderer()
 
   this.render = function(audioData, normalizedPosition) 
   {
+    if(!hasDrawnBackground)
+    {
+      ctx.fillStyle = '#111';
+      ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
+      hasDrawnBackground = true;
+    }
     var lnDataDist = 0;
     var volume     = 0;
     var color      = 0;
