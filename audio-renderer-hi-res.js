@@ -104,6 +104,8 @@ function AudioRendererHiRes(size, onRenderedCallback) {
 
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = '#111';
+    ctx.fillRect(width * bPX, height * bPY, width * (1 - 2 * bPX), height * (1 - 2 * bPY));
     ctx.globalCompositeOperation = "lighter";
 
     // We want to keep things roughly in proportion here,
