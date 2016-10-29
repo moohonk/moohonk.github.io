@@ -86,7 +86,7 @@ function AudioRenderer()
     console.log(normalizedPosition);
     if(!hasDrawnBackground)
     {
-      ctx.fillStyle = '#111';
+      ctx.fillStyle = '#050505';
       ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
       hasDrawnBackground = true;
     }
