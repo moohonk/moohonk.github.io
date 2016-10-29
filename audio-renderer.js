@@ -135,7 +135,11 @@ function AudioRenderer()
 
         // Untranslate the y coords into their final form
         rectY += height * borderPercentY;
-
+        
+        if(rectY > maxDist)
+        {
+          maxDist = rectY; 
+        }
         // Size computation
         size = (volume+0.125) * (volume+0.125) * BASE_DOT_SIZE + Math.random() * 2;
         size *= 0.56;
@@ -163,6 +167,11 @@ function AudioRenderer()
         ctx.fill();
 
         renderData.values.push(renderVals);
+      }
+      if(prevMax != maxDist)
+      {
+        prevMax = maxDist;
+        console.log("minDist:\t" + maxDist);
       }
     }
   };
