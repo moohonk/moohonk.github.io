@@ -83,6 +83,7 @@ function AudioRenderer()
 
   this.render = function(audioData, normalizedPosition) 
   {
+    console.log(normalizedPosition);
     if(!hasDrawnBackground)
     {
       ctx.fillStyle = '#111';
