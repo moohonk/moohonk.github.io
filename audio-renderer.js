@@ -71,7 +71,7 @@ function AudioRenderer()
     ctx.globalCompositeOperation = "lighter";
     
     ctx.fillStyle = '#111';
-    ctx.fillRect(borderPercentX * width, borderPercentY * height, (1 - borderPercentX) * width, yStart);
+    ctx.fillRect(borderPercentX * width, borderPercentY * height, (1 - 2 * borderPercentX) * width, (1 - 2 * borderPercentY) * height);
 
   }
 
