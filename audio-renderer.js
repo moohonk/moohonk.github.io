@@ -171,7 +171,7 @@ function AudioRenderer()
       if(prevMax != maxDist)
       {
         prevMax = maxDist;
-        console.log("minDist:\t" + maxDist);
+        console.log("minDist:\t" + maxDist / height);
       }
     }
   };
