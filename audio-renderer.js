@@ -24,10 +24,8 @@ function AudioRenderer()
   // The minimum height a frequency can be mapped to
   // Even though we're dealing with all of these crazy logs, they cancel out when solving for this.
   var lowerLog  = 1/7 - REFLECT_NUM; 
-  // Since the upper and lower values have differing signs when calculating 
-  //  the normal and reflected parts respectively, the difference between 
-  //  the two endpoints is the sum of these values.
-  var normalizedHeight = upperLog + lowerLog;
+  // The height of the graph, used to scale it to nice values.
+  var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_MAX - BASE) / maxLogVal - REFLECT_NUM;
   var SHOULD_DRAW_STUFF = false;
   var canvas = document.getElementById('render-area');
   var ctx = canvas.getContext('2d');
@@ -129,12 +127,12 @@ function AudioRenderer()
         
       // Scaling Stuff
         // Translate all y Coords for easier scaling
-        rectY -= height * borderPercentY;
+        rectY -= upperLog;
 
         // Do some scaling
         rectY /= normalizedHeight;
 
-        // Untranslate the y coords
+        // Untranslate the y coords into their final form
         rectY += height * borderPercentY;
 
         // Size computation
