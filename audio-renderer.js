@@ -23,7 +23,7 @@ function AudioRenderer()
   var upperLog  = (Math.log(    MAX_INDEX) / LOG_MAX - BASE) / maxLogVal; 
   // The minimum height a frequency can be mapped to
   var lowerLog  = (Math.log(2 * MID_INDEX) / LOG_MAX - BASE) / maxLogVal - REFLECT_NUM; 
-
+  console.log("midInd:\t" + MID_INDEX + "\nupper:\t" + upperLog + "\nlower:\t" + lowerLog + "\nscale:\t" + (1/(upperLog - lowerLog)));
   var SHOULD_DRAW_STUFF = false;
   var canvas = document.getElementById('render-area');
   var ctx = canvas.getContext('2d');
