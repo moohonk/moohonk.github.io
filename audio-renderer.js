@@ -22,8 +22,12 @@ function AudioRenderer()
   // The maximum height a frequency can be mapped to
   var upperLog  = (Math.log(    MAX_INDEX) / LOG_MAX - BASE) / maxLogVal; 
   // The minimum height a frequency can be mapped to
-  var lowerLog  = (Math.log(2 * MID_INDEX) / LOG_MAX - BASE) / maxLogVal - REFLECT_NUM; 
-  console.log("midInd:\t" + MID_INDEX + "\nupper:\t" + upperLog + "\nlower:\t" + lowerLog + "\nscale:\t" + (1/(upperLog - lowerLog)));
+  // Even though we're dealing with all of these crazy logs, they cancel out when solving for this.
+  var lowerLog  = 1/7 - REFLECT_NUM; 
+  // Since the upper and lower values have differing signs when calculating 
+  //  the normal and reflected parts respectively, the difference between 
+  //  the two endpoints is the sum of these values.
+  var normalizedHeight = upperLog + lowerLog;
   var SHOULD_DRAW_STUFF = false;
   var canvas = document.getElementById('render-area');
   var ctx = canvas.getContext('2d');
@@ -128,7 +132,7 @@ function AudioRenderer()
         rectY -= height * borderPercentY;
 
         // Do some scaling
-        rectY /= (upperLog - lowerLog);
+        rectY /= normalizedHeight;
 
         // Untranslate the y coords
         rectY += height * borderPercentY;
