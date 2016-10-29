@@ -128,7 +128,7 @@ function AudioRenderer()
         
       // Scaling Stuff
         // Translate all y Coords for easier scaling
-        rectY -= imageHeight * upperLog;
+        rectY -= (yStart - imageHeight * upperLog);
 
         // Do some scaling
         rectY /= normalizedHeight;
