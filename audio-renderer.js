@@ -69,6 +69,9 @@ function AudioRenderer()
     renderData.maxHgt = canvas.offsetHeight * (1 - 4 * borderPercentX);
 
     ctx.globalCompositeOperation = "lighter";
+    
+    ctx.fillStyle = '#111';
+    ctx.fillRect(borderPercentX * width, borderPercentY * height, (1 - borderPercentX) * width, yStart);
 
   }
 
