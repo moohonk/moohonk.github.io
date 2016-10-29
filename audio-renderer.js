@@ -26,6 +26,7 @@ function AudioRenderer()
   var lowerLog  = 1/7 - REFLECT_NUM; 
   // The height of the graph, used to scale it to nice values.
   var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_MAX - BASE) / maxLogVal - REFLECT_NUM;
+  console.log("normHeight:\t" + normalizedHeight);
   var SHOULD_DRAW_STUFF = false;
   var canvas = document.getElementById('render-area');
   var ctx = canvas.getContext('2d');
