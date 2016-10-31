@@ -1,8 +1,3 @@
-/**
- * Copyright 2014 Google Inc. All Rights Reserved.
- * For licensing see http://lab.aerotwist.com/canvas/music-dna/LICENSE
- */
-
 window.requestAnimFrame =
   window.webkitRequestAnimationFrame ||
   window.mozRequestAnimationFrame ||
