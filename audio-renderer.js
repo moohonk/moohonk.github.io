@@ -159,7 +159,7 @@ function AudioRenderer()
 
         var renderVals = {
           //alpha: volume * volume * 0.09,
-          alpha: Math.pow(volume + (1-VOLUME_THRESH), 2) * 0.09,
+          alpha: Math.pow(volume + (1-VOLUME_THRESH), 2) * 0.15,
           color: color,
           x: rectX,
           y: rectY,
