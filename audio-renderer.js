@@ -7,7 +7,7 @@ function AudioRenderer()
   var LOWERBOUND    = 8;    // The value that BASE depends on
   var REFLECT_NUM   = 0.25; // Precentage of the mapping to be on a reversed log scale
   var BASE_DOT_SIZE = 1;    // The default dot radius
-  var VOLUME_THRESH = 0.675;// The lowest volume level for which we actually display something
+  var VOLUME_THRESH = 0.6;// The lowest volume level for which we actually display something
   var LOG_BASE  = Math.log(LOGBASE   );
   // Shifts the mapping up on the log scale (compressing the frequencies) so it's easier to look at
   var SHRINK    = Math.log(LOWERBOUND) / LOG_BASE; 
