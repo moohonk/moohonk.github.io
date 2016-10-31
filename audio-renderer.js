@@ -148,7 +148,7 @@ function AudioRenderer()
         //size = (volume+0.125) * (volume+0.125) * BASE_DOT_SIZE + Math.random() * 2;
         //size *= 0.56;
         
-        size = Math.pow(volume, 2) * BASE_DOT_SIZE;
+        size = Math.pow(volume + 0.125, 2) * BASE_DOT_SIZE;
         //size = 0.5;
         
         //Make some of the circles very big
