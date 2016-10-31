@@ -156,10 +156,10 @@ function AudioRenderer()
           size *= (audioData[a] * 0.2) * Math.random();
           volume *= Math.random() * 0.25;
         }
-
+    
         var renderVals = {
           //alpha: volume * volume * 0.09,
-          alpha: Math.pow(volume + (1-VOLUME_THRESH), 2) * 0.2,
+          alpha: Math.pow(volume + (1-VOLUME_THRESH), 2)/1.755625,
           color: color,
           x: rectX,
           y: rectY,
