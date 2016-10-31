@@ -12,20 +12,21 @@ function AudioRenderer()
   var LOWERBOUND    = 8;    // The value that BASE depends on
   var REFLECT_NUM   = 0.25; // Precentage of the mapping to be on a reversed log scale
   var BASE_DOT_SIZE = 1;    // The default dot radius
-  var LOG_MAX   = Math.log(LOGBASE   );
-  // Shifts the mapping up on the log scale so it's easier to look at
-  var BASE      = Math.log(LOWERBOUND) / LOG_MAX; 
+  var VOLUME_THRESH = 0.675;// The lowest volume level for which we actually display something
+  var LOG_BASE  = Math.log(LOGBASE   );
+  // Shifts the mapping up on the log scale (compressing the frequencies) so it's easier to look at
+  var SHRINK    = Math.log(LOWERBOUND) / LOG_BASE; 
   // The absolute maximum y-value a point can be mapped to
-  var maxLogVal = Math.log(128       ) / LOG_MAX; 
+  var maxLogVal = Math.log(128       ) / LOG_BASE; 
   // The index before which the mapping is reflected
   var MID_INDEX = (LOWERBOUND * Math.pow(128, REFLECT_NUM)); 
   // The maximum height a frequency can be mapped to
-  var upperLog  = (Math.log(    MAX_INDEX) / LOG_MAX - BASE) / maxLogVal; 
+  var upperLog  = (Math.log(    MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal; 
   // The minimum height a frequency can be mapped to
   // Even though we're dealing with all of these crazy logs, they cancel out when solving for this.
   var lowerLog  = 1/7 - REFLECT_NUM; 
   // The height of the graph, used to scale it to nice values.
-  var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_MAX - BASE) / maxLogVal - REFLECT_NUM;
+  var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal - REFLECT_NUM;
   console.log("normHeight:\t" + normalizedHeight);
   var SHOULD_DRAW_STUFF = false;
   var canvas = document.getElementById('render-area');
@@ -38,6 +39,7 @@ function AudioRenderer()
   var height = 0;
   var imageWidth  = 0;
   var imageHeight = 0;
+  // The percent of the screen we should leave for the border
   var borderPercentX = 0.125;
   var borderPercentY = 0.25;
   var yStart = 0;
@@ -78,6 +80,7 @@ function AudioRenderer()
 
   this.clear = function() {
     ctx.clearRect(0, 0, width, height);
+    hasDrawnBackground = false;
     renderData.values.length = 0;
   };
 
@@ -106,14 +109,14 @@ function AudioRenderer()
         volume = audioData[a] / 255;
         
         // Volume threshhold
-        if (volume < 0.675)
+        if (volume < VOLUME_THRESH)
           continue;
         
         // Map frequency to hue
         color = Math.round(a * 360 / 1024);
 
         // Map the point's y coordinate onto a log scale
-        lnDataDist = Math.log(a) / LOG_MAX - BASE;
+        lnDataDist = Math.log(a) / LOG_BASE - SHRINK;
         rectY = yStart - imageHeight * lnDataDist / maxLogVal;
         
         // Check to see if we should use a flipped log scale to map this point
@@ -126,7 +129,7 @@ function AudioRenderer()
           //  to be the index reflected along y = MID_INDEX
           var newInd = 2 * MID_INDEX - a;
 
-          lnDataDist = (Math.log(newInd) / LOG_MAX - BASE); 
+          lnDataDist = (Math.log(newInd) / LOG_BASE - SHRINK); 
 
           // move away from the beginning point
           rectY += imageHeight * lnDataDist / maxLogVal;
@@ -147,10 +150,11 @@ function AudioRenderer()
           maxDist = rectY; 
         }
         // Size computation
-        size = (volume+0.125) * (volume+0.125) * BASE_DOT_SIZE + Math.random() * 2;
-        size *= 0.56;
+        //size = (volume+0.125) * (volume+0.125) * BASE_DOT_SIZE + Math.random() * 2;
+        //size *= 0.56;
         
-        size = 0.5;
+        size = Math.pow(volume + (1 - VOLUME_THRESH), 2) * BASE_DOT_SIZE;
+        //size = 0.5;
         
         //Make some of the circles very big
         if (Math.random() > 0.995) {
