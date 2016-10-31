@@ -152,10 +152,12 @@ function AudioRenderer()
         //size = 0.5;
         
         //Make some of the circles very big
+        /*
         if (Math.random() > 0.999) {
           size *= (audioData[a] * 0.2) * Math.random();
           volume *= Math.random() * 0.2;
         }
+        */
     
         var renderVals = {
           //alpha: volume * volume * 0.09,
