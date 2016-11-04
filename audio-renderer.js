@@ -154,7 +154,7 @@ function AudioRenderer()
         //size *= 0.56;
         
         
-        size = Math.pow(volume + 0.125, 2) * BASE_DOT_SIZE;
+        size = Math.pow(volume + 0.125, 3) * BASE_DOT_SIZE;
         
         //size = 0.5;
         
