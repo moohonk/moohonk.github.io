@@ -6,7 +6,7 @@ function AudioRenderer()
   var MAX_INDEX     = 850;  // The maximum index to look at in the frequency list
   var LOWERBOUND    = 8;    // The value that BASE depends on
   var REFLECT_NUM   = 0.25; // Precentage of the mapping to be on a reversed log scale
-  var BASE_DOT_SIZE = 0.5;  // The default dot radius
+  var BASE_DOT_SIZE = 1.0;  // The default dot radius
   var BASE_ALPHA    = 0.09; // The base transparency for each dot
   var VOLUME_THRESH = 0.675;// The lowest volume level for which we actually display something
   var LOG_BASE  = Math.log(LOGBASE   );
