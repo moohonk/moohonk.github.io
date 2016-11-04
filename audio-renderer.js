@@ -155,7 +155,7 @@ function AudioRenderer()
         //size *= 0.56;
         
         
-        size = Math.pow(volume + 0.125, 3) * BASE_DOT_SIZE;
+        size = Math.pow(volume + 0.125, 2) * BASE_DOT_SIZE;
         
         //size = 0.5;
         
@@ -169,7 +169,7 @@ function AudioRenderer()
     
         var renderVals = {
           //alpha: volume * volume * 0.09,
-          alpha: Math.pow(volume + (1-VOLUME_THRESH - 0.1), 3) * BASE_ALPHA,
+          alpha: Math.pow(volume + (1-VOLUME_THRESH - 0.1), 2) * BASE_ALPHA,
           color: color,
           x: rectX,
           y: rectY,
