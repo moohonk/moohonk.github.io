@@ -77,23 +77,25 @@ function AudioRenderer()
   function clamp(val, min, max) {
     return Math.min(max, Math.max(val, min));
   }
-
+  
+  function drawBackground() {
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
+    hasDrawnBackground = true;
+  }
+  
   this.clear = function() {
     ctx.clearRect(0, 0, width, height);
     hasDrawnBackground = false;
     renderData.values.length = 0;
-    ctx.fillStyle = '#050505';
-    ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
-    hasDrawnBackground = true;
+    drawBackground();
   };
 
   this.render = function(audioData, normalizedPosition) 
   {
     if(!hasDrawnBackground)
     {
-      ctx.fillStyle = '#050505';
-      ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
-      hasDrawnBackground = true;
+      drawBackground();
     }
     var lnDataDist = 0;
     var normVol    = 0;
