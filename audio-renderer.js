@@ -36,7 +36,7 @@ function AudioRenderer()
   var imageWidth  = 0;
   var imageHeight = 0;
   // The percent of the screen we should leave for the border
-  var borderPercentX = 0.125;
+  var borderPercentX = 0.0625;
   var borderPercentY = 0.25;
   var yStart = 0;
   var renderData = {
@@ -44,9 +44,9 @@ function AudioRenderer()
     height: 0,
     values: [],
     maxWid: canvas.offsetWidth  * (1 - 2 * borderPercentX),
-    maxHgt: canvas.offsetHeight * (1 - 4 * borderPercentX),
-    bPX: 0.125,
-    bPY: 0.25
+    maxHgt: canvas.offsetHeight * (1 - 2 * borderPercentY),
+    bPX: borderPercentX,
+    bPY: borderPercentY
   };
 
   function onResize() 
@@ -65,7 +65,7 @@ function AudioRenderer()
     yStart = imageHeight + height * borderPercentY ;
 
     renderData.maxWid = canvas.offsetWidth  * (1 - 2 * borderPercentX);
-    renderData.maxHgt = canvas.offsetHeight * (1 - 4 * borderPercentX);
+    renderData.maxHgt = canvas.offsetHeight * (1 - 2 * borderPercentY);
 
     ctx.globalCompositeOperation = "lighter";
   }
@@ -78,6 +78,9 @@ function AudioRenderer()
     ctx.clearRect(0, 0, width, height);
     hasDrawnBackground = false;
     renderData.values.length = 0;
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
+    hasDrawnBackground = true;
   };
 
   this.render = function(audioData, normalizedPosition) 
