@@ -83,19 +83,24 @@ function AudioRendererHiRes(size, onRenderedCallback) {
 
     scaledW = renderData.width  * SCALE;
     scaledH = renderData.height * SCALE;
-    if (scaledW < width  * (1 - 2 * bPX))
+    //if (scaledW < width  * (1 - 2 * bPX))
+    if (scaledW < width)
     {
       //If the scaled width is less than what the width
       // would be without any aspect ratio preserving, 
       // calculate the difference between these values 
       // and set the xOffset to be half this difference.
+      // (We want to have the interesting stuff centered in the image)
       var diff = width * (1 - 2 * bPX) - scaledW;
+      diff = width - scaledW;
       xOffset = diff / 2;
     }
 
-    if (scaledH < height * (1 - 2 * bPY))
+    //if (scaledH < height * (1 - 2 * bPY))
+    if (scaledH < height)
     {
       var diff = height * (1 - 2 * bPY) - scaledH;
+      diff = height - scaledH;
       yOffset = diff / 2;
     }
     //console.log("scaled:\t" + scaledW + "\t" + scaledH);
@@ -104,7 +109,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, width, height);
     ctx.fillStyle = '#050505';
-    ctx.fillRect(width * bPX, height * bPY, width * (1 - 2 * bPX), height * (1 - 2 * bPY));
+    ctx.fillRect(scaledW * bPX, scaledH * bPY, scaledW * (1 - 2 * bPX), scaledH * (1 - 2 * bPY));
     ctx.globalCompositeOperation = "lighter";
 
     // We want to keep things roughly in proportion here,
