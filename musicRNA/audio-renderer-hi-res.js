@@ -123,7 +123,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     ctx.moveTo(0, height / 2);
     ctx.lineTo(width, height / 2);
     ctx.stroke();
-    ctx.endPath();
+    ctx.closePath();
     ctx.globalCompositeOperation = "lighter";
 
     // We want to keep things roughly in proportion here,
