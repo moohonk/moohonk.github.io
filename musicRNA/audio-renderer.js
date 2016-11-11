@@ -206,7 +206,7 @@ function AudioRenderer()
       if(prevMax != minY)
       {
         prevMax = minY;
-        console.log("minY:\t" + minY + "\nmaxY:\t" + maxY + "\n-----------------");
+        //console.log("minY:\t" + minY + "\nmaxY:\t" + maxY + "\n-----------------");
       }
     }
   };
