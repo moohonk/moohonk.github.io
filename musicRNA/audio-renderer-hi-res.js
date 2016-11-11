@@ -115,6 +115,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, width, height);
     ctx.fillStyle = '#050505';
+    ctx.fillStyle = '#F0F0F0';
     //ctx.fillRect(scaledW *          bPX  + xOffset, scaledH *          bPY  + yOffset, 
     //             scaledW * (1 - 2 * bPX) + xOffset, scaledH * (1 - 2 * bPY) + yOffset);
     ctx.fillRect(scaledW *          bPX , scaledH *          bPY  , 
