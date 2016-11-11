@@ -120,7 +120,6 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     ctx.fillRect(scaledW *          bPX , scaledH *          bPY  , 
                  scaledW * (1 - 2 * bPX), scaledH * (1 - 2 * bPY));
     ctx.strokeStyle = '#FFF';
-    ctx.strokeRect(renderData.width * bPX, renderData.height * bPY, renderData.maxWid, renderData.maxHgt);
     ctx.beginPath();
     ctx.moveTo(0, height / 2);
     ctx.lineTo(width, height / 2);
