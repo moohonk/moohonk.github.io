@@ -37,7 +37,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
   var ctx = null;
   //var midX = width * 0.5;
   //var midY = height * 0.5;
-  var bPX = 0.125;
+  var bPX = 0.0;
   var bPY = 0.0;
   var imageWidth = 0;
   var imageHeight = 0;
@@ -77,7 +77,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     //The smaller ratio is the biggest we can scale up the image by 
     // while still preserving the original aspect ratio.
     SCALE = Math.min(widScale, hgtScale);
-    console.log("scale:" + SCALE);
+    console.log("scale:" + SCALE + "\nwid: " + widScale + "\nhgt: " + hgtScale + "\n----------");
     imageWidth  = renderData.maxWid * SCALE;
     imageHeight = renderData.maxHgt * SCALE;
 
