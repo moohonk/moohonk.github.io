@@ -68,7 +68,12 @@ function AudioRenderer()
     
     imageWidth  = width  * (1 - 2 * borderPercentX);
     imageHeight = height * (1 - 2 * borderPercentY);
+    
     yStart = imageHeight + height * borderPercentY ;
+    console.log("minY = " + height *      borderPercentY );
+    console.log("maxY = " + yStart                       );
+    console.log("minX = " + width  *      borderPercentX );
+    console.log("maxX = " + width  * (1 - borderPercentX));
 
     renderData.maxWid = canvas.offsetWidth  * (1 - 2 * borderPercentX);
     renderData.maxHgt = canvas.offsetHeight * (1 - 2 * borderPercentY);
