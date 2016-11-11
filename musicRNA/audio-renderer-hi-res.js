@@ -101,7 +101,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     {
       var diff = height * (1 - 2 * bPY) - scaledH;
       diff = height - scaledH;
-      yOffset = diff / 2;
+      yOffset = diff;
     }
     console.log("xOffset: " + xOffset + "\nyOffset: " + yOffset);
     console.log("SCALE: " + SCALE);
