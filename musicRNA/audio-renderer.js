@@ -116,7 +116,7 @@ function AudioRenderer()
     
     if (normalizedPosition <= 1)
     {
-      for (var a =  850; a >= 0; a--) 
+      for (var a =  1024; a >= 0; a--) 
       {
         // Normalize volume
         volume = audioData[a] / 255;
