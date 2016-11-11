@@ -107,29 +107,27 @@ function AudioRendererHiRes(size, onRenderedCallback) {
       diff = height - scaledH;
       yOffset = diff/2;
     }
-    console.log("xOffset: " + xOffset + "\nyOffset: " + yOffset);
-    console.log("SCALE: " + SCALE);
+    //console.log("xOffset: " + xOffset + "\nyOffset: " + yOffset);
+    //console.log("SCALE: " + SCALE);
     //console.log("scaled:\t" + scaledW + "\t" + scaledH);
 
 
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, width, height);
     ctx.fillStyle = '#050505';
-    ctx.fillStyle = '#F0F0F0';
-    var xDiff = width - scaledW;
-    var yDiff = height - scaledH;
-    yDiff /= 2;
+    //ctx.fillStyle = '#808080';
     //ctx.fillRect(scaledW *          bPX  + xOffset, scaledH *          bPY  + yOffset, 
     //             scaledW * (1 - 2 * bPX) + xOffset, scaledH * (1 - 2 * bPY) + yOffset);
-    ctx.fillRect(scaledW *          bPX , scaledH *          bPY  + yDiff , 
-                 scaledW * (1 - 2 * bPX), scaledH * (1 - 2 * bPY) + yDiff);
-    ctx.strokeStyle = '#FFF';
+    ctx.fillRect(scaledW *          bPX , scaledH *          bPY  + yOffset , 
+                 scaledW * (1 - 2 * bPX), scaledH * (1 - 2 * bPY));
+    /*ctx.strokeStyle = '#FFF';
     ctx.strokeRect(0, 0, width, height);
     ctx.beginPath();
     ctx.moveTo(0, height / 2);
     ctx.lineTo(width, height / 2);
     ctx.stroke();
     ctx.closePath();
+    */
     ctx.globalCompositeOperation = "lighter";
 
     // We want to keep things roughly in proportion here,
