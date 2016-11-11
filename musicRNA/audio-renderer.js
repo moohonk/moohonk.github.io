@@ -198,9 +198,9 @@ function AudioRenderer()
 
         renderData.values.push(renderVals);
       }
-      if(prevMax != maxDist)
+      if(prevMax != minY)
       {
-        prevMax = maxDist;
+        prevMax = minY;
         console.log("minY:\t" + minY + "\nmaxY:\t" + maxY + "\n-----------------");
       }
     }
