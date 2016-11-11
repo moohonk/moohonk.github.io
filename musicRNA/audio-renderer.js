@@ -27,7 +27,6 @@ function AudioRenderer()
   var lowerLog  = 1/7 - REFLECT_NUM; 
   // The height of the graph, used to scale it to nice values.
   var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal - REFLECT_NUM;
-  console.log("normHeight:\t" + normalizedHeight);
   var SHOULD_DRAW_STUFF = false;
   var canvas = document.getElementById('render-area');
   var ctx = canvas.getContext('2d');
@@ -35,14 +34,14 @@ function AudioRenderer()
   var maxDist = 0;
   var maxSize = 0;
   var prevMax = 0;
-  var width  = 0;
-  var height = 0;
-  var minY = Number.MAX_SAFE_INTEGER;
-  var maxY = 0;
+  var width   = 0;
+  var height  = 0;
+  var minY    = Number.MAX_SAFE_INTEGER;
+  var maxY    = 0;
   var imageWidth  = 0;
   var imageHeight = 0;
   // The percent of the screen we should leave for the border
-  var borderPercentX = 0.0625;
+  var borderPercentX = 0.03125;
   var borderPercentY = 0.25;
   var yStart = 0;
   var renderData = {
