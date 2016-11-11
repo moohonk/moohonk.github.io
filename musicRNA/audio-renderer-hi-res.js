@@ -119,6 +119,11 @@ function AudioRendererHiRes(size, onRenderedCallback) {
                  scaledW * (1 - 2 * bPX) + xOffset, scaledH * (1 - 2 * bPY) + yOffset);
     ctx.strokeStyle = '#FFF';
     ctx.strokeRect(renderData.width * bPX, renderData.height * bPY, renderData.maxWid, renderData.maxHgt);
+    ctx.beginPath();
+    ctx.moveTo(0, height / 2);
+    ctx.lineTo(width, height / 2);
+    ctx.stroke();
+    ctx.endPath();
     ctx.globalCompositeOperation = "lighter";
 
     // We want to keep things roughly in proportion here,
