@@ -37,6 +37,8 @@ function AudioRenderer()
   var prevMax = 0;
   var width  = 0;
   var height = 0;
+  var minY = Number.MAX_SAFE_INTEGER;
+  var maxY = 0;
   var imageWidth  = 0;
   var imageHeight = 0;
   // The percent of the screen we should leave for the border
@@ -156,7 +158,8 @@ function AudioRenderer()
         {
           maxDist = rectY; 
         }
-        
+        maxY = Math.max(maxY, rectY);
+        minY = Math.min(minY, rectY);
         
         
         // Size computation
@@ -198,7 +201,7 @@ function AudioRenderer()
       if(prevMax != maxDist)
       {
         prevMax = maxDist;
-        console.log("minDist:\t" + maxDist / height);
+        console.log("minY:\t" + minY + "\nmaxY:\t" + maxY + "\n-----------------");
       }
     }
   };
