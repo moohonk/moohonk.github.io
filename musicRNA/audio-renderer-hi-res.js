@@ -116,10 +116,13 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     ctx.fillRect(0, 0, width, height);
     ctx.fillStyle = '#050505';
     ctx.fillStyle = '#F0F0F0';
+    var xDiff = width - scaledW;
+    var yDiff = height - scaledH;
+    yDiff /= 2;
     //ctx.fillRect(scaledW *          bPX  + xOffset, scaledH *          bPY  + yOffset, 
     //             scaledW * (1 - 2 * bPX) + xOffset, scaledH * (1 - 2 * bPY) + yOffset);
-    ctx.fillRect(scaledW *          bPX , scaledH *          bPY  , 
-                 scaledW * (1 - 2 * bPX), scaledH * (1 - 2 * bPY));
+    ctx.fillRect(scaledW *          bPX , scaledH *          bPY  + yDiff , 
+                 scaledW * (1 - 2 * bPX), scaledH * (1 - 2 * bPY) + yDiff);
     ctx.strokeStyle = '#FFF';
     ctx.strokeRect(0, 0, width, height);
     ctx.beginPath();
