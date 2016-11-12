@@ -14,42 +14,47 @@ function AudioRenderer()
   var BASE_ALPHA    = 0.09; // The base transparency for each dot
   var VOLUME_THRESH = 0.675;// The lowest volume level for which we actually display something
   var LOG_BASE  = Math.log(LOGBASE   );
+  
   // Shifts the mapping up on the log scale (compressing the frequencies) so it's easier to look at
   var SHRINK    = Math.log(LOWERBOUND) / LOG_BASE; 
+  
   // The absolute maximum y-value a point can be mapped to
   var maxLogVal = Math.log(128       ) / LOG_BASE; 
+  
   // The index before which the mapping is reflected
   var MID_INDEX = (LOWERBOUND * Math.pow(128, REFLECT_NUM)); 
+  
   // The maximum height a frequency can be mapped to
   var upperLog  = (Math.log(    MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal; 
+  
   // The minimum height a frequency can be mapped to
-  // Even though we're dealing with all of these crazy logs, they cancel out when solving for this.
+  // Even though we're dealing with all of these crazy logs, they cancel in this.
   var lowerLog  = 1/7 - REFLECT_NUM; 
-  // The height of the graph, used to scale it to nice values.
+  
+  // The height of the graph, used to scale things to nice values.
   var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal - REFLECT_NUM;
-  var SHOULD_DRAW_STUFF = false;
+
   var canvas = document.getElementById('render-area');
   var ctx = canvas.getContext('2d');
   var hasDrawnBackground = false;
-  var maxDist = 0;
-  var maxSize = 0;
-  var prevMax = 0;
   var width   = 0;
   var height  = 0;
-  var minY    = Number.MAX_SAFE_INTEGER;
-  var maxY    = 0;
   var imageWidth  = 0;
   var imageHeight = 0;
+  
   // The percent of the screen we should leave for the border
   var borderPercentX = 0.03125;
   var borderPercentY = 0.25;
   var yStart = 0;
+  
+  //The object that stores EVERYTHING.
+  // This is passed to the high-res renderer so it can render things in high res.
   var renderData = {
     width: 0,
     height: 0,
     values: [],
-    maxWid: canvas.offsetWidth  * (1 - 2 * borderPercentX),
-    maxHgt: canvas.offsetHeight * (1 - 2 * borderPercentY),
+    //maxWid: canvas.offsetWidth  * (1 - 2 * borderPercentX),
+    //maxHgt: canvas.offsetHeight * (1 - 2 * borderPercentY),
     bPX: borderPercentX,
     bPY: borderPercentY
   };
@@ -59,23 +64,21 @@ function AudioRenderer()
     width  = canvas.offsetWidth;
     height = canvas.offsetHeight;
 
-    canvas.width  = width;
-    canvas.height = height;
-
+    //Store the width and height everywhere
+    canvas.width      = width;
+    canvas.height     = height;
     renderData.width  = width;
     renderData.height = height;
     
+    //Calculate the width and height of where we will actually be drawing
     imageWidth  = width  * (1 - 2 * borderPercentX);
     imageHeight = height * (1 - 2 * borderPercentY);
     
+    //For to helping with coordinate calculation
     yStart = imageHeight + height * borderPercentY ;
-    console.log("minY = " + height *      borderPercentY );
-    console.log("maxY = " + yStart                       );
-    console.log("minX = " + width  *      borderPercentX );
-    console.log("maxX = " + width  * (1 - borderPercentX));
 
-    renderData.maxWid = canvas.offsetWidth  * (1 - 2 * borderPercentX);
-    renderData.maxHgt = canvas.offsetHeight * (1 - 2 * borderPercentY);
+    //renderData.maxWid = canvas.offsetWidth  * (1 - 2 * borderPercentX);
+    //renderData.maxHgt = canvas.offsetHeight * (1 - 2 * borderPercentY);
 
     ctx.globalCompositeOperation = "lighter";
   }
@@ -85,7 +88,11 @@ function AudioRenderer()
   }
   
   function drawBackground() {
+    //Make a slightly gray background
     ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, width, height);
+    //Have the drawing area be a darker color (in this case black)
+    ctx.fillStyle = '#000';
     ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
     hasDrawnBackground = true;
   }
@@ -100,15 +107,12 @@ function AudioRenderer()
   this.render = function(audioData, normalizedPosition) 
   {
     if(!hasDrawnBackground)
-    {
       drawBackground();
-    }
     var lnDataDist = 0;
     var normVol    = 0;
     var volume     = 0;
     var color      = 0;
     var size       = 0;
-    
     
     var rectX = width * borderPercentX + imageWidth * normalizedPosition;
     var rectY = 0.0;
@@ -173,8 +177,6 @@ function AudioRenderer()
         
         size = Math.pow(volume + 0.125, 2) * BASE_DOT_SIZE;
         
-        //size = 0.5;
-        
         //Make some of the circles very big
         /*
         if (Math.random() > 0.999) {
@@ -184,7 +186,14 @@ function AudioRenderer()
         */
     
         var renderVals = {
-          //alpha: volume * volume * 0.09,
+          /*
+          The transparency depends on this complicated expression. 
+          Basically, it takes the volume, translates the lowest value 
+           so it is at 1, subtracts 0.1 from that, and squares it.
+          Having the alpha depend on volume^2 helps to reduce the visual
+           impact of noise on the overall appearance, and focuses attention
+           onto the louder parts (which should matter more than the quieter parts)
+          */
           alpha: Math.pow(volume + (1-VOLUME_THRESH - 0.1), 2) * BASE_ALPHA,
           color: color,
           x: rectX,
@@ -201,11 +210,6 @@ function AudioRenderer()
         ctx.fill();
 
         renderData.values.push(renderVals);
-      }
-      if(prevMax != minY)
-      {
-        prevMax = minY;
-        //console.log("minY:\t" + minY + "\nmaxY:\t" + maxY + "\n-----------------");
       }
     }
   };
