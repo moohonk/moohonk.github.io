@@ -24,8 +24,8 @@ function MusicDNA() {
   var fileName = '';
 
   var saveNormal = document.getElementById('save-normal');
- /* var saveLarge = document.getElementById('save-large');
-  var saveEnormous = document.getElementById('save-enormous');*/
+  var saveLarge = document.getElementById('save-large');
+  var saveEnormous = document.getElementById('save-enormous');
   var saveAndDownload = document.getElementById('save-and-download');
   var saveButtons = document.getElementById('save-and-download-buttons');
   var generateProgress = document.getElementById('generate-progress');
