@@ -38,8 +38,8 @@ function MusicDNA() {
 
     switch(evt.target) {
       case saveNormal: size = 1; break;
-      //case saveLarge: size = 2; break;
-      //case saveEnormous: size = 3; break;
+      case saveLarge: size = 2; break;
+      case saveEnormous: size = 3; break;
     }
 
     requestAnimFrame(function() {
@@ -122,8 +122,8 @@ function MusicDNA() {
   };
 
   saveNormal.addEventListener('click', onBeginSave);
-  //saveLarge.addEventListener('click', onBeginSave);
-  //saveEnormous.addEventListener('click', onBeginSave);
+  saveLarge.addEventListener('click', onBeginSave);
+  saveEnormous.addEventListener('click', onBeginSave);
   getDownload.addEventListener('click', onSaveComplete);
 
   requestAnimFrame(updateAndRender);
