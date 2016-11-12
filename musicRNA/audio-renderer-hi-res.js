@@ -6,139 +6,91 @@ function AudioRendererHiRes(size, onRenderedCallback) {
   "use strict";
 
   var generateProgressBar = document.getElementById('generate-bar');
-  var STEP = 2000;
   var TAU = Math.PI * 2;
 
-  var width = 1;
+  var width  = 1;
   var height = 1;
 
   switch (size) {
     case 1: // normal
-      width = 1920;
+      width  = 1920;
       height = 1280;
       break;
 
     case 2: // large
-      width = 9000;
+      width  = 9000;
       height = 6000;
       break;
 
     case 3: // enormous
-      width = 16000;
+      width  = 16000;
       height = 12000;
       break;
   }
-
-  var renderData = null;
-  var start = 0;
-  var end = 0;
+  //Variables! 
   var onRendered = onRenderedCallback;
-  var canvas = null;
-  var ctx = null;
-  //var midX = width * 0.5;
-  //var midY = height * 0.5;
-  var bPX = 0.0;
-  var bPY = 0.0;
-  var imageWidth = 0;
-  var imageHeight = 0;
+  var renderData = null;
+  var canvas     = null;
+  var ctx        = null;
   var scaledW = 0;
   var scaledH = 0;
-  var SCALE = 1;
   var xOffset = 0;
   var yOffset = 0;
+  var SCALE   = 1;
+  var STEP    = 2000;
+  var start, end;
+  var bPX  , bPY;
 
   this.render = function(newRenderData) {
 
     var ratio = 1;
-    var maxRenderDataSize = newRenderData.radius * 2;
-    var minRenderDimensions = Math.min(width, height);
-
     renderData = newRenderData;
 
     bPX = renderData.bPX;
     bPY = renderData.bPY;
     
+    //Make a canvas that will do what we want
     canvas = document.createElement('canvas');
     ctx = canvas.getContext('2d');
-
     canvas.width  = width;
     canvas.height = height;
 
-    imageWidth  = width  * (1 - 2 * bPX);
-    imageHeight = height * (1 - 2 * bPY);
-
-    //Find the aspect ratio of the original image
-    var aspectRatio = renderData.maxWid / renderData.maxHgt;
-
-    //Find the ratios of this image's max drawable width / height to the originals
-    var widScale = imageWidth  / renderData.maxWid;
-    var hgtScale = imageHeight / renderData.maxHgt;
-
+    //Find the ratios of this image's width / height to the originals
+    var widScale = width  / renderData.width;
+    var hgtScale = height / renderData.height;
+    
     //The smaller ratio is the biggest we can scale up the image by 
     // while still preserving the original aspect ratio.
     SCALE = Math.min(widScale, hgtScale);
-    console.log("scale:" + SCALE + "\nwid: " + widScale + "\nhgt: " + hgtScale + "\n----");
-    widScale = width / renderData.width;
-    hgtScale = height / renderData.height;
-    SCALE = Math.min(widScale, hgtScale);
-    console.log("scale:" + SCALE + "\nwid: " + widScale + "\nhgt: " + hgtScale + "\n----------");
-    imageWidth  = renderData.maxWid * SCALE;
-    imageHeight = renderData.maxHgt * SCALE;
 
     scaledW = renderData.width  * SCALE;
     scaledH = renderData.height * SCALE;
-    //if (scaledW < width  * (1 - 2 * bPX))
-    if (scaledW < width)
-    {
-      //If the scaled width is less than what the width
-      // would be without any aspect ratio preserving, 
-      // calculate the difference between these values 
-      // and set the xOffset to be half this difference.
-      // (We want to have the interesting stuff centered in the image)
+    
+    /*
+    If the scaled dimensions are smaller than the actual image dimensions, 
+     we want to center the image so that the interesting stuff is in the middle.
+    */
+    if (scaledW < width){
       var diff = width * (1 - 2 * bPX) - scaledW;
       diff = width - scaledW;
       xOffset = diff / 2;
     }
-
-    //if (scaledH < height * (1 - 2 * bPY))
-    if (scaledH < height)
-    {
+    if (scaledH < height){
       var diff = height * (1 - 2 * bPY) - scaledH;
       diff = height - scaledH;
       yOffset = diff/2;
     }
-    //console.log("xOffset: " + xOffset + "\nyOffset: " + yOffset);
-    //console.log("SCALE: " + SCALE);
-    //console.log("scaled:\t" + scaledW + "\t" + scaledH);
-
-
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, width, height);
+    //Fill the background
     ctx.fillStyle = '#050505';
-    //ctx.fillStyle = '#808080';
-    //ctx.fillRect(scaledW *          bPX  + xOffset, scaledH *          bPY  + yOffset, 
-    //             scaledW * (1 - 2 * bPX) + xOffset, scaledH * (1 - 2 * bPY) + yOffset);
-    ctx.fillRect(scaledW *          bPX , scaledH *          bPY  + yOffset , 
-                 scaledW * (1 - 2 * bPX), scaledH * (1 - 2 * bPY));
-    /*ctx.strokeStyle = '#FFF';
-    ctx.strokeRect(0, 0, width, height);
-    ctx.beginPath();
-    ctx.moveTo(0, height / 2);
-    ctx.lineTo(width, height / 2);
-    ctx.stroke();
-    ctx.closePath();
-    */
+    ctx.fillRect(0, 0, width, height);
+    
+    //Make a slightly darker rectangle encapsulating the good stuff
+    ctx.fillStyle = '#000';
+    ctx.fillRect(scaledW *  bPX + xOffset, scaledH *  bPY + yOffset , 
+                 scaledW * (bPX * -2 + 1), scaledH * (bPY * -2 + 1));
     ctx.globalCompositeOperation = "lighter";
-
-    // We want to keep things roughly in proportion here,
-    // so we should scale up as much as we can... but no more, we don't
-    // want to be greedy. People would talk.
-
-    //ratio = minRenderDimensions / maxRenderDataSize;
-
-    //ctx.translate(midX, midY);
-    //ctx.scale(ratio, ratio);
-
+    
+    //Start plopping the data into the image
     start = 0;
     end = Math.min(end + STEP, renderData.values.length);
     requestAnimFrame(renderPortion);
@@ -159,27 +111,22 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     }
     var rectX, rectY;
     for (var i = start; i < end; i++) {
-
+      //A single point
       renderVals = renderData.values[i];
-      //Most Recent RectX + Y
-      //rectX =                scaledW * bPX  + imageWidth  * renderVals.x + xOffset;
-      //rectY = (imageHeight + scaledH * bPY) - imageHeight * renderVals.y + yOffset;
+      
+      //Transform the coords so they are in the right spot on the bigger image
       rectX = SCALE * renderVals.x + xOffset;
       rectY = SCALE * renderVals.y + yOffset;
-
-
-      //rectX = width  * (         borderPercent / 2 + (1 -     borderPercent) * renderVals.x);
-      //rectY = height * ((1 - 2 * borderPercent)    - (1 - 4 * borderPercent) * renderVals.y);
-
+      
+      //Actually draw the dot
       ctx.globalAlpha = renderVals.alpha;
       ctx.fillStyle = 'hsl(' + renderVals.color + ', 80%, 50%)';
-      //ctx.fillStyle = 'hsl(' + renderVals.color + ', 80%, 100%)';
       ctx.beginPath();
-      ctx.arc(rectX, rectY, renderVals.size, 0, TAU, false);
+      ctx.arc(rectX, rectY, renderVals.size * SCALE, 0, TAU, false);
       ctx.closePath();
       ctx.fill();
     }
-    //console.log("XY:\t" + rectX + "\t" + rectY);
+    //Increment the progress bar
     generateProgressBar.style.width =
         ((end / renderData.values.length) * 100).toFixed(1) + '%';
 
