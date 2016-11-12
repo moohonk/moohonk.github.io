@@ -161,15 +161,7 @@ function AudioRenderer()
 
         // Untranslate the y coords into their final form
         rectY += height * borderPercentY;
-        
-        if(rectY > maxDist)
-        {
-          maxDist = rectY; 
-        }
-        maxY = Math.max(maxY, rectY);
-        minY = Math.min(minY, rectY);
-        
-        
+
         // Size computation
         //size = (volume+0.125) * (volume+0.125) * BASE_DOT_SIZE + Math.random() * 2;
         //size *= 0.56;
