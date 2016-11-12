@@ -59,6 +59,16 @@ function AudioRenderer()
     bPY: borderPercentY
   };
 
+  function drawBackground() {
+    //Make a slightly gray background
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, width, height);
+    //Have the drawing area be a darker color (in this case black)
+    ctx.fillStyle = '#000';
+    ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
+    hasDrawnBackground = true;
+  }
+  
   function onResize() 
   {
     width  = canvas.offsetWidth;
@@ -85,16 +95,6 @@ function AudioRenderer()
 
   function clamp(val, min, max) {
     return Math.min(max, Math.max(val, min));
-  }
-  
-  function drawBackground() {
-    //Make a slightly gray background
-    ctx.fillStyle = '#050505';
-    ctx.fillRect(0, 0, width, height);
-    //Have the drawing area be a darker color (in this case black)
-    ctx.fillStyle = '#000';
-    ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
-    hasDrawnBackground = true;
   }
   
   this.clear = function() {
