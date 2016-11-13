@@ -74,6 +74,8 @@ function AudioRenderer()
     ctx.fillStyle = '#000';
     console.log("imageWid:\t" + imageWidth + "\tImageHeight:\t" + imageHeight);
     ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, borderPercentX * width, height);
     hasDrawnBackground = true;
     ctx.globalCompositeOperation = "lighter";
   }
