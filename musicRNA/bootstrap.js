@@ -51,6 +51,7 @@ window.requestAnimFrame =
   function go(file) {
     musicRNA.parse(file);
     fileDropArea.classList.add('dropped');
+    console.log("Go");
     musicRNA.audioRenderer.drawBackground();
 
     ID3.loadTags("filename.mp3", function() {
