@@ -47,6 +47,7 @@ function AudioRenderer()
   var height  = 0;
   var imageWidth  = 0;
   var imageHeight = 0;
+  var numTimesDrawnBackground = 0;
   
   // The percent of the screen we should leave for the border
   var borderPercentX = 0.03125;
@@ -81,6 +82,8 @@ function AudioRenderer()
     ctx.fillRect(0, 0, borderPercentX * width, height);
     hasDrawnBackground = true;
     ctx.globalCompositeOperation = "lighter";
+    numTimesDrawnBackground++;
+    console.log("we've drawn the background " + numTimesDrawnBackground + " times.");
   }
   this.drawBackground = function(){
     drawBackground();
