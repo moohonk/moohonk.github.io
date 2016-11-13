@@ -42,7 +42,6 @@ function MusicDNA() {
       case saveLarge: size = 2; break;
       case saveEnormous: size = 3; break;
     }
-    console.log("The size is " + size);
     requestAnimFrame(function() {
       var audioRendererHiRes = new AudioRendererHiRes(size, onRenderComplete);
       var audioRenderData = audioRenderer.getRenderData();
@@ -83,6 +82,7 @@ function MusicDNA() {
 
   function onFileRead(evt) {
     audioParser.parseArrayBuffer(evt.target.result);
+    console.log("File Read");
     audioRenderer.drawBackground();
   }
 
@@ -90,6 +90,7 @@ function MusicDNA() {
 
     audioDuration = buffer.duration;
     audioPlaying = true;
+    console.log("Audio Data Parsed");
 
     audioRenderer.clear();
   }
