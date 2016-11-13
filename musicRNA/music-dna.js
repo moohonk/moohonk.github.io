@@ -100,11 +100,10 @@ function MusicDNA() {
 
     if (audioPlaying) {
       audioRenderer.render(audioData, audioTime);
-      time.style.width = (audioTime * 100).toFixed(1) + '%';
-
       if (audioTime >= 1) {
         saveAndDownload.classList.add('visible');
       } else {
+        time.style.width = (audioTime * 100).toFixed(1) + '%';
         saveAndDownload.classList.remove('visible');
       }
     }
