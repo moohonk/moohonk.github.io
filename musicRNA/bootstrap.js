@@ -25,6 +25,7 @@ window.requestAnimFrame =
   fileUploadForm.addEventListener('submit', onSubmit, false);
 
   function onSubmit(evt) {
+    console.log("On Submit");
     evt.preventDefault();
     evt.stopImmediatePropagation();
 
@@ -40,7 +41,7 @@ window.requestAnimFrame =
 
     evt.stopPropagation();
     evt.preventDefault();
-
+    console.log("File Dropped");
     var files = evt.dataTransfer.files;
 
     if (files.length) {
@@ -51,7 +52,7 @@ window.requestAnimFrame =
   function go(file) {
     musicRNA.parse(file);
     fileDropArea.classList.add('dropped');
-
+    console.log("Go");
     ID3.loadTags("filename.mp3", function() {
       var tags = ID3.getAllTags("filename.mp3");
       var artistName = tags.artist;
