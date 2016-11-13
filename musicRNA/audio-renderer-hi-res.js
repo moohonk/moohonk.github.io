@@ -111,6 +111,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     }
     var rectX, rectY;
     for (var i = start; i < end; i++) {
+      console.log("rendering stuff");
       //A single point
       renderVals = renderData.values[i];
       
