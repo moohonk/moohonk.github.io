@@ -66,6 +66,7 @@ function AudioRenderer()
   };
 
   function drawBackground() {
+    console.log("Clearing before background");
     ctx.clearRect(0, 0, width, height);
     ctx.globalCompositeOperation = "source-over";
     //Make a slightly gray background
