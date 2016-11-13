@@ -82,6 +82,7 @@ function MusicDNA() {
 
   function onFileRead(evt) {
     audioParser.parseArrayBuffer(evt.target.result);
+    audioRenderer.drawBackground();
   }
 
   function onAudioDataParsed(buffer) {
