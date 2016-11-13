@@ -66,7 +66,7 @@ function AudioRenderer()
   };
 
   function drawBackground() {
-    ctx.globalCompositeOperation="source-over";
+    ctx.globalCompositeOperation = "source-over";
     //Make a slightly gray background
     ctx.fillStyle = '#111';
     ctx.fillRect(0, 0, width, height);
@@ -75,7 +75,7 @@ function AudioRenderer()
     console.log("imageWid:\t" + imageWidth + "\tImageHeight:\t" + imageHeight);
     ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
     hasDrawnBackground = true;
-    ctx.globalCompositeOperation="lighter";
+    ctx.globalCompositeOperation = "lighter";
   }
   this.drawBackground = function(){
     drawBackground();
@@ -114,7 +114,7 @@ function AudioRenderer()
     hasDrawnBackground = false;
     renderData.values.length = 0;
     console.log("Clear");
-    drawBackground();
+    //drawBackground();
   };
 
   this.render = function(audioData, normalizedPosition) 
