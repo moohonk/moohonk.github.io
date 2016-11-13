@@ -93,7 +93,7 @@ function AudioRenderer()
     //renderData.maxHgt = canvas.offsetHeight * (1 - 2 * borderPercentY);
 
     ctx.globalCompositeOperation = "lighter";
-    drawBackground();
+    hasDrawnBackground = false; 
   }
 
   function clamp(val, min, max) {
