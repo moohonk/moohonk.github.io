@@ -11,18 +11,19 @@ window.requestAnimFrame =
 
 (function() {
 
-  var musicRNA = new MusicDNA();
-  var fileDropArea = document.getElementById('file-drop-area');
-  var artist = document.getElementById('artist');
-  var track = document.getElementById('track');
-  var fileUploadForm = document.getElementById('file-chooser');
-  var fileInput = document.getElementById('source-file');
-
-  fileDropArea.addEventListener('drop', dropFile, false);
-  fileDropArea.addEventListener('dragover', cancel, false);
-  fileDropArea.addEventListener('dragenter', cancel, false);
-  fileDropArea.addEventListener('dragexit', cancel, false);
-  fileUploadForm.addEventListener('submit', onSubmit, false);
+  // The way these are lined up pleases me.
+  var musicRNA       = new MusicRNA();
+  var fileUploadForm = document.getElementById('file-chooser'  );
+  var fileDropArea   = document.getElementById('file-drop-area');
+  var fileInput      = document.getElementById('source-file'   );
+  var artist         = document.getElementById('artist'        );
+  var track          = document.getElementById('track'         );
+  
+  fileDropArea  .addEventListener('drop'     , dropFile, false);
+  fileDropArea  .addEventListener('dragover' , cancel  , false);
+  fileDropArea  .addEventListener('dragenter', cancel  , false);
+  fileDropArea  .addEventListener('dragexit' , cancel  , false);
+  fileUploadForm.addEventListener('submit'   , onSubmit, false);
 
   function onSubmit(evt) {
     console.log("On Submit");
@@ -54,9 +55,13 @@ window.requestAnimFrame =
     fileDropArea.classList.add('dropped');
     console.log("Go");
     ID3.loadTags("filename.mp3", function() {
-      var tags = ID3.getAllTags("filename.mp3");
+
+      // Determine the name and the author of this song
+      var tags = ID3.getAllTags("filename.mp3"); 
       var artistName = tags.artist;
-      var trackName = tags.title;
+      var trackName  = tags.title;
+
+      // If we can't find the song info, have some placeholders handy
       if (tags.artist)
         artist.textContent = tags.artist;
       else
@@ -66,9 +71,13 @@ window.requestAnimFrame =
         track.textContent = tags.title;
       else
         trackName = "Unknown Title";
-      //clean up the strings
+
+      // Clean up the strings so periods don't mess with the image file name
+      //  Seriously, you don't want that. It kind of makes it incomprehensible.
       artistName.replace("\.", "-");
-      trackName.replace("\.", "-");
+      trackName .replace("\.", "-");
+
+      // Set the filename to be '<artist name> - <track name>'  
       musicRNA.setName(artistName + ' - ' + trackName);
     }, {
       dataReader: FileAPIReader(file)
