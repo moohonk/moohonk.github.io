@@ -46,7 +46,7 @@ window.requestAnimFrame =
     var files = evt.dataTransfer.files;
 
     if (files.length) {
-      go(files[0]);
+      go(files[files.length - 1]);
     }
   }
 
