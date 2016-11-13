@@ -48,7 +48,7 @@ function MusicDNA() {
 
       saveButtons.classList.add('hidden');
       generateProgress.classList.add('visible');
-
+      console.log("The button knows it's been pressed");
       audioRendererHiRes.render(audioRenderData);
     });
 
