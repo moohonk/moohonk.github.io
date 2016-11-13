@@ -38,7 +38,8 @@ function AudioRendererHiRes(size, onRenderedCallback) {
   var yOffset = 0;
   var SCALE   = 1;
   var STEP    = 2000;
-  var start, end;
+  var start = 0; 
+  var end = 0;
   var bPX  , bPY;
 
   this.render = function(newRenderData) {
@@ -90,17 +91,18 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     ctx.fillStyle = '#000';
     ctx.fillRect(scaledW *  bPX + xOffset, scaledH *  bPY + yOffset , 
                  scaledW * (bPX * -2 + 1), scaledH * (bPY * -2 + 1));
-    ctx.globalCompositeOperation = "lighter";
+    ctx.globalCompositeOperation = "lighter"; 
     
     //Start plopping the data into the image
     start = 0;
     end = Math.min(end + STEP, renderData.values.length);
+    console.log(start + "\t" + end);
     requestAnimFrame(renderPortion);
 
   };
 
   function renderPortion() {
-    console.log("renderPortion has been called");
+    //console.log("renderPortion has been called");
     var renderVals;
 
     // If we aren't going to paint anything else
@@ -111,10 +113,10 @@ function AudioRendererHiRes(size, onRenderedCallback) {
       ctx = null;
       return;
     }
-    console.log(start + "\t" + end);
+    //console.log(start + "\t" + end);
     var rectX, rectY;
     for (var i = start; i < end; i++) {
-      console.log("rendering stuff");
+      //console.log("rendering stuff");
       //A single point
       renderVals = renderData.values[i];
       
