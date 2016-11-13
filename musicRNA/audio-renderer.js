@@ -66,18 +66,15 @@ function AudioRenderer()
   };
 
   function drawBackground() {
-    console.log("drawing the Background");
+    ctx.globalCompositeOperation="source-over";
     //Make a slightly gray background
     ctx.fillStyle = '#111';
-    //ctx.fillRect(0, 0, width, height);
+    ctx.fillRect(0, 0, width, height);
     //Have the drawing area be a darker color (in this case black)
     ctx.fillStyle = '#000';
-    ctx.clearRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
-    ctx.fillStyle = '#FFF';
     ctx.fillRect(0, 0, borderPercentX * width, height);
-    ctx.fillStyle = '#f00';
-    ctx.fillRect(0, 0, width, borderPercentX * width);
     hasDrawnBackground = true;
+    ctx.globalCompositeOperation="lighter";
   }
   this.drawBackground = function(){
     drawBackground();
