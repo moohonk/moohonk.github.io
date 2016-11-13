@@ -16,6 +16,7 @@ function MusicDNA() {
 
   var audioParser = new AudioParser(DATA_SIZE, onAudioDataParsed);
   var audioRenderer = new AudioRenderer();
+  this.audioRenderer = audioRenderer;
   var audioData = new Uint8Array(DATA_SIZE);
   var audioDuration = 1;
   var audioTime = 0;
