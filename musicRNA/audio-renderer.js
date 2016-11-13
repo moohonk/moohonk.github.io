@@ -6,6 +6,8 @@ function AudioRenderer()
 {
   "use strict";
   var TAU = Math.PI * 2;
+  
+  //Config (independent) variables
   var LOGBASE       = 32;   // The logbase used
   var MAX_INDEX     = 850;  // The maximum index to look at in the frequency list
   var LOWERBOUND    = 8;    // The value that BASE depends on
@@ -13,6 +15,10 @@ function AudioRenderer()
   var BASE_DOT_SIZE = 1.0;  // The default dot radius
   var BASE_ALPHA    = 0.09; // The base transparency for each dot
   var VOLUME_THRESH = 0.675;// The lowest volume level for which we actually display something
+  
+  //Dependent variables
+  
+  // Pretty self-explanatory
   var LOG_BASE  = Math.log(LOGBASE   );
   
   // Shifts the mapping up on the log scale (compressing the frequencies) so it's easier to look at
@@ -71,7 +77,9 @@ function AudioRenderer()
     hasDrawnBackground = true;
     console.log("fillStyle2: " + ctx.fillStyle);
   }
-  
+  this.drawBackground = function(){
+    drawBackground();
+  }
   function onResize() 
   {
     width  = canvas.offsetWidth;
