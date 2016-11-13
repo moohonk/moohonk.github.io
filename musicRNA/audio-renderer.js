@@ -72,6 +72,7 @@ function AudioRenderer()
     ctx.fillRect(0, 0, width, height);
     //Have the drawing area be a darker color (in this case black)
     ctx.fillStyle = '#000';
+    console.log("imageWid:\t" + imageWidth + "\tImageHeight:\t" + imageHeight);
     ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
     hasDrawnBackground = true;
     ctx.globalCompositeOperation="lighter";
