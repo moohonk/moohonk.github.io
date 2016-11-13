@@ -7,7 +7,7 @@ function AudioRenderer()
   "use strict";
   var TAU = Math.PI * 2;
   
-  //Config (independent) variables
+  // Constants
   var LOGBASE       = 32;   // The logbase used
   var MAX_INDEX     = 850;  // The maximum index to look at in the frequency list
   var LOWERBOUND    = 8;    // The value that BASE depends on
@@ -15,9 +15,15 @@ function AudioRenderer()
   var BASE_DOT_SIZE = 1.0;  // The default dot radius
   var BASE_ALPHA    = 0.09; // The base transparency for each dot
   var VOLUME_THRESH = 0.675;// The lowest volume level for which we actually display something
+
+  // The percent of the screen we should leave for the border
+  var borderPercentX = 0.03125;
+  var borderPercentY = 0.25;
   
-  //Dependent variables
+  //Dependent constants
   
+  //The absolute maximum radius a dot can have
+  var MAX_DOT_SIZE = Math.pow(1.125, 2) * BASE_DOT_SIZE;
   // Pretty self-explanatory
   var LOG_BASE  = Math.log(LOGBASE   );
   
@@ -40,19 +46,16 @@ function AudioRenderer()
   // The height of the graph, used to scale things to nice values.
   var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal - REFLECT_NUM;
 
+  // Variables
+
   var canvas = document.getElementById('render-area');
   var ctx = canvas.getContext('2d');
   var hasDrawnBackground = false;
-  var width   = 0;
-  var height  = 0;
   var imageWidth  = 0;
   var imageHeight = 0;
-  var numTimesDrawnBackground = 0;
-  
-  // The percent of the screen we should leave for the border
-  var borderPercentX = 0.03125;
-  var borderPercentY = 0.25;
-  var yStart = 0;
+  var yStart      = 0;
+  var height      = 0;
+  var width       = 0;
   
   //The object that stores EVERYTHING.
   // This is passed to the high-res renderer so it can render things in high res.
@@ -66,60 +69,56 @@ function AudioRenderer()
     bPY: borderPercentY
   };
 
+  // Called whenever the screen changes size or a new file is uploaded
   function drawBackground() {
+    // Reset the transparency, otherwise the screen will be really dark
+    ctx.globalAlpha = 1.0;
+
+    // So we can draw items over things without the things affecting the items
     ctx.globalCompositeOperation = "source-over";
-    ctx.clearRect(0, 0, width, height);
-    ctx.fillStyle = '#050505';
-    ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = '#111';
-    ctx.fillRect(0, 0, width, borderPercentY * height);
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, imageHeight + borderPercentY * height, width, borderPercentY * height);
-    hasDrawnBackground = true;
-    ctx.globalCompositeOperation = "lighter";
     
-    /*
-    console.log("Clearing before background");
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, width, height);
-    //Make a slightly gray background
+    // Make a slightly gray background 
+    //  (and paint it over everything drawn previously)
     ctx.fillStyle = '#111';
     ctx.fillRect(0, 0, width, height);
-    //Have the drawing area be a darker color (in this case black)
+
+    // Have the drawing area be a darker color (in this case black)
+    //  because contrast
+    //  I'm a programmer, not a graphic designer, okay? Get off my back.
     ctx.fillStyle = '#000';
-    console.log("imageWid:\t" + imageWidth + "\tImageHeight:\t" + imageHeight);
-    ctx.fillRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
-    ctx.fillStyle = '#fff';
-    ctx.fillRect(0, 0, borderPercentX * width, height);
+    ctx.fillRect(borderPercentX * width - MAX_DOT_SIZE, borderPercentY * height - MAX_DOT_SIZE, 
+                 imageWidth     +     2 * MAX_DOT_SIZE, imageHeight    +      2 * MAX_DOT_SIZE);
+
+    // We have, indeed, drawn the background
     hasDrawnBackground = true;
-    ctx.globalCompositeOperation = "lighter";
-    numTimesDrawnBackground++;
-    console.log("we've drawn the background " + numTimesDrawnBackground + " times.");
-    */
+
+    // Let the things affect the items once more 
+    //  (hypothetical situation continued from ^^ up there)
+    ctx.globalCompositeOperation = "lighter";    
   }
-  this.drawBackground = function(){
-    drawBackground();
-  }
+
+  // Called whenever the screen changes size
   function onResize() 
   {
+    // What are the new width and height?
     width  = canvas.offsetWidth;
     height = canvas.offsetHeight;
 
-    //Store the width and height everywhere
+    // Interesting tidbit: these lines actually reset EVERYTHING about the canvas.
+    //   It's like making an entirely new canvas in the same place as the old one.
     canvas.width      = width;
     canvas.height     = height;
+
+    // Store the width and height so that the hi-res renderer knows
     renderData.width  = width;
     renderData.height = height;
     
-    //Calculate the width and height of where we will actually be drawing
+    // Calculate the width and height of where we will actually be drawing
     imageWidth  = width  * (1 - 2 * borderPercentX);
     imageHeight = height * (1 - 2 * borderPercentY);
     
-    //For to helping with coordinate calculation
+    // For to helping with coordinate calculation
     yStart = imageHeight + height * borderPercentY ;
-
-    //renderData.maxWid = canvas.offsetWidth  * (1 - 2 * borderPercentX);
-    //renderData.maxHgt = canvas.offsetHeight * (1 - 2 * borderPercentY);
 
     ctx.globalCompositeOperation = "lighter";
     hasDrawnBackground = false; 
@@ -129,14 +128,16 @@ function AudioRenderer()
     return Math.min(max, Math.max(val, min));
   }
   
+  // Clears / resets the canvas
+  // Called by other scripts
   this.clear = function() {
     ctx.clearRect(0, 0, width, height);
     hasDrawnBackground = false;
     renderData.values.length = 0;
     console.log("Clear");
-    //drawBackground();
   };
 
+  // Called for each slice of the audio that needs displaying
   this.render = function(audioData, normalizedPosition) 
   {
     if(!hasDrawnBackground)
@@ -144,28 +145,44 @@ function AudioRenderer()
       console.log("Has Not Drawn Background");
       drawBackground();
     }
+    // Just some variables
     var lnDataDist = 0;
     var normVol    = 0;
     var volume     = 0;
     var color      = 0;
     var size       = 0;
     
+    // Coordinates for each dot
+    // The X can be specified here because it changes with time (and not frequency)
     var rectX = width * borderPercentX + imageWidth * normalizedPosition;
     var rectY = 0.0;
+
+    // Nothing's happened . . . yet
     var stuffHappened = false;
     
+    // Has the song ended yet?
     if (normalizedPosition <= 1)
     {
-      for (var a =  1024; a >= 0; a--) 
+      // Make sure that drawing points on top of other points 
+      //  will make the overall color brighter.
+      // Antialiasing and all that.
+      ctx.globalCompositeOperation = 'lighter';
+      for (var a = MAX_INDEX; a >= 0; a--) 
       {
         // Normalize volume
         volume = audioData[a] / 255;
         
         // Volume threshhold
+        // If the volume is below a certain value, display nothing for that point.
+        // Yes, this does mean that really quiet songs won't have as many points
+        // But it keeps louder / more complicated songs from being too incomprehensible.
         if (volume < VOLUME_THRESH)
           continue;
         
         // Map frequency to hue
+        // Why 1024 and not MAX_INDEX? Because I said so, that's why.
+        //  Also, this way the colors only go up to purplish-blue and not into pinks.
+        //  Because I want it to look like audio frequency maps to light frequency.
         color = Math.round(a * 360 / 1024);
 
         // Map the point's y coordinate onto a log scale
@@ -176,19 +193,23 @@ function AudioRenderer()
         if (a < MID_INDEX)
         {
           // Move the beginning point to effect easier reflection
+          // Trust me with this stuff; I spent a good couple days doing nothing but logs.
           rectY = yStart - 2 * REFLECT_NUM * imageHeight;
           
           // Set the index used in position calculations 
           //  to be the index reflected along y = MID_INDEX
           var newInd = 2 * MID_INDEX - a;
 
+          // The distance from this point to the beginning point
           lnDataDist = (Math.log(newInd) / LOG_BASE - SHRINK); 
 
           // move away from the beginning point
           rectY += imageHeight * lnDataDist / maxLogVal;
+          //                                ^ Make sure you normalize it tho
         }
         
-      // Scaling Stuff
+        // Scaling Stuff
+
         // Translate all y Coords for easier scaling
         rectY -= (yStart - imageHeight * upperLog);
 
@@ -199,20 +220,9 @@ function AudioRenderer()
         rectY += height * borderPercentY;
 
         // Size computation
-        //size = (volume+0.125) * (volume+0.125) * BASE_DOT_SIZE + Math.random() * 2;
-        //size *= 0.56;
-        
-        
         size = Math.pow(volume + 0.125, 2) * BASE_DOT_SIZE;
         
-        //Make some of the circles very big
-        /*
-        if (Math.random() > 0.999) {
-          size *= (audioData[a] * 0.2) * Math.random();
-          volume *= Math.random() * 0.2;
-        }
-        */
-    
+        // Make a JSON object with everything the hi-res renderer needs to draw this point
         var renderVals = {
           /*
           The transparency depends on this complicated expression. 
@@ -237,6 +247,7 @@ function AudioRenderer()
         ctx.closePath();
         ctx.fill();
 
+        // Store the info for this point
         renderData.values.push(renderVals);
       }
     }
