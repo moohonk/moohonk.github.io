@@ -70,12 +70,10 @@ function AudioRenderer()
     //Make a slightly gray background
     ctx.fillStyle = '#111';
     ctx.fillRect(0, 0, width, height);
-    console.log("fillStyle1: " + ctx.fillStyle);
     //Have the drawing area be a darker color (in this case black)
     ctx.fillStyle = '#000';
     ctx.clearRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
     hasDrawnBackground = true;
-    console.log("fillStyle2: " + ctx.fillStyle);
   }
   this.drawBackground = function(){
     drawBackground();
@@ -113,13 +111,17 @@ function AudioRenderer()
     ctx.clearRect(0, 0, width, height);
     hasDrawnBackground = false;
     renderData.values.length = 0;
+    console.log("Clear");
     drawBackground();
   };
 
   this.render = function(audioData, normalizedPosition) 
   {
     if(!hasDrawnBackground)
+    {
+      console.log("Has Not Drawn Background");
       drawBackground();
+    }
     var lnDataDist = 0;
     var normVol    = 0;
     var volume     = 0;
