@@ -66,6 +66,7 @@ function AudioRenderer()
   };
 
   function drawBackground() {
+    ctx.clearRect(0, 0, width, height);
     ctx.globalCompositeOperation = "source-over";
     //Make a slightly gray background
     ctx.fillStyle = '#111';
