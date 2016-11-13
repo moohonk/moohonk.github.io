@@ -11,7 +11,7 @@ window.requestAnimFrame =
 
 (function() {
 
-  var musicDNA = new MusicDNA();
+  var musicRNA = new MusicDNA();
   var fileDropArea = document.getElementById('file-drop-area');
   var artist = document.getElementById('artist');
   var track = document.getElementById('track');
@@ -49,17 +49,27 @@ window.requestAnimFrame =
   }
 
   function go(file) {
-    musicDNA.parse(file);
+    musicRNA.parse(file);
     fileDropArea.classList.add('dropped');
+    musicRNA.audioRenderer.drawBackground();
 
     ID3.loadTags("filename.mp3", function() {
       var tags = ID3.getAllTags("filename.mp3");
+      var artistName = tags.artist;
+      var trackName = tags.title;
       if (tags.artist)
         artist.textContent = tags.artist;
+      else
+        artistName = "Unknown Artist";
+      
       if (tags.title)
         track.textContent = tags.title;
-
-      musicDNA.setName(tags.artist + ' - ' + tags.title);
+      else
+        trackName = "Unknown Title";
+      //clean up the strings
+      artistName.replace("\.", "-");
+      trackName.replace("\.", "-");
+      musicRNA.setName(artistName + ' - ' + trackName);
     }, {
       dataReader: FileAPIReader(file)
     });
