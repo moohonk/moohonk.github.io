@@ -68,6 +68,15 @@ function AudioRenderer()
 
   function drawBackground() {
     ctx.globalCompositeOperation = "source-over";
+    ctx.clearRect(0, 0, width, height);
+    ctx.fillStyle = '#050505';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = '#111';
+    ctx.fillRect(0, 0, width, borderPercentY * height);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, imageHeight + borderPercentY * height, width, borderPercentY * height);
+    
+    /*
     console.log("Clearing before background");
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, width, height);
@@ -84,6 +93,7 @@ function AudioRenderer()
     ctx.globalCompositeOperation = "lighter";
     numTimesDrawnBackground++;
     console.log("we've drawn the background " + numTimesDrawnBackground + " times.");
+    */
   }
   this.drawBackground = function(){
     drawBackground();
