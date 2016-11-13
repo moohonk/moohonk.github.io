@@ -42,7 +42,9 @@ function AudioRendererHiRes(size, onRenderedCallback) {
   var bPX  , bPY;
 
   this.render = function(newRenderData) {
-
+    
+    console.log("render has been called");
+    
     var ratio = 1;
     renderData = newRenderData;
 
@@ -98,7 +100,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
   };
 
   function renderPortion() {
-
+    console.log("renderPortion has been called");
     var renderVals;
 
     // If we aren't going to paint anything else
