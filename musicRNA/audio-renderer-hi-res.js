@@ -111,7 +111,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
       ctx = null;
       return;
     }
-    console.log("hello "+ start + "\t" + end);
+    console.log(start + "\t" + end);
     var rectX, rectY;
     for (var i = start; i < end; i++) {
       console.log("rendering stuff");
