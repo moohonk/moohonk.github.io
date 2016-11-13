@@ -75,6 +75,8 @@ function AudioRenderer()
     ctx.clearRect(borderPercentX * width, borderPercentY * height, imageWidth, imageHeight);
     ctx.fillStyle = '#FFF';
     ctx.fillRect(0, 0, borderPercentX * width, height);
+    ctx.fillStyle = '#f00';
+    ctx.fillRect(0, 0, width, borderPercentX * width);
     hasDrawnBackground = true;
   }
   this.drawBackground = function(){
