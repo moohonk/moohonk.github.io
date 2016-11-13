@@ -35,13 +35,13 @@ function MusicDNA() {
   function onBeginSave(evt) {
 
     var size = 0;
-
+    
     switch(evt.target) {
       case saveNormal: size = 1; break;
       case saveLarge: size = 2; break;
       case saveEnormous: size = 3; break;
     }
-
+    console.log("The size is " + size);
     requestAnimFrame(function() {
       var audioRendererHiRes = new AudioRendererHiRes(size, onRenderComplete);
       var audioRenderData = audioRenderer.getRenderData();
