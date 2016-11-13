@@ -60,6 +60,7 @@ function AudioRenderer()
   };
 
   function drawBackground() {
+    console.log("drawing the Background");
     //Make a slightly gray background
     ctx.fillStyle = '#050505';
     ctx.fillRect(0, 0, width, height);
