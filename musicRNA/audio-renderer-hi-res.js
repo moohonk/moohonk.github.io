@@ -27,7 +27,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
       height = 12000;
       break;
   }
-  //Variables! 
+  // Variables! there's so many
   var onRendered = onRenderedCallback;
   var renderData = null;
   var canvas     = null;
@@ -38,8 +38,8 @@ function AudioRendererHiRes(size, onRenderedCallback) {
   var yOffset = 0;
   var SCALE   = 1;
   var STEP    = 2000;
-  var start = 0; 
-  var end = 0;
+  var start   = 0; 
+  var end     = 0;
   var bPX  , bPY;
 
   this.render = function(newRenderData) {
@@ -52,20 +52,21 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     bPX = renderData.bPX;
     bPY = renderData.bPY;
     
-    //Make a canvas that will do what we want
+    // Make a canvas that will do what we want
     canvas = document.createElement('canvas');
     ctx = canvas.getContext('2d');
     canvas.width  = width;
     canvas.height = height;
 
-    //Find the ratios of this image's width / height to the originals
+    // Find the ratios of this image's width / height to the originals
     var widScale = width  / renderData.width;
     var hgtScale = height / renderData.height;
     
-    //The smaller ratio is the biggest we can scale up the image by 
-    // while still preserving the original aspect ratio.
+    // The smaller ratio is the biggest we can scale up the image by 
+    //  while still preserving the original aspect ratio.
     SCALE = Math.min(widScale, hgtScale);
 
+    // Get the actual scaled width and height
     scaledW = renderData.width  * SCALE;
     scaledH = renderData.height * SCALE;
     
@@ -83,8 +84,9 @@ function AudioRendererHiRes(size, onRenderedCallback) {
       diff = height - scaledH;
       yOffset = diff/2;
     }
+
     //Fill the background
-    ctx.fillStyle = '#050505';
+    ctx.fillStyle = '#111';
     ctx.fillRect(0, 0, width, height);
     
     //Make a slightly darker rectangle encapsulating the good stuff
@@ -102,7 +104,6 @@ function AudioRendererHiRes(size, onRenderedCallback) {
   };
 
   function renderPortion() {
-    //console.log("renderPortion has been called");
     var renderVals;
 
     // If we aren't going to paint anything else
@@ -113,10 +114,10 @@ function AudioRendererHiRes(size, onRenderedCallback) {
       ctx = null;
       return;
     }
-    //console.log(start + "\t" + end);
+
     var rectX, rectY;
     for (var i = start; i < end; i++) {
-      //console.log("rendering stuff");
+
       //A single point
       renderVals = renderData.values[i];
       
@@ -132,6 +133,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
       ctx.closePath();
       ctx.fill();
     }
+    
     //Increment the progress bar
     generateProgressBar.style.width =
         ((end / renderData.values.length) * 100).toFixed(1) + '%';
