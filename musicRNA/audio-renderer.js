@@ -76,6 +76,7 @@ function AudioRenderer()
     ctx.fillStyle = '#000';
     ctx.fillRect(0, imageHeight + borderPercentY * height, width, borderPercentY * height);
     hasDrawnBackground = true;
+    ctx.globalCompositeOperation = "lighter";
     
     /*
     console.log("Clearing before background");
