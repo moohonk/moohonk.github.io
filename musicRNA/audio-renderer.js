@@ -57,6 +57,11 @@ function AudioRenderer()
   var height      = 0;
   var width       = 0;
   
+  var totalAudioPoints = 0; // The total number of data points ever
+  var survivingPoints  = 0; // The number of points that got past the volume culling
+  var totalVolume      = 0; // The sum of all the volumes ever
+  var culledVolume     = 0; // The sum of the volumes that got past the culling
+  
   //The object that stores EVERYTHING.
   // This is passed to the high-res renderer so it can render things in high res.
   var renderData = {
@@ -71,6 +76,10 @@ function AudioRenderer()
 
   // Called whenever the screen changes size or a new file is uploaded
   function drawBackground() {
+    totalAudioPoints = 0;
+    survivingPoints  = 0;
+    totalVolume      = 0;
+    culledVolume     = 0;
     // Reset the transparency, otherwise the screen will be really dark
     ctx.globalAlpha = 1.0;
 
@@ -168,9 +177,13 @@ function AudioRenderer()
       // Antialiasing and all that.
       ctx.globalCompositeOperation = 'lighter';
       for (var a = MAX_INDEX; a >= 0; a--) 
-      {
+      {          
         // Normalize volume
         volume = audioData[a] / 255;
+        
+        // Just some analytics. Pay no mind.
+        totalAudioPoints++;
+        totalVolume += volume;
         
         // Volume threshhold
         // If the volume is below a certain value, display nothing for that point.
@@ -178,6 +191,10 @@ function AudioRenderer()
         // But it keeps louder / more complicated songs from being too incomprehensible.
         if (volume < VOLUME_THRESH)
           continue;
+        
+        // More analytics.
+        survivingPoints++;
+        culledVolume += volume;
         
         // Map frequency to hue
         // Why 1024 and not MAX_INDEX? Because I said so, that's why.
@@ -251,6 +268,13 @@ function AudioRenderer()
         renderData.values.push(renderVals);
       }
     }
+    console.log("Total points    :\t" + totalAudioPoints);
+    console.log("Total volume    :\t" + totalVolume);
+    console.log("Avg sound       :\t" + totalVolume / totalAudioPoints);
+    console.log("Culled points   :\t" + survivingPoints);
+    console.log("culled sound    :\t" + culledVolume);
+    console.log("Avg culled sound:\t" + culledVolume / survivingPoints);
+    console.log("===========================================================");
   };
 
   this.getRenderData = function() {
