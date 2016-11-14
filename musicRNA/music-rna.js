@@ -107,6 +107,7 @@ function MusicRNA() {
         saveAndDownload.classList.add('visible');
         if (!hasDisplayedStats)
         {
+          console.log("The time is now " + audioTime);
           audioRenderer.displayAudioStats();
           hasDisplayedStats = true;
         }
