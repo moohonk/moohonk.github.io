@@ -105,11 +105,11 @@ function MusicRNA() {
       audioRenderer.render(audioData, audioTime);
       if (audioTime >= 1) {
         saveAndDownload.classList.add('visible');
-        if (!hasDisplayedStats)
+        if (!this.hasDisplayedStats)
         {
           console.log("The time is now " + audioTime);
           audioRenderer.displayAudioStats();
-          hasDisplayedStats = true;
+          this.hasDisplayedStats = true;
         }
       } else {
         time.style.width = (audioTime * 100).toFixed(1) + '%';
