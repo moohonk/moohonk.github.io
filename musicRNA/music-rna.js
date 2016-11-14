@@ -105,11 +105,11 @@ function MusicRNA() {
       audioRenderer.render(audioData, audioTime);
       if (audioTime >= 1) {
         saveAndDownload.classList.add('visible');
-        if (!this.hasDisplayedStats)
+        if (!hasDisplayedStats)
         {
           console.log("The time is now " + audioTime);
           audioRenderer.displayAudioStats();
-          this.hasDisplayedStats = true;
+          hasDisplayedStats = true;
         }
       } else {
         time.style.width = (audioTime * 100).toFixed(1) + '%';
@@ -120,6 +120,9 @@ function MusicRNA() {
     requestAnimFrame(updateAndRender);
   }
 
+  this.setDisplayStats = function(boolean) {
+    hasDisplayedStats = boolean;
+  };
   this.setName = function (name) {
     fileName = name;
   };
