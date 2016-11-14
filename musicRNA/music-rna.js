@@ -33,6 +33,7 @@ function MusicRNA() {
 
   var getDownload = document.getElementById('get-download');
   var hasDisplayedStats = false;
+  this.hasDisplayedStats = hasDisplayedStats;
 
   function onBeginSave(evt) {
 
@@ -126,7 +127,6 @@ function MusicRNA() {
     var fileReader = new FileReader();
     fileReader.addEventListener('loadend', onFileRead);
     fileReader.readAsArrayBuffer(file);
-    hasDisplayedStats = false;
   };
 
   saveNormal.addEventListener('click', onBeginSave);
