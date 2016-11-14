@@ -54,7 +54,7 @@ window.requestAnimFrame =
     musicRNA.parse(file);
     fileDropArea.classList.add('dropped');
     console.log("Go");
-    musicRNA.hasDisplayedStats = false;
+    musicRNA.setDisplayedStats(false);
     ID3.loadTags("filename.mp3", function() {
 
       // Determine the name and the author of this song
