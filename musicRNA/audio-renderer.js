@@ -268,15 +268,17 @@ function AudioRenderer()
         renderData.values.push(renderVals);
       }
     }
+    
+  };
+  this.displayAudioStats = function() {
     console.log("Total points    :\t" + totalAudioPoints);
     console.log("Total volume    :\t" + totalVolume);
     console.log("Avg sound       :\t" + totalVolume / totalAudioPoints);
     console.log("Culled points   :\t" + survivingPoints);
     console.log("culled sound    :\t" + culledVolume);
     console.log("Avg culled sound:\t" + culledVolume / survivingPoints);
-    console.log("===========================================================");
+    console.log("============================");
   };
-
   this.getRenderData = function() {
     return renderData;
   };
