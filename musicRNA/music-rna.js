@@ -32,6 +32,7 @@ function MusicRNA() {
   var generateProgress = document.getElementById('generate-progress');
 
   var getDownload = document.getElementById('get-download');
+  var hasDisplayedStats = false;
 
   function onBeginSave(evt) {
 
@@ -103,6 +104,11 @@ function MusicRNA() {
       audioRenderer.render(audioData, audioTime);
       if (audioTime >= 1) {
         saveAndDownload.classList.add('visible');
+        if (!hasDisplayedStats)
+        {
+          audioRenderer.displayAudioStats();
+          hasDisplayedStats = true;
+        }
       } else {
         time.style.width = (audioTime * 100).toFixed(1) + '%';
         saveAndDownload.classList.remove('visible');
@@ -120,6 +126,7 @@ function MusicRNA() {
     var fileReader = new FileReader();
     fileReader.addEventListener('loadend', onFileRead);
     fileReader.readAsArrayBuffer(file);
+    hasDisplayedStats = false;
   };
 
   saveNormal.addEventListener('click', onBeginSave);
