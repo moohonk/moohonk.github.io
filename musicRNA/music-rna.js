@@ -55,7 +55,7 @@ function MusicRNA() {
   }
 
   function onRenderComplete(imageData) {
-
+    audioRenderer.displayAudioStats();
     imageData = imageData.replace(/^data:image\/png;base64,/, '');
 
     var imageBinaryString = atob(imageData);
@@ -70,6 +70,7 @@ function MusicRNA() {
     getDownload.classList.add('visible');
     getDownload.href = window.URL.createObjectURL(blob);
     getDownload.download = fileName;
+    
 
     generateProgress.classList.remove('visible');
   }
