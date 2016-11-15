@@ -56,6 +56,7 @@ function AudioRenderer()
   var yStart      = 0;
   var height      = 0;
   var width       = 0;
+  var timesCalled = 0;
   
   var totalAudioPoints = 0; // The total number of data points ever
   var survivingPoints  = 0; // The number of points that got past the volume culling
@@ -267,10 +268,12 @@ function AudioRenderer()
         // Store the info for this point
         renderData.values.push(renderVals);
       }
+      timesCalled++;
     }
     
   };
   this.displayAudioStats = function() {
+    console.log("called " + timesCalled + " times.");
     console.log("Total points    :\t" + totalAudioPoints);
     console.log("Total volume    :\t" + totalVolume);
     console.log("Avg sound       :\t" + totalVolume / totalAudioPoints);
