@@ -58,6 +58,10 @@ function AudioRenderer()
   var width       = 0;
   var timesCalled = 0;
   
+  var volumeArray = Array(850);
+  for (var i = 0; i < 850; i++)
+    volumeArray[i] = 0;
+  
   var totalAudioPoints = 0; // The total number of data points ever
   var survivingPoints  = 0; // The number of points that got past the volume culling
   var totalVolume      = 0; // The sum of all the volumes ever
@@ -179,6 +183,8 @@ function AudioRenderer()
       ctx.globalCompositeOperation = 'lighter';
       for (var a = MAX_INDEX; a >= 0; a--) 
       {          
+        // Add the current volumes to the totals
+        volumeArray[a] += audioData[a];
         // Normalize volume
         volume = audioData[a] / 255;
         
@@ -272,15 +278,19 @@ function AudioRenderer()
     }
     
   };
-  this.displayAudioStats = function() {
-    console.log("called " + timesCalled + " times.");
-    console.log("Total points    :\t" + totalAudioPoints);
-    console.log("Total volume    :\t" + totalVolume);
-    console.log("Avg sound       :\t" + totalVolume / totalAudioPoints);
-    console.log("Culled points   :\t" + survivingPoints);
-    console.log("culled sound    :\t" + culledVolume);
-    console.log("Avg culled sound:\t" + culledVolume / survivingPoints);
-    console.log("============================");
+  this.displayAudioStats = function(duration) {
+    var nonZeroTotal = 0;
+    var numNonZeros  = 0;
+    for (var i = 0; i < 850; i++)
+    {
+      if (volumeArray[i] != 0)
+      {
+        numNonZeros++;
+        nonZeroTotal += (volumeArray[i] / (duration * 255));
+      }
+    }
+    console.log("Average intensity:\t" + nonZeroTotal / numNonZeros);
+      
   };
   this.getRenderData = function() {
     return renderData;
