@@ -286,10 +286,11 @@ function AudioRenderer()
       if (volumeArray[i] != 0)
       {
         numNonZeros++;
-        nonZeroTotal += (volumeArray[i] / (duration * 255));
+        nonZeroTotal += (volumeArray[i]);
       }
     }
-    console.log("Average intensity:\t" + nonZeroTotal / numNonZeros);
+    console.log("total: " + nonZeroTotal + "  number: " + numNonZeros);
+    console.log("Average intensity:\t" + nonZeroTotal / (numNonZeros * duration * 255));
       
   };
   this.getRenderData = function() {
