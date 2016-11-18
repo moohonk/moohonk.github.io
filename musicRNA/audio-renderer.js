@@ -61,6 +61,7 @@ function AudioRenderer()
   var volumeArray = Array(850);
   for (var i = 0; i < 850; i++)
     volumeArray[i] = 0;
+  var numNonZeros = 0;
   
   var totalAudioPoints = 0; // The total number of data points ever
   var survivingPoints  = 0; // The number of points that got past the volume culling
@@ -281,6 +282,7 @@ function AudioRenderer()
   this.displayAudioStats = function(duration) {
     var nonZeroTotal = 0;
     var numNonZeros  = 0;
+    console.log(volumeArray);
     for (var i = 0; i < 850; i++)
     {
       if (volumeArray[i] != 0)
