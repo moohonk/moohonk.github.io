@@ -59,8 +59,12 @@ function AudioRenderer()
   var timesCalled = 0;
   
   var volumeArray = Array(850);
+  var culledArray = Array(850);
   for (var i = 0; i < 850; i++)
+  {
     volumeArray[i] = 0;
+    culledArray[i] = 0;
+  }
   var numNonZeros = 0;
   
   var totalAudioPoints = 0; // The total number of data points ever
@@ -152,6 +156,12 @@ function AudioRenderer()
     console.log("Clear");
   };
 
+  
+//===============================================================================================================
+//                                                  THE RENDER FUNCTION
+//
+//===============================================================================================================
+  
   // Called for each slice of the audio that needs displaying
   this.render = function(audioData, normalizedPosition) 
   {
@@ -200,6 +210,8 @@ function AudioRenderer()
         // But it keeps louder / more complicated songs from being too incomprehensible.
         if (volume < VOLUME_THRESH)
           continue;
+        
+        culledArray[a] += volume;
         
         // More analytics.
         survivingPoints++;
@@ -281,20 +293,26 @@ function AudioRenderer()
     
   };
   this.displayAudioStats = function(duration) {
-    var nonZeroTotal = 0;
-    var numNonZeros  = 0;
+    var normalTotal = 0;
+    var culledTotal = 0;
     for (var i = 0; i < 850; i++)
     {
       if (volumeArray[i] != 0)
       {
-        numNonZeros++;
-        nonZeroTotal += (volumeArray[i]);
+        normalTotal += (volumeArray[i]);
         volumeArray[i] /= duration;
+      }
+      if (culledArray[i] != 0)
+      {
+        culledTotal += culledArray[i];
+        culledArray[i] /= duration;
       }
     }
     console.log(volumeArray);
-    console.log("total: " + nonZeroTotal + "  number: " + numNonZeros);
-    console.log("Average intensity:\t" + nonZeroTotal / (numNonZeros * duration));
+    console.log(culledArray);
+    console.log("total: " + 850 + "  number: " + numNonZeros);
+    console.log("Average intensity:\t" + normalTotal / (850 * duration));
+    console.log("Average culled intensity:\t" + culledTotal / (850 * duration));
       
   };
   this.getRenderData = function() {
