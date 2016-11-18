@@ -20,6 +20,7 @@ function AudioParser(dataSize, onAudioDataDecoded) {
   var audioRenderer = null;
   var audioDecodedCallback = null;
   var timePlaybackStarted = 0;
+  
 
   analyser.smoothingTimeConstant = 0.2;
   analyser.fftSize = dataSize;
@@ -28,7 +29,7 @@ function AudioParser(dataSize, onAudioDataDecoded) {
   audioDecodedCallback = onAudioDataDecoded;
 
   function onDecodeData (buffer) {
-
+    console.log("duration: " + buffer.duration);
     // Kill any existing audio
     if (sourceNode) {
       if (sourceNode.playbackState === sourceNode.PLAYING_STATE)
