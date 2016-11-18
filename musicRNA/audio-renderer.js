@@ -184,7 +184,7 @@ function AudioRenderer()
       for (var a = MAX_INDEX; a >= 0; a--) 
       {          
         // Add the current volumes to the totals
-        volumeArray[a] += audioData[a];
+        volumeArray[a] += (audioData[a] / 255);
         // Normalize volume
         volume = audioData[a] / 255;
         
@@ -290,7 +290,7 @@ function AudioRenderer()
       }
     }
     console.log("total: " + nonZeroTotal + "  number: " + numNonZeros);
-    console.log("Average intensity:\t" + nonZeroTotal / (numNonZeros * duration * 255));
+    console.log("Average intensity:\t" + nonZeroTotal / (numNonZeros * duration));
       
   };
   this.getRenderData = function() {
