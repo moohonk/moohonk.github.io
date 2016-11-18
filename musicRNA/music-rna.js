@@ -108,7 +108,7 @@ function MusicRNA() {
         if (!hasDisplayedStats)
         {
           console.log("The time is now " + audioTime);
-          audioRenderer.displayAudioStats();
+          audioRenderer.displayAudioStats(audioDuration);
           hasDisplayedStats = true;
         }
       } else {
