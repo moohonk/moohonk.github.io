@@ -184,10 +184,11 @@ function AudioRenderer()
       ctx.globalCompositeOperation = 'lighter';
       for (var a = MAX_INDEX; a >= 0; a--) 
       {          
-        // Add the current volumes to the totals
-        volumeArray[a] += (audioData[a] / 255);
         // Normalize volume
         volume = audioData[a] / 255;
+        
+        // Add the current volume to the totals
+        volumeArray[a] += volume;
         
         // Just some analytics. Pay no mind.
         totalAudioPoints++;
@@ -282,15 +283,16 @@ function AudioRenderer()
   this.displayAudioStats = function(duration) {
     var nonZeroTotal = 0;
     var numNonZeros  = 0;
-    console.log(volumeArray);
     for (var i = 0; i < 850; i++)
     {
       if (volumeArray[i] != 0)
       {
         numNonZeros++;
         nonZeroTotal += (volumeArray[i]);
+        volumeArray[i] /= duration;
       }
     }
+    console.log(volumeArray);
     console.log("total: " + nonZeroTotal + "  number: " + numNonZeros);
     console.log("Average intensity:\t" + nonZeroTotal / (numNonZeros * duration));
       
