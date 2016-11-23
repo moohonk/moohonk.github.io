@@ -225,13 +225,31 @@
     #save-enormous {
       opacity: 0;
       pointer-events: none;
+    }
+    .buttonLink {
+      display: inline-block;
+      padding: 5px 10px 6px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      line-height: 1;
+      -moz-border-radius: 5px;
+      -webkit-border-radius: 5px;
+      -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+      text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+      border-bottom: 1px solid rgba(0,0,0,0.25);
+      position: relative;
+      cursor: pointer;
+      background-color: #ff5c00;
+    }
   </style>
 </head>
 <body>
   <p>Hi!<br>Welcome to my page!</p>
   <p>Here is a list of my projects so far:</p>
   <l>
-    <a href = "/musicRNA">Music RNA, a frequency visualizer for songs</a>
+    <a class = "buttonLink" href = "/musicRNA">Music RNA, a frequency visualizer for songs</a>
   </l>
  
 </body>
