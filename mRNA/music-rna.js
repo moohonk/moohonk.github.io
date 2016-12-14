@@ -71,7 +71,6 @@ function MusicRNA() {
 
       saveButtons.classList.add('hidden');
       generateProgress.classList.add('visible');
-      console.log("The button knows it's been pressed");
       audioRendererHiRes.render(audioRenderData);
     });
 
@@ -99,22 +98,17 @@ function MusicRNA() {
   }
 
   function onSaveComplete() {
-    if(SHOULD_CONSOLE_DEBUG)
-      console.log("onSaveComplete");
     saveButtons.classList.remove('hidden');
     getDownload.classList.remove('visible');
     generateProgress.classList.remove('visible');
   }
 
   this.stop = function (){
-    console.log(songFileName);
     weShouldStop = true;
   }
 
   function onFileRead(evt) {
     audioParser.preprocess(evt.target.result);
-    if(SHOULD_CONSOLE_DEBUG)
-      console.log("onFileRead");
     // Because otherwise the preprocessing might happen after this, 
     //  resulting in an observed average volume of 0
     // This would normally result in decreased visibility of the audio data.
@@ -125,11 +119,6 @@ function MusicRNA() {
   // Called when we are finished parsing the latest song
   // Buffer is the parsed song
   function onAudioDataParsed(buffer) {
-    if(SHOULD_CONSOLE_DEBUG)
-    {
-      console.log("Audio Data Parsed");
-      console.log(audioParser.sampleRate);
-    }
     audioDuration = buffer.duration;
     
     var sampleRate = audioParser.offlineSampleRate;
@@ -157,7 +146,6 @@ function MusicRNA() {
     var fileReader = new FileReader();
     fileReader.addEventListener('loadend', onFileRead);
     fileReader.readAsArrayBuffer(file);
-    for(var i = 0; i < percents; i++) pcntArray[i] = 0;
   };
 
   // Displays one frame of the song
@@ -170,22 +158,12 @@ function MusicRNA() {
     if (audioPlaying) 
     {
       audioRenderer.render(audioData, audioTime);
-      var index = audioTime * percents;
-      index = index - (index % 1);
-
-      if(pcntArray[index] == 0)
-      {
-        console.log(100 * index / percents + "%");
-        pcntArray[index] = 1;
-      }
-
       // If we are done with the song
       if (audioTime >= 1) 
       {
         saveAndDownload.classList.add('visible');
         if (!hasDisplayedStats)
         {
-          console.log("The time is now " + audioTime);
           var sampleRate = audioParser.sampleRate;
           audioRenderer.displayAudioStats(audioDuration, sampleRate);
           hasDisplayedStats = true;
@@ -221,9 +199,6 @@ function MusicRNA() {
 
   this.parse = function (file) {
     theFile = file;
-    if(SHOULD_CONSOLE_DEBUG)
-      console.log("parse");
-    console.log("name: " + file.name);
     var fileReader = new FileReader();
     fileReader.addEventListener('loadend', onFileRead);
     fileReader.readAsArrayBuffer(file);
