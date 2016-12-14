@@ -75,6 +75,7 @@ function AudioRenderer(theMusicRNA)
   var SHOULD_CONSOLE_DEBUG = false;
 
   function linReg(x){
+    console.log("The average volume is " + x);
     var retVal = 0;
     retVal = 60.467179501 * x + 0.598067347081808 + 0.1;
 
@@ -83,6 +84,7 @@ function AudioRenderer(theMusicRNA)
     retVal +=   1480587.7038664         * Math.pow(x, 2);
     retVal +=      -507.228872599461    * x;
     retVal +=         0.670058081186047    ;
+    console.log("The adjusted threshold is " + retVal);
     return retVal;
   }
 
