@@ -325,32 +325,10 @@ function AudioRenderer(theMusicRNA)
 
   //this.beDynamic = function(fullAudioData, audioDuration, sampleRate){
   this.beDynamic = function(pData, audioDuration, sampleRate, dataSize){
-    // Make an array to hold the amount of 
-
-    
     var divConst = (dataSize / 2) * sampleRate;// audioDuration * sampleRate;
-    /*
-    var sum = 0;
-    for(var i = 0; i < 1024; i++)
-      sum += fullAudioData[i];
-    //console.log(fullAudioData);
-    console.log(sum);
-    */
-    //if(SHOULD_CONSOLE_DEBUG)
-    {
-      console.log(audioDuration, sampleRate);
-      
-    }
-
     var sum = pData;
     var x = sum / divConst;
-    var xs = (x * 10000) + "e-4";
-    if (timesCalled == 0)
-    {
-      console.log("Average Intensity: ");
-      console.log(xs);
-    }
-    xIntens = x;
+    
     // The equation for the threshold as determined by experimentation
     if (displayMode)
       VOLUME_THRESH = linReg(x);
