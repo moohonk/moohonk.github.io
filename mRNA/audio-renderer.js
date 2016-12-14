@@ -356,6 +356,8 @@ function AudioRenderer(theMusicRNA)
   };
 
   function binarySearch(actual, expected, error) {
+    if (displayMode)
+      MusicRNA.stop();
     if (expected - error <= actual && actual <= expected + error)
     {
       console.log(xIntens);
@@ -383,8 +385,7 @@ function AudioRenderer(theMusicRNA)
       }
       console.log("Next: " + VOLUME_THRESH);
     }
-    if (displayMode)
-      MusicRNA.stop();
+    
   }
 
   this.displayAudioStats = function(duration, sampleRate) {
@@ -393,18 +394,21 @@ function AudioRenderer(theMusicRNA)
     var avgInt   = totalVolume  / divConst;
     var culInt   = culledVolume / divConst;
 
-    console.log(avgInt);
-    console.log(VOLUME_THRESH);
-    console.log(culInt);
+    if (!displayMode)
+    {
+      console.log(avgInt);
+      console.log(VOLUME_THRESH);
+      console.log(culInt);
 
 
-    avgInt = Math.round(1000000000  * avgInt) / 100000; // The average intensity is normally on the order of 10^(-4).
-    culInt = Math.round(10000000000 * culInt) / 100000; // The culled intensity should be on the order of 10^(-5).
+      avgInt = Math.round(1000000000  * avgInt) / 100000; // The average intensity is normally on the order of 10^(-4).
+      culInt = Math.round(10000000000 * culInt) / 100000; // The culled intensity should be on the order of 10^(-5).
 
 
-    var intWindow = 0.035;
-    var target    = 2.150;
-    binarySearch(culInt, target, intWindow);
+      var intWindow = 0.035;
+      var target    = 2.150;
+      binarySearch(culInt, target, intWindow);
+    }
   };
   this.getRenderData = function() {
     return renderData;
