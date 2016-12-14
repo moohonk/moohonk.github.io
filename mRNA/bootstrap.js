@@ -41,7 +41,7 @@ window.requestAnimFrame = (function(){
   }
 
   function dropFile(evt) {
-    console.log("File Dropped");
+    //console.log("File Dropped");
     evt.stopPropagation();
     evt.preventDefault();
     var files = evt.dataTransfer.files;
@@ -52,7 +52,7 @@ window.requestAnimFrame = (function(){
   }
 
   function go(file) {
-    console.log("Go");
+    //console.log("Go");
     musicRNA.parse(file);
     fileDropArea.classList.add('dropped');
 
