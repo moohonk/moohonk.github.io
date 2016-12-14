@@ -141,6 +141,7 @@ function MusicRNA() {
   }
 
   function parse(file) {
+    audioRenderer.clear();
     //console.log("Parsing");
     songFileName = file.name;
     var fileReader = new FileReader();
