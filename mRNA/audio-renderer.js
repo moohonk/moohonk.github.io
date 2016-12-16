@@ -14,7 +14,7 @@ function AudioRenderer(theMusicRNA)
   // Constants
   var LOGBASE       = 32;   // The logbase used
   var MAX_INDEX     = 850;  // The maximum index to look at in the frequency list
-  var LOWERBOUND    = 8;    // The value that BASE depends on
+  var LOWERBOUND    = 12;    // The value that BASE depends on
   var REFLECT_NUM   = 0.25; // Precentage of the mapping to be on a reversed log scale
   var BASE_DOT_SIZE = 1.0;  // The default dot radius
   var BASE_ALPHA    = 0.09; // The base transparency for each dot
@@ -36,20 +36,21 @@ function AudioRenderer(theMusicRNA)
   var SHRINK    = Math.log(LOWERBOUND) / LOG_BASE; 
   
   // The absolute maximum y-value a point can be mapped to
-  var maxLogVal = Math.log(128       ) / LOG_BASE; 
+  var maxLogVal = Math.log(1024 / LOWERBOUND) / LOG_BASE; 
   
   // The index before which the mapping is reflected
-  var MID_INDEX = (LOWERBOUND * Math.pow(128, REFLECT_NUM)); 
-  
+  // var MID_INDEX = (LOWERBOUND * Math.pow(128, REFLECT_NUM)); 
+  var MID_INDEX = Math.pow(LOWERBOUND, (1 - REFLECT_NUM)) * Math.pow(1024, REFLECT_NUM);
   // The maximum height a frequency can be mapped to
-  var upperLog  = (Math.log(    MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal; 
+  var upperLog  = (Math.log(MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal; 
   
   // The minimum height a frequency can be mapped to
   // Even though we're dealing with all of these crazy logs, they cancel in this.
-  var lowerLog  = 1/7 - REFLECT_NUM; 
+  var lowerLog  = (Math.log(2) / LOG_BASE) / maxLogVal - REFLECT_NUM;
   
   // The height of the graph, used to scale things to nice values.
-  var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal - REFLECT_NUM;
+  var normalizedHeight = upperLog + lowerLog;
+  //var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal - REFLECT_NUM;
 
   // Variables
 
@@ -59,6 +60,8 @@ function AudioRenderer(theMusicRNA)
   var imageWidth  = 0;
   var imageHeight = 0;
   var yStart      = 0;
+  var xOffset     = 0;
+  var yOffset     = 0;
   var height      = 0;
   var width       = 0;
   var timesCalled = 0;
@@ -75,16 +78,17 @@ function AudioRenderer(theMusicRNA)
   var SHOULD_CONSOLE_DEBUG = false;
 
   function linReg(x){
-    console.log("The average volume is " + x);
     var retVal = 0;
     retVal = 60.467179501 * x + 0.598067347081808 + 0.1;
 
     // Cubic seemed to be the best way to go, so I did it.
-    retVal =  -797508447.939692         * Math.pow(x, 3);
-    retVal +=   1480587.7038664         * Math.pow(x, 2);
-    retVal +=      -507.228872599461    * x;
-    retVal +=         0.670058081186047    ;
-    console.log("The adjusted threshold is " + retVal);
+    retVal =  -797508447.939692          * Math.pow(x, 3);
+    retVal +=    1480587.7038664         * Math.pow(x, 2);
+    retVal +=       -507.228872599461    * x;
+    retVal +=          0.670058081186047    ;
+    //retVal = 0;
+    if (!displayMode)
+      return 0.675;
     return retVal;
   }
 
@@ -140,6 +144,11 @@ function AudioRenderer(theMusicRNA)
     ctx.globalCompositeOperation = "lighter";    
   }
 
+  // Returns the largest image width possible while keeping the specified width-to-height ratio
+  function getNewWidth(canvasWidth, canvasHeight, widHgtRatio)
+  {
+
+  }
   // Called whenever the screen changes size
   function onResize() 
   {
@@ -151,6 +160,26 @@ function AudioRenderer(theMusicRNA)
     //   It's like making an entirely new canvas in the same place as the old one.
     canvas.width      = width;
     canvas.height     = height;
+
+
+
+    //*************************************************************************************
+    //**    For enforcing one aspect ratio on resize (not currently fully implemented)   **
+    //*************************************************************************************
+    var whRatio = 0;
+    var newWid = width;
+    var newHgt = height;
+    var widFromHgt = whRatio * height;
+    if (widFromHgt < width) 
+      newWid = widFromHgt;
+    else
+      newHgt = width / whRatio;
+    // Calculate offsets
+    xOffset = (width  - newWid) / 2;
+    yOffset = (height - newHgt) / 2;
+
+
+
 
     // Store the width and height so that the hi-res renderer knows
     renderData.width  = width;
@@ -325,19 +354,39 @@ function AudioRenderer(theMusicRNA)
 
   //this.beDynamic = function(fullAudioData, audioDuration, sampleRate){
   this.beDynamic = function(pData, audioDuration, sampleRate, dataSize){
+    // Make an array to hold the amount of 
+
+    
     var divConst = (dataSize / 2) * sampleRate;// audioDuration * sampleRate;
+    /*
+    var sum = 0;
+    for(var i = 0; i < 1024; i++)
+      sum += fullAudioData[i];
+    //console.log(fullAudioData);
+    console.log(sum);
+    */
+    //if(SHOULD_CONSOLE_DEBUG)
+    {
+      console.log(audioDuration, sampleRate);
+      
+    }
+
     var sum = pData;
     var x = sum / divConst;
-    
+    var xs = (x * 10000) + "e-4";
+    if (timesCalled == 0)
+    {
+      console.log("Average Intensity: ");
+      console.log(xs);
+    }
+    xIntens = x;
     // The equation for the threshold as determined by experimentation
     if (displayMode)
       VOLUME_THRESH = linReg(x);
-    //console.log("The dynamic threshold is " + VOLUME_THRESH);
+    console.log("The dynamic threshold is " + VOLUME_THRESH);
   };
 
   function binarySearch(actual, expected, error) {
-    if (displayMode)
-      MusicRNA.stop();
     if (expected - error <= actual && actual <= expected + error)
     {
       console.log(xIntens);
@@ -365,7 +414,8 @@ function AudioRenderer(theMusicRNA)
       }
       console.log("Next: " + VOLUME_THRESH);
     }
-    
+    if (displayMode)
+      MusicRNA.stop();
   }
 
   this.displayAudioStats = function(duration, sampleRate) {
@@ -374,25 +424,18 @@ function AudioRenderer(theMusicRNA)
     var avgInt   = totalVolume  / divConst;
     var culInt   = culledVolume / divConst;
 
-    if (!displayMode)
-    {
-      console.log(avgInt);
-      console.log(VOLUME_THRESH);
-      console.log(culInt);
+    console.log(avgInt);
+    console.log(VOLUME_THRESH);
+    console.log(culInt);
 
 
-      avgInt = Math.round(1000000000  * avgInt) / 100000; // The average intensity is normally on the order of 10^(-4).
-      culInt = Math.round(10000000000 * culInt) / 100000; // The culled intensity should be on the order of 10^(-5).
+    avgInt = Math.round(1000000000  * avgInt) / 100000; // The average intensity is normally on the order of 10^(-4).
+    culInt = Math.round(10000000000 * culInt) / 100000; // The culled intensity should be on the order of 10^(-5).
 
 
-      var intWindow = 0.035;
-      var target    = 2.150;
-      binarySearch(culInt, target, intWindow);
-    }
-    else
-    {
-      MusicRNA.stop();
-    }
+    var intWindow = 0.035;
+    var target    = 2.150;
+    binarySearch(culInt, target, intWindow);
   };
   this.getRenderData = function() {
     return renderData;
