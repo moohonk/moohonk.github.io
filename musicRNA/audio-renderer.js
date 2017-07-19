@@ -422,6 +422,7 @@ function AudioRenderer(theMusicRNA)
   };
 
   function binarySearch(actual, expected, error) {
+    /*
     if (expected - error <= actual && actual <= expected + error)
     {
       console.log(xIntens);
@@ -451,6 +452,7 @@ function AudioRenderer(theMusicRNA)
     }
     if (displayMode)
       MusicRNA.stop();
+      */
   }
 
   this.displayAudioStats = function(duration, sampleRate) {
