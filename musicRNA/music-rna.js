@@ -21,10 +21,10 @@ function MusicRNA() {
 
   var SHOULD_DISPLAY_STUFF = true;
   var SHOULD_CONSOLE_DEBUG = false;
-  audioParser  .setDisplay(SHOULD_DISPLAY_STUFF);
-  audioRenderer.setDisplay(SHOULD_DISPLAY_STUFF);
-  audioParser  .setConsole(SHOULD_CONSOLE_DEBUG);
-  audioRenderer.setConsole(SHOULD_CONSOLE_DEBUG);
+  //audioParser  .setDisplay(SHOULD_DISPLAY_STUFF);
+  //audioRenderer.setDisplay(SHOULD_DISPLAY_STUFF);
+  //audioParser  .setConsole(SHOULD_CONSOLE_DEBUG);
+  //audioRenderer.setConsole(SHOULD_CONSOLE_DEBUG);
 
   var audioData      = new Uint8Array(DATA_SIZE);
   var audioData2     = new Uint8Array(DATA_SIZE);
