@@ -146,6 +146,7 @@ function MusicRNA() {
     audioRenderer.maxBound = 0.85;
     // Calculate the optimal threshold for this song
     audioRenderer.beDynamic(pData, audioDuration, sampleRate, DATA_SIZE * 4);
+    console.log("dynamicism has been accomplished");
     if(SHOULD_DISPLAY_STUFF)
     {
       audioPlaying = true;
