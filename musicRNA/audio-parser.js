@@ -13,52 +13,225 @@ function AudioParser(dataSize, onAudioDataDecoded) {
 
   "use strict";
 
+  var SHOULD_DISPLAY_STUFF = true;
+  var SHOULD_CONSOLE_DEBUG = true;
+  var shouldCollectPData   = true;
+  this.setConsole = function(bool){
+    SHOULD_CONSOLE_DEBUG = bool;
+  };
+  this.setDisplay = function(bool){
+    SHOULD_DISPLAY_STUFF = bool;
+  };
+
+  var offlineMult = 4;
+  var number = 44100;
   var audioContext = new AudioContext();
-  var analyser = audioContext.createAnalyser();
-  var gainNode = audioContext.createGain();
-  var sourceNode = null;
-  var audioRenderer = null;
-  var audioDecodedCallback = null;
-  var timePlaybackStarted = 0;
+  var analyser     = audioContext.createAnalyser();
+  var gainNode     = audioContext.createGain();
   
+  var aBuffer = new Uint8Array(2048);
+  var bBuffer = new Uint8Array(2048);
+  var cBuffer = new Uint8Array(2048);
+  var pData   = 0;
+  var temp = new Uint8Array(2048);
+  var startTime = 0;
+  var pDataBuffer = new Uint8Array(dataSize * offlineMult);
+
+  var offlineCtx = new OfflineAudioContext(2,1,number);
+  var analyser2 = offlineCtx.createAnalyser();
+  
+  // analyser2.smoothingTimeConstant = 0.2;
+  // analyser2.fftSize = dataSize;
+  
+  this.offlineSampleRate = number;
+  this.sampleRate = audioContext.sampleRate;  
+
+  var sourceNode           = null;
+  var audioRenderer        = null;
+  var offlineSourceNode    = null;
+  var audioDecodedCallback = null;
+  var timePlaybackStarted  = 0;
+  var arraybuffer;
+  var arraybuffer2;
 
   analyser.smoothingTimeConstant = 0.2;
-  analyser.fftSize = dataSize;
-
-  gainNode.gain.value = 0.5;
+  analyser.fftSize               = dataSize;
+  gainNode.gain.value            = 0.5;
+  
   audioDecodedCallback = onAudioDataDecoded;
 
-  function onDecodeData (buffer) {
-    console.log("duration: " + buffer.duration);
-    // Kill any existing audio
-    if (sourceNode) {
-      if (sourceNode.playbackState === sourceNode.PLAYING_STATE)
-        sourceNode.stop();
+  function time(){
+    return (performance.now() - startTime);
+  }
 
-      sourceNode = null;
+  function copy(src)  {
+    var dst = new ArrayBuffer(src.byteLength);
+    new Uint8Array(dst).set(new Uint8Array(src));
+    return dst;
+  }
+  function copyBuffer(buffer)
+  {
+      var bytes = new Uint8Array(buffer);
+      var output = new ArrayBuffer(buffer.byteLength);
+      var outputBytes = new Uint8Array(output);
+      for (var i = 0; i < bytes.length; i++)
+          outputBytes[i] = bytes[i];
+      return output;
+  }
+
+  function myFunc(buffer) {
+    console.log("AudioParser myFunc");
+    console.log("Buffer passed:");
+    console.log(buffer);
+    offlineCtx = new OfflineAudioContext(2,number*20,number);
+    analyser2 = offlineCtx.createAnalyser();
+    analyser2.smoothingTimeConstant = 0.2;
+    analyser2.fftSize = dataSize * offlineMult;
+    var gainNode2 = offlineCtx.createGain();
+    gainNode2.gain.value = 0.5;
+    if(SHOULD_CONSOLE_DEBUG)
+      console.log("myFunc " + time());
+    //console.log(buffer);
+    if (offlineSourceNode) {
+      if (offlineSourceNode.playbackState === offlineSourceNode.PLAYING_STATE)
+        offlineSourceNode.stop();
+
+      offlineSourceNode = null;
     }
 
     // Make a new source
-    if (!sourceNode) {
+    offlineSourceNode = offlineCtx.createBufferSource();
+    offlineSourceNode.loop = false;
+    console.log("created offline source node");
 
-      sourceNode = audioContext.createBufferSource();
-      sourceNode.loop = false;
+    offlineSourceNode.connect(gainNode2);
+    gainNode2.connect(analyser2);
+    analyser2.connect(offlineCtx.destination);
 
-      sourceNode.connect(gainNode);
-      gainNode.connect(analyser);
-      analyser.connect(audioContext.destination);
-    }
-
+    console.log("connected nodes");
+    
     // Set it up and play it
-    sourceNode.buffer = buffer;
-    sourceNode.start();
+    offlineSourceNode.buffer = buffer;
+    offlineSourceNode.start();
+    var time1 = performance.now();
+    
+    // Start gathering the data into the pre data list
+    // requestAnimFrame(collectPreprocessData);
+    var sum = 0;
+    analyser2.getByteFrequencyData(bBuffer);
+    var iMax = dataSize * offlineMult / 2;
 
-    timePlaybackStarted = Date.now();
 
-    audioDecodedCallback(buffer);
+    for (var i = 0; i < dataSize * offlineMult / 2; i++)
+      sum += bBuffer[i];
+    console.log("put bBuffer into sum");
+    console.log("Sum = " + sum);
+    if(SHOULD_CONSOLE_DEBUG)
+      console.log("Hi " + sum);
+
+
+    //console.log("bBuffer");
+    //console.log(bBuffer);
+    offlineCtx.startRendering().then(function(abuffer) {
+      //if(SHOULD_CONSOLE_DEBUG)
+        console.log("time: " + time());
+      var time2 = performance.now();
+      shouldCollectPData = false;
+      console.log("abuffer:");
+      console.log(abuffer);
+      //requestAnimFrame(collectPreprocessData);
+
+      
+      //if(SHOULD_CONSOLE_DEBUG){
+        console.log("pData: " + pData);
+        console.log("Doing the audio took " + (time2 - time1) + " milliseconds.");//}
+      analyser2.getByteFrequencyData(cBuffer);
+      console.log(cBuffer);
+      var sum = 0;
+      console.log("iMax = " + (dataSize * offlineMult / 2));
+      iMax = 2048;
+      for (var i = 0; i < iMax; i++)
+        sum += cBuffer[i];
+      //if(SHOULD_CONSOLE_DEBUG)
+      console.log("onCompleteSum " + sum);
+
+      // console.log("cBuffer");
+      // console.log(cBuffer);
+      //analyser2.getByteFrequencyData(aBuffer);
+      // console.log(aBuffer);
+      // offlineCtx.close();
+    });
+    
+
+    // analyser2.getByteFrequencyData(aBuffer);
+
+
+
+    
+    window.setTimeout(function()
+      {
+        console.log("ArrayBuffer:", arraybuffer2);
+        audioContext.decodeAudioData(arraybuffer2, 
+          function(buffer){
+            console.log("decData");
+            if(SHOULD_CONSOLE_DEBUG)
+              console.log("onDecodeData " + time());
+            // Kill any existing audio
+            if (sourceNode) {
+              if (sourceNode.playbackState === sourceNode.PLAYING_STATE)
+                if(SHOULD_DISPLAY_STUFF)
+                  sourceNode.stop();
+
+              sourceNode = null;
+            }
+
+            // Make a new source
+            if (!sourceNode) {
+
+              sourceNode = audioContext.createBufferSource();
+              sourceNode.loop = false;
+
+              sourceNode.connect(gainNode);
+              gainNode.connect(analyser);
+              analyser.connect(audioContext.destination);
+            }
+
+            // Set it up and play it
+            sourceNode.buffer = buffer;
+            if(SHOULD_DISPLAY_STUFF)
+              sourceNode.start();
+
+            timePlaybackStarted = Date.now();
+
+            audioDecodedCallback(buffer);
+          }
+        , onError);
+        console.log("ArrayBuffer:", ArrayBuffer);
+      }, 150);
+
+function onDecodeData (buffer) {
+    
 
   }
 
+    temp = aBuffer;
+  }
+
+  // function collectPreprocessData()
+  // {
+  //   if(SHOULD_CONSOLE_DEBUG)
+  //     console.log("cPData " + time());
+  //   analyser2.getByteFrequencyData(bBuffer);
+  //   var sum = 0;
+  //   for (var i = 0; i < dataSize * offlineMult / 2; i++)
+  //     sum += bBuffer[i];
+  //   pData += sum;
+  //   console.log(sum + '\t' + pData);
+  //   if (shouldCollectPData)
+  //     requestAnimFrame(collectPreprocessData);
+  // }
+
+  
   function onError() {
     alert("Hmm, couldn't parse that file. Try something else?");
   }
@@ -67,7 +240,36 @@ function AudioParser(dataSize, onAudioDataDecoded) {
     analyser.getByteFrequencyData(arrayBuffer);
   };
 
+  this.getPreprocess = function(){
+    return pData;
+  };
+
+  this.getPreprocessedData = function (arrayBuffer){
+    if(SHOULD_CONSOLE_DEBUG)
+      console.log("getpData " + time());
+
+    analyser2.getByteFrequencyData(arrayBuffer);
+  };
+  
+
+  this.preprocess = function(arrayBuffer){
+    startTime = performance.now();
+    
+    arraybuffer = copy(arrayBuffer);
+    arraybuffer2 = copy(arrayBuffer);
+    if(SHOULD_CONSOLE_DEBUG)
+    {
+      console.log("prePr " + time());
+    }
+    console.log(arrayBuffer);
+    offlineCtx.decodeAudioData(arrayBuffer, myFunc      , onError);
+    console.log("preprocess 4");
+  };
+
   this.parseArrayBuffer = function (arrayBuffer) {
+    if(SHOULD_CONSOLE_DEBUG)
+      console.log("pArBf " + time());
+    //offlineCtx.decodeAudioData(arrayBuffer, myFunc      , onError);
     audioContext.decodeAudioData(arrayBuffer, onDecodeData, onError);
   };
 
