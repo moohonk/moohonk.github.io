@@ -2,20 +2,28 @@
  * Copyright 2014 Google Inc. All Rights Reserved.
  * For licensing see moohonk.github.io/musicRNA/LICENSE
  */
-function AudioRenderer() 
+function AudioRenderer(theMusicRNA) 
 {
   "use strict";
   var TAU = Math.PI * 2;
   
+  var MusicRNA = theMusicRNA;
+
+  var displayMode  = true; //Display mode forgoes iterative testing of the song
+  var useThreshold = true; //Just in case I want to look at something with no threshold
+  var useLinear    = true; //Switch to linear scaling of freqs near the bottom
+
   // Constants
   var LOGBASE       = 32;   // The logbase used
   var MAX_INDEX     = 850;  // The maximum index to look at in the frequency list
-  var LOWERBOUND    = 8;    // The value that BASE depends on
+  var LOWERBOUND    = 12;    // The value that SHRINK depends on
   var REFLECT_NUM   = 0.25; // Precentage of the mapping to be on a reversed log scale
   var BASE_DOT_SIZE = 1.0;  // The default dot radius
   var BASE_ALPHA    = 0.09; // The base transparency for each dot
   var VOLUME_THRESH = 0.675;// The lowest volume level for which we actually display something
-
+  var minBound      = 0.45;
+  var maxBound      = 0.85;
+  var slopeMult     = 0.75; // value the linear slope should be multiplied by
   // The percent of the screen we should leave for the border
   var borderPercentX = 0.03125;
   var borderPercentY = 0.25;
@@ -31,20 +39,29 @@ function AudioRenderer()
   var SHRINK    = Math.log(LOWERBOUND) / LOG_BASE; 
   
   // The absolute maximum y-value a point can be mapped to
-  var maxLogVal = Math.log(128       ) / LOG_BASE; 
+  var maxLogVal = Math.log(1024 / LOWERBOUND) / LOG_BASE; 
   
   // The index before which the mapping is reflected
-  var MID_INDEX = (LOWERBOUND * Math.pow(128, REFLECT_NUM)); 
-  
+  // var MID_INDEX = (LOWERBOUND * Math.pow(128, REFLECT_NUM)); 
+  var MID_INDEX = Math.pow(LOWERBOUND, (1 - REFLECT_NUM)) * Math.pow(1024, REFLECT_NUM);
   // The maximum height a frequency can be mapped to
-  var upperLog  = (Math.log(    MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal; 
+  var upperLog  = (Math.log(MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal; 
   
   // The minimum height a frequency can be mapped to
   // Even though we're dealing with all of these crazy logs, they cancel in this.
-  var lowerLog  = 1/7 - REFLECT_NUM; 
+  var lowerLog  = (Math.log(2) / LOG_BASE) / maxLogVal - REFLECT_NUM;
   
   // The height of the graph, used to scale things to nice values.
-  var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal - REFLECT_NUM;
+  var normalizedHeight = upperLog + lowerLog;
+
+
+  var slope = 1 / (MID_INDEX * Math.log(1024 / LOWERBOUND));
+
+
+  var intercept = 0;
+
+  var lowerMax = 0;
+  //var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal - REFLECT_NUM;
 
   // Variables
 
@@ -54,23 +71,47 @@ function AudioRenderer()
   var imageWidth  = 0;
   var imageHeight = 0;
   var yStart      = 0;
+  var xOffset     = 0;
+  var yOffset     = 0;
   var height      = 0;
   var width       = 0;
   var timesCalled = 0;
-  
-  var volumeArray = Array(850);
-  var culledArray = Array(850);
-  for (var i = 0; i < 850; i++)
-  {
-    volumeArray[i] = 0;
-    culledArray[i] = 0;
-  }
-  var numNonZeros = 0;
+  var totalTime = 0.0;
+  var xIntens   = 0;
+  var times = [0, 0, 0, 0, 0];
   
   var totalAudioPoints = 0; // The total number of data points ever
   var survivingPoints  = 0; // The number of points that got past the volume culling
   var totalVolume      = 0; // The sum of all the volumes ever
   var culledVolume     = 0; // The sum of the volumes that got past the culling
+
+  var SHOULD_DISPLAY_STUFF = false;
+  var SHOULD_CONSOLE_DEBUG = false;
+
+  function linReg(x){
+    var retVal = 0;
+    retVal = 60.467179501 * x + 0.598067347081808 + 0.1;
+
+    // Cubic seemed to be the best way to go, so I did it.
+    retVal =  -797508447.939692          * Math.pow(x, 3);
+    retVal +=    1480587.7038664         * Math.pow(x, 2);
+    retVal +=       -507.228872599461    * x;
+    retVal +=          0.670058081186047    ;
+    //retVal = 0;
+    if (!useThreshold)
+      return 0;
+    if (!displayMode)
+      return 0.675;
+    return retVal;
+  }
+
+  this.setDisplay = function(bool){
+    SHOULD_DISPLAY_STUFF = bool;
+  };
+
+  this.setConsole = function(bool){
+    SHOULD_CONSOLE_DEBUG = bool;
+  };
   
   //The object that stores EVERYTHING.
   // This is passed to the high-res renderer so it can render things in high res.
@@ -116,6 +157,11 @@ function AudioRenderer()
     ctx.globalCompositeOperation = "lighter";    
   }
 
+  // Returns the largest image width possible while keeping the specified width-to-height ratio
+  function getNewWidth(canvasWidth, canvasHeight, widHgtRatio)
+  {
+
+  }
   // Called whenever the screen changes size
   function onResize() 
   {
@@ -127,6 +173,26 @@ function AudioRenderer()
     //   It's like making an entirely new canvas in the same place as the old one.
     canvas.width      = width;
     canvas.height     = height;
+
+
+
+    //*************************************************************************************
+    //**    For enforcing one aspect ratio on resize (not currently fully implemented)   **
+    //*************************************************************************************
+    var whRatio = 0;
+    var newWid = width;
+    var newHgt = height;
+    var widFromHgt = whRatio * height;
+    if (widFromHgt < width) 
+      newWid = widFromHgt;
+    else
+      newHgt = width / whRatio;
+    // Calculate offsets
+    xOffset = (width  - newWid) / 2;
+    yOffset = (height - newHgt) / 2;
+
+
+
 
     // Store the width and height so that the hi-res renderer knows
     renderData.width  = width;
@@ -141,6 +207,24 @@ function AudioRenderer()
 
     ctx.globalCompositeOperation = "lighter";
     hasDrawnBackground = false; 
+
+    lowerMax = imageHeight / Math.log(1024 / LOWERBOUND)
+
+    slope = slopeMult * imageHeight / (MID_INDEX * Math.log(1024 / LOWERBOUND))
+    intercept = REFLECT_NUM * imageHeight - slope * MID_INDEX;
+    /*
+    console.log("slope:");
+    console.log(slope);
+    console.log("intercept:");
+    console.log(intercept);
+    console.log("upperLog");
+    console.log(upperLog);
+    console.log("lowerLog");
+    console.log(lowerLog);
+    console.log("normalizedHeight");
+    console.log(normalizedHeight);*/
+    if (useLinear)
+      normalizedHeight = upperLog - intercept / imageHeight;
   }
 
   function clamp(val, min, max) {
@@ -153,21 +237,19 @@ function AudioRenderer()
     ctx.clearRect(0, 0, width, height);
     hasDrawnBackground = false;
     renderData.values.length = 0;
-    console.log("Clear");
+    if(SHOULD_CONSOLE_DEBUG)
+      console.log("Clear");
   };
 
-  
-//===============================================================================================================
-//                                                  THE RENDER FUNCTION
-//
-//===============================================================================================================
-  
   // Called for each slice of the audio that needs displaying
   this.render = function(audioData, normalizedPosition) 
   {
+    var startTime = performance.now();
+    var t;
     if(!hasDrawnBackground)
     {
-      console.log("Has Not Drawn Background");
+      if(SHOULD_CONSOLE_DEBUG)
+        console.log("Has Not Drawn Background");
       drawBackground();
     }
     // Just some variables
@@ -192,13 +274,14 @@ function AudioRenderer()
       //  will make the overall color brighter.
       // Antialiasing and all that.
       ctx.globalCompositeOperation = 'lighter';
+
       for (var a = MAX_INDEX; a >= 0; a--) 
-      {          
+      {    
+
+        t = performance.now();
+
         // Normalize volume
         volume = audioData[a] / 255;
-        
-        // Add the current volume to the totals
-        volumeArray[a] += volume;
         
         // Just some analytics. Pay no mind.
         totalAudioPoints++;
@@ -210,8 +293,6 @@ function AudioRenderer()
         // But it keeps louder / more complicated songs from being too incomprehensible.
         if (volume < VOLUME_THRESH)
           continue;
-        
-        culledArray[a] += volume;
         
         // More analytics.
         survivingPoints++;
@@ -244,6 +325,10 @@ function AudioRenderer()
           // move away from the beginning point
           rectY += imageHeight * lnDataDist / maxLogVal;
           //                                ^ Make sure you normalize it tho
+
+          // If we're doing linear scaling, use it
+          if (useLinear)
+            rectY = yStart - slope * a - intercept;
         }
         
         // Scaling Stuff
@@ -260,6 +345,9 @@ function AudioRenderer()
         // Size computation
         size = Math.pow(volume + 0.125, 2) * BASE_DOT_SIZE;
         
+        times[0] += performance.now() - t;
+        t = performance.now();
+
         // Make a JSON object with everything the hi-res renderer needs to draw this point
         var renderVals = {
           /*
@@ -276,6 +364,8 @@ function AudioRenderer()
           y: rectY,
           size: size
         };
+        times[1] += performance.now() - t;
+        t = performance.now();
         
         // Draw the point on the canvas
         ctx.globalAlpha = renderVals.alpha;
@@ -287,33 +377,100 @@ function AudioRenderer()
 
         // Store the info for this point
         renderData.values.push(renderVals);
+        
+        times[2] += performance.now() - t;
       }
-      timesCalled++;
+    totalTime += performance.now() - startTime;
     }
     
   };
-  this.displayAudioStats = function(duration) {
-    var normalTotal = 0;
-    var culledTotal = 0;
-    for (var i = 0; i < 850; i++)
+  // Hopefully, this will be called on an array containing all of the audio data in the song.
+  // Assumming that works, it will modify the starting constants to give the song a better picture.
+
+  //this.beDynamic = function(fullAudioData, audioDuration, sampleRate){
+  this.beDynamic = function(pData, audioDuration, sampleRate, dataSize){
+    // Make an array to hold the amount of 
+
+    
+    var divConst = (dataSize / 2) * sampleRate;// audioDuration * sampleRate;
+    /*
+    var sum = 0;
+    for(var i = 0; i < 1024; i++)
+      sum += fullAudioData[i];
+    //console.log(fullAudioData);
+    console.log(sum);
+    */
+    //if(SHOULD_CONSOLE_DEBUG)
     {
-      if (volumeArray[i] != 0)
-      {
-        normalTotal += (volumeArray[i]);
-        volumeArray[i] /= duration;
-      }
-      if (culledArray[i] != 0)
-      {
-        culledTotal += culledArray[i];
-        culledArray[i] /= duration;
-      }
-    }
-    console.log(volumeArray);
-    console.log(culledArray);
-    console.log("total: " + 850 + "  number: " + numNonZeros);
-    console.log("Average intensity:\t" + normalTotal / (850 * duration));
-    console.log("Average culled intensity:\t" + culledTotal / (850 * duration));
+      console.log(audioDuration, sampleRate);
       
+    }
+
+    var sum = pData;
+    var x = sum / divConst;
+    var xs = (x * 10000) + "e-4";
+    if (timesCalled == 0)
+    {
+      console.log("Average Intensity: ");
+      console.log(xs);
+    }
+    xIntens = x;
+    // The equation for the threshold as determined by experimentation
+    if (displayMode)
+      VOLUME_THRESH = linReg(x);
+    console.log("The dynamic threshold is " + VOLUME_THRESH);
+  };
+
+  function binarySearch(actual, expected, error) {
+    if (expected - error <= actual && actual <= expected + error)
+    {
+      console.log(xIntens);
+      console.log("We did it.");
+      console.log("#########################");
+      MusicRNA.stop();
+    }
+    else {
+      if (actual > expected) // Threshold needs to be higher
+      {
+        // Adjust the bounds for the next iteration
+        minBound = VOLUME_THRESH;
+        // Binary Search! The thing we should do here
+        VOLUME_THRESH = (VOLUME_THRESH + maxBound) / 2;
+        // This is the best way I've found to truncate numbers in JavaScript. Idonlikeit.
+        VOLUME_THRESH = Math.round(Math.pow(10, 15) * VOLUME_THRESH) / Math.pow(10, 15);
+      }
+      else // Threshold needs to be lower
+      {
+        // Adjust the bounds for the next iteration
+        maxBound = VOLUME_THRESH;
+        // Binary Searchy
+        VOLUME_THRESH = (VOLUME_THRESH + minBound) / 2;
+        VOLUME_THRESH = Math.round(Math.pow(10, 15) * VOLUME_THRESH) / Math.pow(10, 15);
+      }
+      console.log("Next: " + VOLUME_THRESH);
+    }
+    if (displayMode)
+      MusicRNA.stop();
+  }
+
+  this.displayAudioStats = function(duration, sampleRate) {
+    timesCalled++;
+    var divConst = 850 * duration * sampleRate; // The dividing constant
+    var avgInt   = totalVolume  / divConst;
+    var culInt   = culledVolume / divConst;
+
+    console.log(avgInt);
+    console.log(VOLUME_THRESH);
+    console.log(culInt);
+
+
+    avgInt = Math.round(1000000000  * avgInt) / 100000; // The average intensity is normally on the order of 10^(-4).
+    culInt = Math.round(10000000000 * culInt) / 100000; // The culled intensity should be on the order of 10^(-5).
+
+
+    var intWindow = 0.035;
+    var target    = 2.150;
+    binarySearch(culInt, target, intWindow);
   };
   this.getRenderData = function() {
     return renderData;
