@@ -210,7 +210,7 @@ function AudioParser(dataSize, onAudioDataDecoded) {
       }, 150);
 
 function onDecodeData (buffer) {
-    
+    console.log("Data decoded");
 
   }
 
