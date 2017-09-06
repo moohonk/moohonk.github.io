@@ -6,14 +6,6 @@
 function MusicRNA() {
 
   "use strict";
-/**
- * Copyright 2014 Google Inc. All Rights Reserved.
- * For licensing see moohonk.github.io/musicRNA/LICENSE
- */
-
-function MusicRNA() {
-
-  "use strict";
 
   var DATA_SIZE = 2048;
   var SAVE_SIZE = {
@@ -79,7 +71,8 @@ function MusicRNA() {
 
       saveButtons.classList.add('hidden');
       generateProgress.classList.add('visible');
-      console.log("The button knows it's been pressed");
+      if(SHOULD_CONSOLE_DEBUG)
+        console.log("The button knows it's been pressed");
       audioRendererHiRes.render(audioRenderData);
     });
 
@@ -120,7 +113,8 @@ function MusicRNA() {
   }
 
   function onFileRead(evt) {
-    console.log("MusicRNA onFileRead");
+    if(SHOULD_CONSOLE_DEBUG)
+      console.log("MusicRNA onFileRead");
     //var temp = evt.target.result;
     audioParser.preprocess(evt.target.result);
     //audioParser.parseArrayBuffer(temp);
@@ -165,11 +159,13 @@ function MusicRNA() {
   }
 
   function parse(file) {
-    console.log("Parsing");
+    if(SHOULD_CONSOLE_DEBUG)
+      console.log("Parsing");
     songFileName = file.name;
     var fileReader = new FileReader();
     fileReader.addEventListener('loadend', onFileRead);
-    console.log("MusicRNA reading the file");
+    if(SHOULD_CONSOLE_DEBUG)
+      console.log("MusicRNA reading the file");
     fileReader.readAsArrayBuffer(file);
     for(var i = 0; i < percents; i++) pcntArray[i] = 0;
   };
@@ -199,7 +195,8 @@ function MusicRNA() {
         saveAndDownload.classList.add('visible');
         if (!hasDisplayedStats)
         {
-          console.log("The time is now " + audioTime);
+          if(SHOULD_CONSOLE_DEBUG)
+            console.log("The time is now " + audioTime);
           var sampleRate = audioParser.sampleRate;
           audioRenderer.displayAudioStats(audioDuration, sampleRate);
           hasDisplayedStats = true;
@@ -250,138 +247,4 @@ function MusicRNA() {
 
   if (SHOULD_DISPLAY_STUFF)
     requestAnimFrame(updateAndRender);
-}
-
-  var DATA_SIZE = 2048;
-  var SAVE_SIZE = {
-    normal: 'small',
-    large: 'large',
-    enormous: 'enormous'
-  };
-
-  var audioParser = new AudioParser(DATA_SIZE, onAudioDataParsed);
-  var audioRenderer = new AudioRenderer();
-  this.audioRenderer = audioRenderer;
-  var audioData = new Uint8Array(DATA_SIZE);
-  var audioDuration = 1;
-  var audioTime = 0;
-  var audioPlaying = false;
-  var time = document.getElementById('time');
-  var fileName = '';
-
-  var saveNormal = document.getElementById('save-normal');
-  var saveLarge = document.getElementById('save-large');
-  var saveEnormous = document.getElementById('save-enormous');
-  var saveAndDownload = document.getElementById('save-and-download');
-  var saveButtons = document.getElementById('save-and-download-buttons');
-  var generateProgress = document.getElementById('generate-progress');
-
-  var getDownload = document.getElementById('get-download');
-  var hasDisplayedStats = false;
-  this.hasDisplayedStats = hasDisplayedStats;
-
-  function onBeginSave(evt) {
-
-    var size = 0;
-    
-    switch(evt.target) {
-      case saveNormal: size = 1; break;
-      case saveLarge: size = 2; break;
-      case saveEnormous: size = 3; break;
-    }
-    requestAnimFrame(function() {
-      var audioRendererHiRes = new AudioRendererHiRes(size, onRenderComplete);
-      var audioRenderData = audioRenderer.getRenderData();
-
-      saveButtons.classList.add('hidden');
-      generateProgress.classList.add('visible');
-      console.log("The button knows it's been pressed");
-      audioRendererHiRes.render(audioRenderData);
-    });
-
-  }
-
-  function onRenderComplete(imageData) {
-    audioRenderer.displayAudioStats();
-    imageData = imageData.replace(/^data:image\/png;base64,/, '');
-
-    var imageBinaryString = atob(imageData);
-    var imageBinaryData = new Uint8Array(imageBinaryString.length);
-
-    // Feels like there should be a nicer way to do this :-/
-    for (var i = 0; i < imageBinaryString.length; i++)
-      imageBinaryData[i] = imageBinaryString.charCodeAt(i);
-
-    var blob = new Blob([imageBinaryData.buffer],{'type': 'image/png'});
-
-    getDownload.classList.add('visible');
-    getDownload.href = window.URL.createObjectURL(blob);
-    getDownload.download = fileName;
-    
-
-    generateProgress.classList.remove('visible');
-  }
-
-  function onSaveComplete() {
-    saveButtons.classList.remove('hidden');
-    getDownload.classList.remove('visible');
-    generateProgress.classList.remove('visible');
-  }
-
-  function onFileRead(evt) {
-    audioParser.parseArrayBuffer(evt.target.result);
-  }
-
-  function onAudioDataParsed(buffer) {
-
-    audioDuration = buffer.duration;
-    audioPlaying = true;
-    console.log("Audio Data Parsed");
-
-    audioRenderer.clear();
-  }
-
-  function updateAndRender() {
-
-    audioParser.getAnalyserAudioData(audioData);
-    audioTime = audioParser.getTime() / audioDuration;
-
-    if (audioPlaying) {
-      audioRenderer.render(audioData, audioTime);
-      if (audioTime >= 1) {
-        saveAndDownload.classList.add('visible');
-        if (!hasDisplayedStats)
-        {
-          console.log("The time is now " + audioTime);
-          audioRenderer.displayAudioStats(audioDuration);
-          hasDisplayedStats = true;
-        }
-      } else {
-        time.style.width = (audioTime * 100).toFixed(1) + '%';
-        saveAndDownload.classList.remove('visible');
-      }
-    }
-
-    requestAnimFrame(updateAndRender);
-  }
-
-  this.setDisplayStats = function(boolean) {
-    hasDisplayedStats = boolean;
-  };
-  this.setName = function (name) {
-    fileName = name;
-  };
-
-  this.parse = function (file) {
-    var fileReader = new FileReader();
-    fileReader.addEventListener('loadend', onFileRead);
-    fileReader.readAsArrayBuffer(file);
-  };
-
-  saveNormal.addEventListener('click', onBeginSave);
-  saveLarge.addEventListener('click', onBeginSave);
-  saveEnormous.addEventListener('click', onBeginSave);
-  getDownload.addEventListener('click', onSaveComplete);
-
-  requestAnimFrame(updateAndRender);
 }
