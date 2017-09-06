@@ -270,7 +270,7 @@ function onDecodeData (buffer) {
     if(SHOULD_CONSOLE_DEBUG)
       console.log("pArBf " + time());
     //offlineCtx.decodeAudioData(arrayBuffer, myFunc      , onError);
-    audioContext.decodeAudioData(arrayBuffer, onDecodeData, onError);
+    //audioContext.decodeAudioData(arrayBuffer, onDecodeData, onError);
   };
 
   this.getTime = function() {
