@@ -472,6 +472,8 @@ function AudioRenderer(theMusicRNA)
     var target    = 2.150;
     if (!displayMode)
       binarySearch(culInt, target, intWindow);
+    else
+      MusicRNA.stop();
   };
   this.getRenderData = function() {
     return renderData;
