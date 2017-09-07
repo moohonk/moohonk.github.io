@@ -459,18 +459,19 @@ function AudioRenderer(theMusicRNA)
     var avgInt   = totalVolume  / divConst;
     var culInt   = culledVolume / divConst;
 
-    console.log(avgInt);
-    console.log(VOLUME_THRESH);
-    console.log(culInt);
+    console.log("avgInt ", avgInt);
+    console.log("thresh ", VOLUME_THRESH);
+    console.log("culInt ", culInt);
 
 
     avgInt = Math.round(1000000000  * avgInt) / 100000; // The average intensity is normally on the order of 10^(-4).
     culInt = Math.round(10000000000 * culInt) / 100000; // The culled intensity should be on the order of 10^(-5).
 
 
-    var intWindow = 0.035;
+    var intWindow = 0.035; // Error margins for the intensity
     var target    = 2.150;
-    binarySearch(culInt, target, intWindow);
+    if (!displayMode)
+      binarySearch(culInt, target, intWindow);
   };
   this.getRenderData = function() {
     return renderData;
