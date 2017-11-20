@@ -9,21 +9,23 @@ function AudioRenderer(theMusicRNA)
   
   var MusicRNA = theMusicRNA;
 
+  // Booleans
   var displayMode  = true; //Display mode forgoes iterative testing of the song
   var useThreshold = true; //Just in case I want to look at something with no threshold
   var useLinear    = true; //Switch to linear scaling of freqs near the bottom
 
   // Constants
-  var LOGBASE       = 32;   // The logbase used
-  var MAX_INDEX     = 850;  // The maximum index to look at in the frequency list
-  var LOWERBOUND    = 12;    // The value that SHRINK depends on
-  var REFLECT_NUM   = 0.25; // Precentage of the mapping to be on a reversed log scale
-  var BASE_DOT_SIZE = 1.0;  // The default dot radius
-  var BASE_ALPHA    = 0.09; // The base transparency for each dot
-  var VOLUME_THRESH = 0.675;// The lowest volume level for which we actually display something
-  var minBound      = 0.45;
-  var maxBound      = 0.85;
-  var slopeMult     = 0.75; // value the linear slope should be multiplied by
+  var MAX_INDEX     = 850  ; // The maximum index to look at in the frequency list
+  var BASE_DOT_SIZE = 1.0  ; // The default dot radius
+  var BASE_ALPHA    = 0.09 ; // The base transparency for each dot
+  var VOLUME_THRESH = 0.675; // The lowest volume level for which we actually display something
+  var minBound      = 0.3  ;
+  var maxBound      = 0.85 ;
+  var c             = 0.74 ;
+
+  var mid = 850 * Math.exp(c/(c-1));
+  var mSlope;
+
   // The percent of the screen we should leave for the border
   var borderPercentX = 0.03125;
   var borderPercentY = 0.25;
@@ -32,36 +34,6 @@ function AudioRenderer(theMusicRNA)
   
   //The absolute maximum radius a dot can have
   var MAX_DOT_SIZE = Math.pow(1.125, 2) * BASE_DOT_SIZE;
-  // Pretty self-explanatory
-  var LOG_BASE  = Math.log(LOGBASE   );
-  
-  // Shifts the mapping up on the log scale (compressing the frequencies) so it's easier to look at
-  var SHRINK    = Math.log(LOWERBOUND) / LOG_BASE; 
-  
-  // The absolute maximum y-value a point can be mapped to
-  var maxLogVal = Math.log(1024 / LOWERBOUND) / LOG_BASE; 
-  
-  // The index before which the mapping is reflected
-  // var MID_INDEX = (LOWERBOUND * Math.pow(128, REFLECT_NUM)); 
-  var MID_INDEX = Math.pow(LOWERBOUND, (1 - REFLECT_NUM)) * Math.pow(1024, REFLECT_NUM);
-  // The maximum height a frequency can be mapped to
-  var upperLog  = (Math.log(MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal; 
-  
-  // The minimum height a frequency can be mapped to
-  // Even though we're dealing with all of these crazy logs, they cancel in this.
-  var lowerLog  = (Math.log(2) / LOG_BASE) / maxLogVal - REFLECT_NUM;
-  
-  // The height of the graph, used to scale things to nice values.
-  var normalizedHeight = upperLog + lowerLog;
-
-
-  var slope = 1 / (MID_INDEX * Math.log(1024 / LOWERBOUND));
-
-
-  var intercept = 0;
-
-  var lowerMax = 0;
-  //var normalizedHeight = (Math.log(2 * MAX_INDEX) / LOG_BASE - SHRINK) / maxLogVal - REFLECT_NUM;
 
   // Variables
 
@@ -155,6 +127,10 @@ function AudioRenderer(theMusicRNA)
     // Let the things affect the items once more 
     //  (hypothetical situation continued from ^^ up there)
     ctx.globalCompositeOperation = "lighter";    
+
+    // Redraw ALL the points
+    // This might need to be taken out for performance reasons 
+    // (i.e. if someone just keeps resizing the screen or something)
   }
 
   // Returns the largest image width possible while keeping the specified width-to-height ratio
@@ -187,12 +163,10 @@ function AudioRenderer(theMusicRNA)
       newWid = widFromHgt;
     else
       newHgt = width / whRatio;
+
     // Calculate offsets
     xOffset = (width  - newWid) / 2;
     yOffset = (height - newHgt) / 2;
-
-
-
 
     // Store the width and height so that the hi-res renderer knows
     renderData.width  = width;
@@ -208,23 +182,7 @@ function AudioRenderer(theMusicRNA)
     ctx.globalCompositeOperation = "lighter";
     hasDrawnBackground = false; 
 
-    lowerMax = imageHeight / Math.log(1024 / LOWERBOUND)
-
-    slope = slopeMult * imageHeight / (MID_INDEX * Math.log(1024 / LOWERBOUND))
-    intercept = REFLECT_NUM * imageHeight - slope * MID_INDEX;
-    /*
-    console.log("slope:");
-    console.log(slope);
-    console.log("intercept:");
-    console.log(intercept);
-    console.log("upperLog");
-    console.log(upperLog);
-    console.log("lowerLog");
-    console.log(lowerLog);
-    console.log("normalizedHeight");
-    console.log(normalizedHeight);*/
-    if (useLinear)
-      normalizedHeight = upperLog - intercept / imageHeight;
+    mSlope = (c-1) * imageHeight / mid;
   }
 
   function clamp(val, min, max) {
@@ -253,7 +211,6 @@ function AudioRenderer(theMusicRNA)
       drawBackground();
     }
     // Just some variables
-    var lnDataDist = 0;
     var normVol    = 0;
     var volume     = 0;
     var color      = 0;
@@ -286,7 +243,6 @@ function AudioRenderer(theMusicRNA)
         // Just some analytics. Pay no mind.
         totalAudioPoints++;
         totalVolume += volume;
-        
         // Volume threshhold
         // If the volume is below a certain value, display nothing for that point.
         // Yes, this does mean that really quiet songs won't have as many points
@@ -304,43 +260,11 @@ function AudioRenderer(theMusicRNA)
         //  Because I want it to look like audio frequency maps to light frequency.
         color = Math.round(a * 360 / 1024);
 
-        // Map the point's y coordinate onto a log scale
-        lnDataDist = Math.log(a) / LOG_BASE - SHRINK;
-        rectY = yStart - imageHeight * lnDataDist / maxLogVal;
-        
-        // Check to see if we should use a flipped log scale to map this point
-        if (a < MID_INDEX)
-        {
-          // Move the beginning point to effect easier reflection
-          // Trust me with this stuff; I spent a good couple days doing nothing but logs.
-          rectY = yStart - 2 * REFLECT_NUM * imageHeight;
-          
-          // Set the index used in position calculations 
-          //  to be the index reflected along y = MID_INDEX
-          var newInd = 2 * MID_INDEX - a;
-
-          // The distance from this point to the beginning point
-          lnDataDist = (Math.log(newInd) / LOG_BASE - SHRINK); 
-
-          // move away from the beginning point
-          rectY += imageHeight * lnDataDist / maxLogVal;
-          //                                ^ Make sure you normalize it tho
-
-          // If we're doing linear scaling, use it
-          if (useLinear)
-            rectY = yStart - slope * a - intercept;
-        }
-        
-        // Scaling Stuff
-
-        // Translate all y Coords for easier scaling
-        rectY -= (yStart - imageHeight * upperLog);
-
-        // Do some scaling
-        rectY /= normalizedHeight;
-
-        // Untranslate the y coords into their final form
-        rectY += height * borderPercentY;
+        rectY = height * borderPercentY;
+        if (a <= mid) // Use linear scaling if the index is below a certain point (because the log gets ugly)
+          rectY += mSlope * a + imageHeight;
+        else          // If the index is above that point, its okay to use a log
+          rectY += imageHeight * (c - 1) * Math.log(a / MAX_INDEX);
 
         // Size computation
         size = Math.pow(volume + 0.125, 2) * BASE_DOT_SIZE;
@@ -388,10 +312,8 @@ function AudioRenderer(theMusicRNA)
   // Assumming that works, it will modify the starting constants to give the song a better picture.
 
   //this.beDynamic = function(fullAudioData, audioDuration, sampleRate){
-  this.beDynamic = function(pData, audioDuration, sampleRate, dataSize){
-    // Make an array to hold the amount of 
-
-    
+  this.beDynamic = function(pData, audioDuration, sampleRate, dataSize)
+  {
     var divConst = (dataSize / 2) * sampleRate;// audioDuration * sampleRate;
     /*
     var sum = 0;
@@ -401,14 +323,15 @@ function AudioRenderer(theMusicRNA)
     console.log(sum);
     */
     //if(SHOULD_CONSOLE_DEBUG)
-    {
-      console.log(audioDuration, sampleRate);
-      
-    }
+    var mins = Math.floor(audioDuration / 60);
+    var secs = Math.round(audioDuration % 60);
+    var stng = secs + "s";
+    if (secs < 10) stng = "0" + stng;
+    stng = mins + "m" + stng;
+    console.log(stng + " ", sampleRate);
 
-    var sum = pData;
-    var x = sum / divConst;
-    var xs = (x * 10000) + "e-4";
+    var x   = pData / divConst;
+    var xs  = (x * 10000) + "e-4";
     if (timesCalled == 0)
     {
       console.log("Average Intensity: ");
@@ -418,6 +341,10 @@ function AudioRenderer(theMusicRNA)
     // The equation for the threshold as determined by experimentation
     if (displayMode)
       VOLUME_THRESH = linReg(x);
+
+    //m = -0.1 * THRESH_SCALAR * VOLUME_THRESH / (MAX_INDEX - X_INTERCEPT);
+    //b =  2   * THRESH_SCALAR * VOLUME_THRESH / (MAX_INDEX - X_INTERCEPT);
+
     console.log("The dynamic threshold is " + VOLUME_THRESH);
   };
 
