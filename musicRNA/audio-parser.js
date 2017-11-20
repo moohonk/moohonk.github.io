@@ -169,9 +169,10 @@ function AudioParser(dataSize, onAudioDataDecoded) {
           console.log("ArrayBuffer:", arraybuffer2);
         audioContext.decodeAudioData(arraybuffer2, 
           function(buffer){
-            console.log("decData");
-            if(SHOULD_CONSOLE_DEBUG)
-              console.log("onDecodeData " + time());
+            
+            if(SHOULD_CONSOLE_DEBUG){
+              console.log("decData");
+              console.log("onDecodeData " + time());}
             // Kill any existing audio
             if (sourceNode) {
               if (sourceNode.playbackState === sourceNode.PLAYING_STATE)
