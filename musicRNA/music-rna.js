@@ -9,8 +9,8 @@ function MusicRNA() {
 
   var DATA_SIZE = 2048;
   var SAVE_SIZE = {
-    normal: 'small',
-    large: 'large',
+    normal:   'small',
+    large:    'large',
     enormous: 'enormous'
   };
   
@@ -33,13 +33,14 @@ function MusicRNA() {
   var audioDuration  = 1;
   var audioTime      = 0;
   var audioPlaying   = false;
-  var time           = document.getElementById('time');
-  var theFile = null;
-  var weShouldStop = false;
+  var time_lower     = document.getElementById('time-lower');
+  var time_upper     = document.getElementById('time-upper');
+  var theFile        = null;
+  var weShouldStop   = false;
   var fileName       = '';
-  var songFileName = '';
+  var songFileName   = '';
 
-  var percents = 5;
+  var percents  = 5;
   var pcntArray = new Array(percents);
   for(var i = 0; i < percents; i++) pcntArray[i] = 0;
   
@@ -54,20 +55,20 @@ function MusicRNA() {
   var getDownload        = document.getElementById('get-download');
   var hasDisplayedStats  = false;
   this.hasDisplayedStats = hasDisplayedStats;
-  var numOfRenders = 0;
+  var numOfRenders   = 0;
   var timeForRenders = 0.0;
   function onBeginSave(evt) {
 
     var size = 0;
     
     switch(evt.target) {
-      case saveNormal: size = 1; break;
-      case saveLarge: size = 2; break;
+      case saveNormal:   size = 1; break;
+      case saveLarge:    size = 2; break;
       case saveEnormous: size = 3; break;
     }
     requestAnimFrame(function() {
       var audioRendererHiRes = new AudioRendererHiRes(size, onRenderComplete);
-      var audioRenderData = audioRenderer.getRenderData();
+      var audioRenderData    = audioRenderer.getRenderData();
 
       saveButtons.classList.add('hidden');
       generateProgress.classList.add('visible');
@@ -78,7 +79,8 @@ function MusicRNA() {
 
   }
 
-  function onRenderComplete(imageData) {
+  function onRenderComplete(imageData) 
+  {
     audioRenderer.displayAudioStats();
     imageData = imageData.replace(/^data:image\/png;base64,/, '');
 
@@ -99,7 +101,8 @@ function MusicRNA() {
     generateProgress.classList.remove('visible');
   }
 
-  function onSaveComplete() {
+  function onSaveComplete() 
+  {
     if(SHOULD_CONSOLE_DEBUG)
       console.log("onSaveComplete");
     saveButtons.classList.remove('hidden');
@@ -107,16 +110,19 @@ function MusicRNA() {
     generateProgress.classList.remove('visible');
   }
 
-  this.stop = function (){
+  this.stop = function ()
+  {
     console.log(songFileName);
     weShouldStop = true;
   }
 
-  function onFileRead(evt) {
-    if(SHOULD_CONSOLE_DEBUG)
+  function onFileRead(evt) 
+  {
+    if(SHOULD_CONSOLE_DEBUG || true)
       console.log("MusicRNA onFileRead");
     //var temp = evt.target.result;
     audioParser.preprocess(evt.target.result);
+    audioRenderer.resetTimesCalled();
     //audioParser.parseArrayBuffer(temp);
     if(SHOULD_CONSOLE_DEBUG)
       console.log("onFileRead");
@@ -147,8 +153,12 @@ function MusicRNA() {
     for (var i = 0; i < 1024; i++)
       pData += audioData2[i];
 
-    audioRenderer.minBound = 0.45;
-    audioRenderer.maxBound = 0.85;
+    
+    audioRenderer.minBound      = 0.45;
+    audioRenderer.maxBound      = 0.85;
+    audioRenderer.VOLUME_THRESH = 0.675;
+    
+    
     // Calculate the optimal threshold for this song
     audioRenderer.beDynamic(pData, audioDuration, sampleRate, DATA_SIZE * 4);
     if(SHOULD_DISPLAY_STUFF)
@@ -200,21 +210,19 @@ function MusicRNA() {
           var sampleRate = audioParser.sampleRate;
           audioRenderer.displayAudioStats(audioDuration, sampleRate);
           hasDisplayedStats = true;
+
           if (!weShouldStop)
-          {
             parse(theFile);
-          }
         }
       } 
       else 
       {
         if (hasDisplayedStats)
-        {
           hasDisplayedStats = false;
-        }
         // Make the progress bar longer 
         // Make sure we can't see the download menu
-        time.style.width = (audioTime * 100).toFixed(1) + '%';
+        //time_lower.style.width = (audioTime * 93.75).toFixed(2) + '%';
+        //time_upper.style.width = (audioTime * 93.75).toFixed(2) + '%';
         saveAndDownload.classList.remove('visible');
       }
     }

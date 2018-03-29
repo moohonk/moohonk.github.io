@@ -40,6 +40,9 @@ function AudioRendererHiRes(size, onRenderedCallback) {
   var STEP    = 2000;
   var start   = 0; 
   var end     = 0;
+  var imageWidth, imageHeight;
+  var xStart, yStart;
+  var newSize;
   var bPX  , bPY;
 
   this.render = function(newRenderData) {
@@ -82,7 +85,7 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     if (scaledH < height){
       var diff = height * (1 - 2 * bPY) - scaledH;
       diff = height - scaledH;
-      yOffset = diff/2;
+      yOffset = diff / 2;
     }
 
     //Fill the background
@@ -94,6 +97,11 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     ctx.fillRect(scaledW *  bPX + xOffset, scaledH *  bPY + yOffset , 
                  scaledW * (bPX * -2 + 1), scaledH * (bPY * -2 + 1));
     ctx.globalCompositeOperation = "lighter"; 
+
+    imageWidth  = (1 - 2 * bpX) * renderData.width  * SCALE;
+    imageHeight = (1 - 2 * bpY) * renderData.height * SCALE;
+    xStart      = bpX * renderData.width  * SCALE + xOffset;
+    yStart      = bpY * renderData.height * SCALE + yOffset;
     
     //Start plopping the data into the image
     start = 0;
@@ -122,8 +130,10 @@ function AudioRendererHiRes(size, onRenderedCallback) {
       renderVals = renderData.values[i];
       
       //Transform the coords so they are in the right spot on the bigger image
-      rectX = SCALE * renderVals.x + xOffset;
-      rectY = SCALE * renderVals.y + yOffset;
+      //rectX = SCALE * renderVals.x + xOffset;
+      //rectY = SCALE * renderVals.y + yOffset;
+      rectX = xStart + renderVals.aX * imageWidth;
+      rectY = yStart + renderVals.aY * imageHeight;
       
       //Actually draw the dot
       ctx.globalAlpha = renderVals.alpha;

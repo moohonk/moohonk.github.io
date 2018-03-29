@@ -15,13 +15,18 @@ function AudioRenderer(theMusicRNA)
   var useLinear    = true; //Switch to linear scaling of freqs near the bottom
 
   // Constants
-  var MAX_INDEX     = 850  ; // The maximum index to look at in the frequency list
-  var BASE_DOT_SIZE = 1.0  ; // The default dot radius
-  var BASE_ALPHA    = 0.09 ; // The base transparency for each dot
-  var VOLUME_THRESH = 0.675; // The lowest volume level for which we actually display something
-  var minBound      = 0.3  ;
-  var maxBound      = 0.85 ;
-  var c             = 0.74 ;
+  var MAX_INDEX       = 850  ; // The maximum index to look at in the frequency list
+  var BASE_DOT_SIZE   = 1.0  ; // The default dot radius
+  var BASE_ALPHA      = 0.09 ; // The base transparency for each dot
+  var VOLUME_THRESH   = 0.675; // The lowest volume level for which we actually display something
+  var PROGRESS_WIDTH  = 1    ;
+  var PROGRESS_HEIGHT = 4    ;
+  var new_dot_size    = 1.0  ;
+  var new_alpha       = 0.09 ;
+  var minBound        = 0.3  ;
+  var maxBound        = 0.85 ;
+  var c               = 0.74 ;
+
 
   var mid = 850 * Math.exp(c/(c-1));
   var mSlope;
@@ -48,8 +53,8 @@ function AudioRenderer(theMusicRNA)
   var height      = 0;
   var width       = 0;
   var timesCalled = 0;
-  var totalTime = 0.0;
-  var xIntens   = 0;
+  var totalTime   = 0.0;
+  var xIntens     = 0;
   var times = [0, 0, 0, 0, 0];
   
   var totalAudioPoints = 0; // The total number of data points ever
@@ -59,10 +64,14 @@ function AudioRenderer(theMusicRNA)
 
   var SHOULD_DISPLAY_STUFF = false;
   var SHOULD_CONSOLE_DEBUG = false;
+  var should_redraw_prog   = false;
 
+  var xSt, ySt;
+  var prevWid = 0;
+  var prevHgt = 0;
   function linReg(x){
     var retVal = 0;
-    retVal = 60.467179501 * x + 0.598067347081808 + 0.1;
+    //retVal = 60.467179501 * x + 0.598067347081808 + 0.1;
 
     // Cubic seemed to be the best way to go, so I did it.
     retVal =  -797508447.939692          * Math.pow(x, 3);
@@ -105,7 +114,7 @@ function AudioRenderer(theMusicRNA)
     culledVolume     = 0;
     // Reset the transparency, otherwise the screen will be really dark
     ctx.globalAlpha = 1.0;
-
+    console.log(imageWidth);
     // So we can draw items over things without the things affecting the items
     ctx.globalCompositeOperation = "source-over";
     
@@ -131,6 +140,14 @@ function AudioRenderer(theMusicRNA)
     // Redraw ALL the points
     // This might need to be taken out for performance reasons 
     // (i.e. if someone just keeps resizing the screen or something)
+/*
+    for (var i = 0; i < renderData.values.length; i++)
+    {
+      //console.log("doing a thing");
+      var value = renderData.values[i];
+      drawCircle(xSt + value * imageWidth, yStart + value.aY * imageHeight, value.color, value.size, value.alpha);
+    }*/
+    console.log("did a thing");
   }
 
   // Returns the largest image width possible while keeping the specified width-to-height ratio
@@ -144,17 +161,30 @@ function AudioRenderer(theMusicRNA)
     // What are the new width and height?
     width  = canvas.offsetWidth;
     height = canvas.offsetHeight;
-
+    if (prevHgt == 0 || prevWid == 0)
+    {
+      prevWid = width;
+      prevHgt = height;
+      hasDrawnBackground = false;
+    }
+    if (width != prevWid || height != prevHgt)
+    {
+      //ctx.setTransform(width / prevWid, 0, 0, height / prevHgt, 0, 0);
+    }
+    prevHgt = height;
+    prevWid = width;
     // Interesting tidbit: these lines actually reset EVERYTHING about the canvas.
     //   It's like making an entirely new canvas in the same place as the old one.
+    
     canvas.width      = width;
     canvas.height     = height;
-
+    
 
 
     //*************************************************************************************
     //**    For enforcing one aspect ratio on resize (not currently fully implemented)   **
     //*************************************************************************************
+    
     var whRatio = 0;
     var newWid = width;
     var newHgt = height;
@@ -178,11 +208,19 @@ function AudioRenderer(theMusicRNA)
     
     // For to helping with coordinate calculation
     yStart = imageHeight + height * borderPercentY ;
+    xSt = width * borderPercentX;
 
     ctx.globalCompositeOperation = "lighter";
     hasDrawnBackground = false; 
 
     mSlope = (c-1) * imageHeight / mid;
+
+    new_dot_size = BASE_DOT_SIZE * imageWidth / 1440;
+    console.log("The Base Dot Size is " + new_dot_size);
+
+    // We need to redraw the progress bars next frame
+    should_redraw_prog = true;
+    
   }
 
   function clamp(val, min, max) {
@@ -190,14 +228,46 @@ function AudioRenderer(theMusicRNA)
   }
   
   // Clears / resets the canvas
-  // Called by other scripts
-  this.clear = function() {
+  // Called by other .js files
+  this.clear = function() 
+  {
     ctx.clearRect(0, 0, width, height);
     hasDrawnBackground = false;
     renderData.values.length = 0;
     if(SHOULD_CONSOLE_DEBUG)
       console.log("Clear");
   };
+
+  function drawProgressBars(position, startX)
+  {
+    // Determine upper-left corner coordinates and dimensions for the two progress bars
+    // If we're real close to the start of the song, make sure we're drawing in the right place
+    //var LX  = Math.max(width * borderPercentX + imageWidth * position - PROGRESS_WIDTH, width * borderPercentX);
+    var RX  =          width * borderPercentX + imageWidth * position + MAX_DOT_SIZE;
+    var UUY = borderPercentY * height - MAX_DOT_SIZE - PROGRESS_HEIGHT; // Upper progress bar y-coord
+    var LUY = (1 - borderPercentY) * height + MAX_DOT_SIZE;             // Lower progress bar y-coord
+
+    var barWidth = RX - startX;
+
+
+    // Actually draw the progress bars
+    ctx.fillStyle = '#444';
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    ctx.fillRect(startX, UUY, barWidth, PROGRESS_HEIGHT);
+    ctx.fillRect(startX, LUY, barWidth, PROGRESS_HEIGHT);
+    ctx.globalCompositeOperation = "lighter";
+  };
+
+  function drawCircle(x, y, color, size, alpha)
+  {
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = 'hsl(' + color + ', 80%, 50%)';
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, TAU, false);
+    ctx.closePath();
+    ctx.fill();
+  }
 
   // Called for each slice of the audio that needs displaying
   this.render = function(audioData, normalizedPosition) 
@@ -206,24 +276,37 @@ function AudioRenderer(theMusicRNA)
     var t;
     if(!hasDrawnBackground)
     {
+      console.log("herpy derp drawing a background");
       if(SHOULD_CONSOLE_DEBUG)
         console.log("Has Not Drawn Background");
       drawBackground();
     }
+
+    var progXStart = Math.max(width * borderPercentX + imageWidth * normalizedPosition - PROGRESS_WIDTH, width * borderPercentX - PROGRESS_WIDTH);
+
+    // If the window was resized, we want to completely redraw the progress bar
+    if (should_redraw_prog)
+    {
+      should_redraw_prog = false;
+      progXStart = width * borderPercentX - PROGRESS_WIDTH;
+    }
+
+    drawProgressBars(normalizedPosition, progXStart);
+
+
     // Just some variables
     var normVol    = 0;
     var volume     = 0;
     var color      = 0;
     var size       = 0;
     
-    // Coordinates for each dot
+    // Calculate the coordinates for each dot
     // The X can be specified here because it changes with time (and not frequency)
     var rectX = width * borderPercentX + imageWidth * normalizedPosition;
     var rectY = 0.0;
-
-    // Nothing's happened . . . yet
-    var stuffHappened = false;
     
+    var absX = 0, absY = 0;
+    absX = normalizedPosition;
     // Has the song ended yet?
     if (normalizedPosition <= 1)
     {
@@ -231,6 +314,7 @@ function AudioRenderer(theMusicRNA)
       //  will make the overall color brighter.
       // Antialiasing and all that.
       ctx.globalCompositeOperation = 'lighter';
+      //ctx.globalCompositeOperation = 'darker';
 
       for (var a = MAX_INDEX; a >= 0; a--) 
       {    
@@ -247,6 +331,12 @@ function AudioRenderer(theMusicRNA)
         // If the volume is below a certain value, display nothing for that point.
         // Yes, this does mean that really quiet songs won't have as many points
         // But it keeps louder / more complicated songs from being too incomprehensible.
+        /*if (a > 341)
+        {
+          if (volume < VOLUME_THRESH - .1 * Math.log(a / 340))
+            continue;
+        }
+        else */
         if (volume < VOLUME_THRESH)
           continue;
         
@@ -259,15 +349,24 @@ function AudioRenderer(theMusicRNA)
         //  Also, this way the colors only go up to purplish-blue and not into pinks.
         //  Because I want it to look like audio frequency maps to light frequency.
         color = Math.round(a * 360 / 1024);
-
         rectY = height * borderPercentY;
-        if (a <= mid) // Use linear scaling if the index is below a certain point (because the log gets ugly)
+
+        // Use linear scaling if the index is below a certain point (because the log gets ugly)
+        if (a <= mid)
+        {
           rectY += mSlope * a + imageHeight;
-        else          // If the index is above that point, its okay to use a log
+          absY = mSlope * a;
+        }
+
+        // If the index is above that point, its okay to use a log
+        else
+        {
           rectY += imageHeight * (c - 1) * Math.log(a / MAX_INDEX);
+          absY = (c - 1) * Math.log(a / MAX_INDEX);
+        }
 
         // Size computation
-        size = Math.pow(volume + 0.125, 2) * BASE_DOT_SIZE;
+        size = Math.pow(volume + 0.125, 2) * new_dot_size;
         
         times[0] += performance.now() - t;
         t = performance.now();
@@ -282,22 +381,19 @@ function AudioRenderer(theMusicRNA)
            impact of noise on the overall appearance, and focuses attention
            onto the louder parts (which should matter more than the quieter parts)
           */
-          alpha: Math.pow(volume + (1-VOLUME_THRESH - 0.1), 2) * BASE_ALPHA,
+          alpha: Math.pow(volume + (1-VOLUME_THRESH - 0.1), 2) * new_alpha,
           color: color,
-          x: rectX,
-          y: rectY,
+          //x: rectX,
+          //y: rectY,
+          aX: absX,
+          aY: absY,
           size: size
         };
         times[1] += performance.now() - t;
         t = performance.now();
         
         // Draw the point on the canvas
-        ctx.globalAlpha = renderVals.alpha;
-        ctx.fillStyle = 'hsl(' + renderVals.color + ', 80%, 50%)';
-        ctx.beginPath();
-        ctx.arc(rectX, rectY, renderVals.size, 0, TAU, false);
-        ctx.closePath();
-        ctx.fill();
+        drawCircle(rectX, rectY, color, size, renderVals.alpha);
 
         // Store the info for this point
         renderData.values.push(renderVals);
@@ -314,6 +410,14 @@ function AudioRenderer(theMusicRNA)
   //this.beDynamic = function(fullAudioData, audioDuration, sampleRate){
   this.beDynamic = function(pData, audioDuration, sampleRate, dataSize)
   {
+
+    if (audioDuration > 240)
+      new_alpha = BASE_ALPHA * 240 / audioDuration;
+
+    if (audioDuration < 90)
+      new_alpha = BASE_ALPHA * 90 / audioDuration;
+    console.log("new alpha : " + new_alpha);
+
     var divConst = (dataSize / 2) * sampleRate;// audioDuration * sampleRate;
     /*
     var sum = 0;
@@ -328,10 +432,11 @@ function AudioRenderer(theMusicRNA)
     var stng = secs + "s";
     if (secs < 10) stng = "0" + stng;
     stng = mins + "m" + stng;
-    console.log(stng + " ", sampleRate);
+    console.log(stng);
 
     var x   = pData / divConst;
     var xs  = (x * 10000) + "e-4";
+    console.log("timesCalled: " + timesCalled);
     if (timesCalled == 0)
     {
       console.log("Average Intensity: ");
@@ -404,6 +509,10 @@ function AudioRenderer(theMusicRNA)
   };
   this.getRenderData = function() {
     return renderData;
+  };
+  // Resets the amount of times DisplayAudioStats has been called so things will work right for dropping a new file in
+  this.resetTimesCalled = function(){
+    timesCalled = 0;
   };
 
   window.addEventListener('resize', onResize, false);
