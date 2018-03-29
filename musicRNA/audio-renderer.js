@@ -240,23 +240,27 @@ function AudioRenderer(theMusicRNA)
 
   function drawProgressBars(position, startX)
   {
-    // Determine upper-left corner coordinates and dimensions for the two progress bars
-    // If we're real close to the start of the song, make sure we're drawing in the right place
-    //var LX  = Math.max(width * borderPercentX + imageWidth * position - PROGRESS_WIDTH, width * borderPercentX);
-    var RX  =          width * borderPercentX + imageWidth * position + MAX_DOT_SIZE;
-    var UUY = borderPercentY * height - MAX_DOT_SIZE - PROGRESS_HEIGHT; // Upper progress bar y-coord
-    var LUY = (1 - borderPercentY) * height + MAX_DOT_SIZE;             // Lower progress bar y-coord
+    // Only draw the progress bar when the song hasn't ended yet
+    if(position <= 1)
+    {
+      // Determine upper-left corner coordinates and dimensions for the two progress bars
+      // If we're real close to the start of the song, make sure we're drawing in the right place
+      //var LX  = Math.max(width * borderPercentX + imageWidth * position - PROGRESS_WIDTH, width * borderPercentX);
+      var RX  =          width * borderPercentX + imageWidth * position + MAX_DOT_SIZE;
+      var UUY = borderPercentY * height - MAX_DOT_SIZE - PROGRESS_HEIGHT; // Upper progress bar y-coord
+      var LUY = (1 - borderPercentY) * height + MAX_DOT_SIZE;             // Lower progress bar y-coord
 
-    var barWidth = RX - startX;
+      var barWidth = RX - startX;
 
 
-    // Actually draw the progress bars
-    ctx.fillStyle = '#444';
-    ctx.globalCompositeOperation = "source-over";
-    ctx.globalAlpha = 1;
-    ctx.fillRect(startX, UUY, barWidth, PROGRESS_HEIGHT);
-    ctx.fillRect(startX, LUY, barWidth, PROGRESS_HEIGHT);
-    ctx.globalCompositeOperation = "lighter";
+      // Actually draw the progress bars
+      ctx.fillStyle = '#444';
+      ctx.globalCompositeOperation = "source-over";
+      ctx.globalAlpha = 1;
+      ctx.fillRect(startX, UUY, barWidth, PROGRESS_HEIGHT);
+      ctx.fillRect(startX, LUY, barWidth, PROGRESS_HEIGHT);
+      ctx.globalCompositeOperation = "lighter";
+    }
   };
 
   function drawCircle(x, y, color, size, alpha)
