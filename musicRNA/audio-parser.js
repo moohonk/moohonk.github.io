@@ -271,4 +271,8 @@ function onDecodeData (buffer) {
     return (Date.now() - timePlaybackStarted) * 0.001;
   };
 
+  this.resume = function() {
+    audioContext.resume();
+  }
+
 }

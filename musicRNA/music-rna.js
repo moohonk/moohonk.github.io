@@ -182,7 +182,7 @@ function MusicRNA() {
 
   // Displays one frame of the song
   function updateAndRender() {
-
+    audioParser.resume();
     audioParser.getAnalyserAudioData(audioData);
     audioTime = audioParser.getTime() / audioDuration;
 
@@ -228,7 +228,8 @@ function MusicRNA() {
     }
 
     // Schedule the next frame
-    requestAnimFrame(updateAndRender);
+    //requestAnimFrame(updateAndRender);
+    requestAnimationFrame(updateAndRender);
   }
 
   this.setDisplayStats = function(boolean) {
@@ -254,5 +255,6 @@ function MusicRNA() {
   getDownload.addEventListener('click', onSaveComplete);
 
   if (SHOULD_DISPLAY_STUFF)
-    requestAnimFrame(updateAndRender);
+    //requestAnimFrame(updateAndRender);
+    requestAnimationFrame(updateAndRender);
 }

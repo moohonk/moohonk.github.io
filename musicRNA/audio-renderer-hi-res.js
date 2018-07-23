@@ -98,10 +98,10 @@ function AudioRendererHiRes(size, onRenderedCallback) {
                  scaledW * (bPX * -2 + 1), scaledH * (bPY * -2 + 1));
     ctx.globalCompositeOperation = "lighter"; 
 
-    imageWidth  = (1 - 2 * bpX) * renderData.width  * SCALE;
-    imageHeight = (1 - 2 * bpY) * renderData.height * SCALE;
-    xStart      = bpX * renderData.width  * SCALE + xOffset;
-    yStart      = bpY * renderData.height * SCALE + yOffset;
+    imageWidth  = (1 - 2 * bPX) * renderData.width  * SCALE;
+    imageHeight = (1 - 2 * bPY) * renderData.height * SCALE;
+    xStart      = bPX * renderData.width  * SCALE + xOffset;
+    yStart      = bPY * renderData.height * SCALE + yOffset;
     
     //Start plopping the data into the image
     start = 0;
