@@ -52,27 +52,30 @@ window.requestAnimFrame =
 
   function go(file) {
     musicRNA.parse(file);
+
     fileDropArea.classList.add('dropped');
-    console.log("Go");
+    console.log("Go" + file);
     musicRNA.setDisplayStats(false);
+    artist.textContent = "";
+    track.textContent = "";
+
     ID3.loadTags("filename.mp3", function() {
 
       // Determine the name and the author of this song
       var tags = ID3.getAllTags("filename.mp3"); 
-      var artistName = tags.artist;
-      var trackName  = tags.title;
+      var artistName = "Unknown Artist";
+      var trackName  = "Unknown Title";
 
       // If we can't find the song info, have some placeholders handy
       if (tags.artist)
-        artist.textContent = tags.artist;
-      else
-        artistName = "Unknown Artist";
-      
+        artistName = tags.artist;
       if (tags.title)
-        track.textContent = tags.title;
-      else
-        trackName = "Unknown Title";
+        trackName  = tags.title;
+      
+      artist.textContent = artistName;
+      track.textContent  = trackName;
 
+      ID3.clearAll();
       // Clean up the strings so periods don't mess with the image file name
       //  Seriously, you don't want that. It kind of makes it incomprehensible.
       artistName.replace("\.", "-");

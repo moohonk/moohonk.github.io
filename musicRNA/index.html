@@ -89,32 +89,65 @@
       line-height: 1;
     }
     #save-and-download {
-      width: 100%;
-      height: 100px;
       position: absolute;
-      left: 0%;
-      top: 0;
-      border-bottom: 1px solid #003040;
-      background: #090909;
-      padding: 0;
+      border: 1px solid #003040;
+      background: #09090959;
+      border-radius: 3px;
       text-align: center;
-      -webkit-transform: translateY(-101px);
-      -moz-transform: translateY(-101px);
-      -ms-transform: translateY(-101px);
-      -o-transform: translateY(-101px);
-      transform: translateY(-101px);
+      padding: 14px;
+      width: 342px;
+      height: 90px;
+      left: 50%;
+      top: 0;
+      -webkit-transform: translate(-50%, -101%);
+      -moz-transform:    translate(-50%, -101%);
+      -ms-transform:     translate(-50%, -101%);
+      -o-transform:      translate(-50%, -101%);
+      transform:         translate(-50%, -101%);
+
       -webkit-transition: -webkit-transform 300ms ease-out;
-      -moz-transition: -moz-transform 300ms ease-out;
-      -ms-transition: -ms-transform 300ms ease-out;
-      -o-transition: -o-transform 300ms ease-out;
-      transition: transform 300ms ease-out;;
+      -moz-transition:    -moz-transform    300ms ease-out;
+      -ms-transition:     -ms-transform     300ms ease-out;
+      -o-transition:      -o-transform      300ms ease-out;
+      transition:         transform         300ms ease-out;
+    }
+    #pop-down.save {
+      /*width: 237px;*/
+      height: 90px;
+      left: 50%;
+      top: 0;
     }
     #save-and-download.visible {
-      -webkit-transform: translateY(0);
-      -moz-transform: translateY(0);
-      -ms-transform: translateY(0);
-      -o-transform: translateY(0);
-      transform: translateY(0);
+      -webkit-transform: translate(-50%, 0);
+      -moz-transform:    translate(-50%, 0);
+      -ms-transform:     translate(-50%, 0);
+      -o-transform:      translate(-50%, 0);
+      transform:         translate(-50%, 0);
+    }
+    #back-button {
+      position:absolute;
+      border: 1px solid #003040;
+      background: #09090959;
+      border-radius:3px;
+      text-align:center;
+      padding:14px;
+      -webkit-transform: translate(0, -101%);
+      -moz-transform:    translate(0, -101%);
+      -ms-transform:     translate(0, -101%);
+      -o-transform:      translate(0, -101%);
+      transform:         translate(0, -101%);
+      -webkit-transition: -webkit-transform 300ms ease-out;
+      -moz-transition:    -moz-transform    300ms ease-out;
+      -ms-transition:     -ms-transform     300ms ease-out;
+      -o-transition:      -o-transform      300ms ease-out;
+      transition:         transform         300ms ease-out;
+    }
+    #back-button.visible {
+      -webkit-transform: translate(0, 0);
+      -moz-transform:    translate(0, 0);
+      -ms-transform:     translate(0, 0);
+      -o-transform:      translate(0, 0);
+      transform:         translate(0, 0);
     }
     #save-and-download h1 {
       font-family: 'Roboto';
@@ -129,7 +162,7 @@
       padding: 14px 0 0 0;
     }
     #save-and-download-buttons {
-      padding-top: 13px;
+      padding: 13px;
       text-align: center;
       transition: opacity 0.3s ease-out;
     }
@@ -138,6 +171,7 @@
       pointer-events: none;
     }
     #save-and-download button,
+    #backButton,
     #save-and-download a {
       display: inline-block;
       font-family: 'Roboto';
@@ -153,7 +187,8 @@
       opacity: 0.4;
       text-decoration: none;
     }
-    #save-and-download-buttons button:hover {
+    #save-and-download-buttons button:hover ,
+    #back-button button:hover{
       opacity: 1;
       transition: opacity 0.3s ease-out;
     }
@@ -185,7 +220,7 @@
     }
     #save-and-download a#get-download {
       position: absolute;
-      bottom: 27px;
+      bottom: 9px;
       left: 50%;
       width: 100px;
       margin: 0 0 0 -60px;
@@ -240,6 +275,9 @@
     <div id="artist"></div>
     <div id="track"></div>
   </div>
+  <!-- <div id="back-button">
+    <button id="backButton">Back</button>
+  </div> -->
   <div id="save-and-download">
     <h1>Download mRNA</h1>
     <div id="save-and-download-buttons">

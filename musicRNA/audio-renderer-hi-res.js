@@ -2,7 +2,7 @@
  * Copyright 2014 Google Inc. All Rights Reserved.
  * For licensing see moohonk.github.io/musicRNA/LICENSE
  */
-function AudioRendererHiRes(size, onRenderedCallback) {
+function AudioRendererHiRes(size, songLength, onRenderedCallback) {
   "use strict";
 
   var generateProgressBar = document.getElementById('generate-bar');
@@ -107,9 +107,36 @@ function AudioRendererHiRes(size, onRenderedCallback) {
     start = 0;
     end = Math.min(end + STEP, renderData.values.length);
     console.log(start + "\t" + end);
+    renderWaveform();
     requestAnimFrame(renderPortion);
 
   };
+
+  function renderWaveform() {
+    var renderVals;
+    var waveformHeight = 0;
+    var leftX          = 0;
+    var chunkWidth     = 0;
+    var upperY, lowerY;
+    var thisChunk;
+    ctx.fillStyle = '#444';
+    ctx.globalCompositeOperation = "source-over";
+    ctx.globalAlpha = 1;
+    for(var i = 0; i < renderData.waveforms.length; i++)
+    {
+      thisChunk      = renderData.waveforms[i];
+      leftX          = Math.floor(thisChunk.normPosition * imageWidth + xStart);
+      chunkWidth     = Math.ceil(thisChunk.chunkWidth   * imageWidth);
+      waveformHeight = thisChunk.waveHeight   * bPY * height;
+      
+      upperY = yStart - waveformHeight;
+      lowerY = yStart + imageHeight;
+
+      ctx.fillRect(leftX, upperY, chunkWidth, waveformHeight);
+      ctx.fillRect(leftX, lowerY, chunkWidth, waveformHeight);
+    }
+    ctx.globalCompositeOperation = "lighter";
+  }
 
   function renderPortion() {
     var renderVals;
