@@ -12,3 +12,14 @@ div{
   border-color: #fff;
   border-width: 1px;
 }
+.left{
+  position: absolute;
+  height: 100%;
+  width: 30%
+}
+.right{
+  position: absolute;
+  height: 100%;
+  width: 70%;
+  margin-left: 30%;
+}
