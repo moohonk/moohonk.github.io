@@ -17,6 +17,11 @@ function GraphViewer()
 
 	var targetXRotation = Math.PI/4;
 	var targetYRotation = -Math.PI/4;
+	var MINIMUM_ZOOM = 1;
+	var MAXIMUM_ZOOM = 50;
+	var targetZoom = 30;
+	var isZooming = false;
+	var ZOOM_INCREMENT = 0.2;
 	var xRotating = false;
 	var yRotating = false;
 	var MIN_ROTATION_ANGLE  = .04;
@@ -69,7 +74,7 @@ function GraphViewer()
 		scene.add(points);
 
 		adjustAxes(10);
-		
+
 		var material2 = new THREE.LineBasicMaterial({color: 0xaaaaaa});
 		line = new THREE.Line(lines, material);
 		scene.add(line);
@@ -81,15 +86,15 @@ function GraphViewer()
 		scene.add(regression);
 
 		// Give everything some rotation so it doesn't look 2D from the start
-		points.rotation.x     = Math.PI/4;
-		points.rotation.y     = -Math.PI/4;
-		line.rotation.x       = Math.PI/4;
+		line.rotation.x       =  Math.PI/4;
 		line.rotation.y       = -Math.PI/4;
-		regression.rotation.x = Math.PI/4;
+		points.rotation.x     =  Math.PI/4;
+		points.rotation.y     = -Math.PI/4;
+		regression.rotation.x =  Math.PI/4;
 		regression.rotation.y = -Math.PI/4;
 
 		// Zoom of the camera? I think
-		camera.position.z = 30;
+		camera.position.z = targetZoom;
 
 //============================================================================================
 		// Set up listeners
@@ -106,10 +111,12 @@ function GraphViewer()
 		var yInput = document.getElementById("yInput");
 		var zInput = document.getElementById("zInput");
 
-		window.addEventListener("mouseup", function(){heldButtonIndex = -1;});
+		window.addEventListener("mouseup", function(){heldButtonIndex = -1;
+		});
 
 		// Camera rotation button events
 		upButton.addEventListener("mousedown", function(){
+				
 				heldButtonIndex = 0;
 				holdRotate();
 			});
@@ -125,6 +132,14 @@ function GraphViewer()
 				heldButtonIndex = 3;
 				holdRotate();
 			});
+		zoomIn.addEventListener("mousedown", function(){
+			heldButtonIndex = 4;
+			holdRotate();
+		});
+		zoomOut.addEventListener("mousedown", function(){
+			heldButtonIndex = 5;
+			holdRotate();
+		});
 
 		// Arrow key events
 		window.onkeydown = function(e){
@@ -182,9 +197,32 @@ function GraphViewer()
 			case 3: // Right button being held
 				turnLeft();
 				break;
+			case 4: // Zoom-In button being pressed
+				zoomIn();
+				break;
+			case 5: // Zoom-Out button being pressed
+				zoomOut();
+				break;
 		}
 		// As long as a camera rotation button is being held, we want to rotate the camera
 		requestAnimationFrame(holdRotate);
+	}
+	function zoomIn(){
+		console.log(targetZoom);
+		if(!isZooming)
+		{
+			targetZoom -= ZOOM_INCREMENT;
+			if(targetZoom < MINIMUM_ZOOM)
+				targetZoom = MINIMUM_ZOOM;
+		}
+	}
+	function zoomOut(){
+		if(!isZooming)
+		{
+			targetZoom += ZOOM_INCREMENT;
+			if(targetZoom > MAXIMUM_ZOOM)
+				targetZoom = MAXIMUM_ZOOM;
+		}
 	}
 	// If the camera has a possibility of being unable to see a point, zoom out until it can be seen
 	//  This might be the most complicated thing on this website
@@ -280,9 +318,22 @@ function GraphViewer()
 
 		requestAnimationFrame( animate );
 		rotateObjects();
+		zoomCamera();
 
 		render();
 		// stats.update();
+
+	}
+	function zoomCamera(){
+		isZooming = false;
+		if(Math.abs(camera.position.z - targetZoom) > 2 * ZOOM_INCREMENT)
+		{
+			isZooming = true;
+			if(camera.position.z > targetZoom)
+				camera.position.z -= ZOOM_INCREMENT;
+			else
+				camera.position.z += ZOOM_INCREMENT;
+		}
 
 	}
 	
@@ -311,12 +362,12 @@ function GraphViewer()
 		}
 
 		// Rotate all the objects that are in this scene
-		points.rotation.x += dx;
-		points.rotation.y += dy;
-		line  .rotation.x += dx;
-		line  .rotation.y += dy;
-		regression  .rotation.x += dx;
-		regression  .rotation.y += dy;
+		line      .rotation.x += dx;
+		line      .rotation.y += dy;
+		points    .rotation.x += dx;
+		points    .rotation.y += dy;
+		regression.rotation.x += dx;
+		regression.rotation.y += dy;
 	}
 
 	function render() {
@@ -342,8 +393,5 @@ function GraphViewer()
 				targetXRotation = -MAX_PHI;
 		}
 	}
-
-	
-
 	init();
 }
