@@ -42,6 +42,8 @@ function GraphViewer()
 		material = new THREE.PointsMaterial({});
 		regLinePoints = new THREE.BufferGeometry();
 
+		lineCoords = [0, 0, 0, 0, 0, 0];
+
 		// Make the camera
 		camera = new THREE.PerspectiveCamera(45, (window.innerWidth*.7) / (window.innerHeight-112), 0.1, 1000);
 
@@ -67,22 +69,24 @@ function GraphViewer()
 		scene.add(points);
 
 		adjustAxes(10);
+		
 		var material2 = new THREE.LineBasicMaterial({color: 0xaaaaaa});
 		line = new THREE.Line(lines, material);
 		scene.add(line);
 
+		regLinePoints.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 		regLinePoints.addAttribute('size', new THREE.Float32BufferAttribute([3, 3], 1));
 		var lineRegMat = new THREE.LineBasicMaterial({color:0x77aaff});
 		regression = new THREE.Line(regLinePoints, lineRegMat);
 		scene.add(regression);
 
 		// Give everything some rotation so it doesn't look 2D from the start
-		points.rotation.x = Math.PI/4;
-		points.rotation.y = -Math.PI/4;
-		line.rotation.x   = Math.PI/4;
-		line.rotation.y   = -Math.PI/4;
-		regression.rotation.x   = Math.PI/4;
-		regression.rotation.y   = -Math.PI/4;
+		points.rotation.x     = Math.PI/4;
+		points.rotation.y     = -Math.PI/4;
+		line.rotation.x       = Math.PI/4;
+		line.rotation.y       = -Math.PI/4;
+		regression.rotation.x = Math.PI/4;
+		regression.rotation.y = -Math.PI/4;
 
 		// Zoom of the camera? I think
 		camera.position.z = 30;
