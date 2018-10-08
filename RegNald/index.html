@@ -2,40 +2,68 @@
   <head>
     <title>RegNald</title>
     <link rel = "stylesheet" type="text/css" href="styles.css">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:300,700' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    <div id = "leftContainer" class = "leftContainer">leftContainer
-      <div id = "left" class = "left">left
-        <div id = "title">title</div>
-        <div id = "tabContainer">
-          tabcontainer
-          <div id = "tabs">
-            <div id = "tab1" class = "selected">tab1</div>
-            <div id = "tab2" class = "deselected">tab2</div>
-          </div>
-          <div id = "data">
-            data
-            <div id = "tableHeaders">tableHeaders</div>
-            <div id = "tableWindow">
-              tableWindow
-              <div id = "vector1">Vector1</div>          
-            </div>
-            <div id = "editingWindow">
-              editingWindow
-              <div id = "textFields">TextFields</div>
-              <div id = "editingButtons">editingButtons</div>
-            </div>
-          </div>
+    <div id = "left">
+      <div id = "title"><h1>RegNald</h1></div>
+      <div id = "tabs">
+        <div id = "tab0" class = "tab selected"  style = "float:left;">Data   </div>
+        <div id = "tab1" class = "tab deselected"style = "float:right;">Options</div>
+      </div>
+      <div id = "data">
+        <div id = "tableHeaders">
+          <div id = "selectAll"></div>
+          <div id = "xHeader"  class = "dataHeader">X</div>
+          <div id = "yHeader"  class = "dataHeader">Y</div>
+          <div id = "zHeader"  class = "dataHeader">Z</div>
+          <div id = "deleteAll"></div>
+          <div id = "scrollSpacing" class = "scrollSpacing"></div>
+        </div>
+        <div id = "tableWindow"></div>
+        <div id = "editingWindow">
+          <button id = "undoButton">
+            <div class = "flexSpacing"></div>
+            <div id = "undoLabel">Undo</div>
+            <div class = "flexSpacing"></div>
+          </button>
+          <button id = "applyButton">Add Data</button>
+          <button id = "redoButton">
+            <div class = "flexSpacing"></div>
+            <div id = "redoLabel">Redo</div>
+            <div class = "flexSpacing"></div>
+          </button>
+          <input id = "xInput" type = "number" value = "0" onclick = "this.select();"></input>
+          <input id = "yInput" type = "number" value = "0" onclick = "this.select();"></input>
+          <input id = "zInput" type = "number" value = "0" onclick = "this.select();"></input>
         </div>
       </div>
     </div>
-    <div id = "rightContainer" class = "rightContainer"> rightContainer
-      <div id = "right" class = "right">right
-        <div id = "3DWindow">3DWindow</div>
-        <div id = "cameraControl" class = "controlWindow">CameraControl</div>
-        <div id = "cameraPresets" class = "controlWindow">CameraPresets</div>
+    <div id = "right">
+      <div id = "viewWindow"></div>
+      <div id = "windowBottom" style= "border:none;">
+          <div id = "cameraControl" class = "controlWindow">
+            <div id = "camControlLabel"> Camera Controls</div>
+            <button id = "upButton"    class = "camButton up"   ></button>
+            <button id = "zoomIn"      class = "zoom in"        ></button>
+            <button id = "leftButton"  class = "camButton left" ></button>
+            <div    id = "centerBackground">
+              <div  id = "camControlCenter"></div>
+            </div>
+            <button id = "rightButton" class = "camButton right"></button>
+            <button id = "zoomOut"     class = "zoom out"       ></button>
+            <button id = "downButton"  class = "camButton down" ></button>
+          </div>
+          <div id = "regInfo">
+            <div id = "equation">Equation goes here</div>
+            <div id = "rSquared">R Squared goes here</div>
+          </div>
+          <div id = "cameraPresets" class = "controlWindow">CameraPresets</div>
       </div>
     </div>
+    <script src="js/three.js"></script>
+    <script src="graphViewer.js"></script>
+    <script src="regNald.js"></script>
+    <script src = "bootstrap.js"></script>
   </body>
-  
 </html>
