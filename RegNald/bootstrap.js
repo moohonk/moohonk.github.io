@@ -27,7 +27,7 @@
 
 	
 
-// Select the tab given by 'id': 0 => data tab
+// Select the tab given by 'id': 0 => data    tab
 //                               1 => options tab
 	function select(id)
 	{
@@ -38,6 +38,7 @@
 		// Get the DOM elements
 		selectedTab   = document.getElementById(string1);
 		deselectedTab = document.getElementById(string2);
+		window1 = document.getElementById("window1");
 
 		// If the wrong tab is selected, swap the selection to the right tab
 		if(selectedTab.classList.contains('deselected'))
@@ -46,6 +47,11 @@
 			selectedTab.classList  .add   ('selected'  );
 			deselectedTab.classList.remove('selected'  );
 			deselectedTab.classList.add   ('deselected');
+		}
+		window1.classList.remove("invisible");
+		if (id == 0)
+		{
+			window1.classList.add("invisible");
 		}
 	}
 
