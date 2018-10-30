@@ -13,6 +13,15 @@ function RegNald(graphViewer)
 //                  (x, y, z)
 	var dataList = [];
 
+// The list of lower and upper bounds for generating random points
+	var upper = graphViewer.maxPoint;
+	var lower = graphViewer.minPoint;
+	console.log(upper);
+	console.log(lower);
+	var bounds = [upper, lower,
+				  upper, lower,
+				  upper, lower]
+
 // List of the current 'isSelected' state of each row
 	var selected = [];
 	var numSelected = 0;
@@ -24,18 +33,22 @@ function RegNald(graphViewer)
 
 // Elements that need regNald functions bound to them
 	var selectAll   = document.getElementById("selectAll");
+	var randButton  = document.getElementById("randomButton");
 	var applyButton = document.getElementById("applyButton");
 	var undoButton  = document.getElementById("undoButton");
 	var redoButton  = document.getElementById("redoButton");
-	var xInput = document.getElementById("xInput");
-	var yInput = document.getElementById("yInput");
-	var zInput = document.getElementById("zInput");
+	var xInput      = document.getElementById("xInput");
+	var yInput      = document.getElementById("yInput");
+	var zInput      = document.getElementById("zInput");
+	var dataWindow  = document.getElementById("window2");
 
+	dataWindow.style = "height: " + window.innerHeight - 245.475;
 // Add some listeners
 	selectAll  .addEventListener("click", function(){toggleSelectAll()});
 	applyButton.addEventListener("click", function(){addEntry()});
 	undoButton .addEventListener("click", function(){undo()});
 	redoButton .addEventListener("click", function(){redo()});
+	randButton .addEventListener("click", function(){addRandomPoint();})
 
 // The doubly-linked list structure for the editing history
 // Each node stores the actions needed to produce the current dataList state given the previous dataList state
@@ -46,9 +59,9 @@ function RegNald(graphViewer)
 function Node(editCode, id, x, y, z, xP = 0, yP = 0, zP = 0) {
   this.editCode = editCode;
   this.id = id;
-  this.x = x;
-  this.y = y;
-  this.z = z;
+  this.x  = x;
+  this.y  = y;
+  this.z  = z;
   this.xP = xP;
   this.yP = yP;
   this.zP = zP;
@@ -74,9 +87,14 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 		if(numSelected == 1)
 		{
 			var sI = selected.indexOf(true);
-			editEntry(sI, x, y, z);
+
 			// Store this edit in the edit history
 			addEditToHistory(2, IDList[sI], x, y, z, dataList[sI][0], dataList[sI][1], dataList[sI][2]);
+
+			// Edit the entry
+			editEntry(sI, x, y, z);
+
+			// Deselect the table row
 			toggleSelected(IDList[sI]);
 			return;
 		}
@@ -87,7 +105,6 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 	}
 
 	function insertData(id, x, y, z){
-
 
 		// Add a new row in the table window
 		addVectorToHTML(id, x, y, z);
@@ -102,13 +119,18 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 // Change the x, y, z values of the entry with ID 'id' to these new ones
 	function editEntry(id, x, y, z)
 	{
+		console.log("editing");
+
 		// Find the index of the entry whose ID is 'id'
 		var i = IDList.indexOf(id);
+		console.log("i: ", i);
 
 		// Do nothing if we don't have a vector with ID 'id'
 		if(i < 0) return;
 
+		console.log("weve gotten past the one thing that could conceivably stop us");
 		dataList[i] = [x, y, z];
+		console.log(dataList[i])
 
 		var xLabel = document.getElementById("x" + id);
 		var yLabel = document.getElementById("y" + id);
@@ -146,34 +168,33 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 		// var elementType = ["div", "div", "div", "div", "div", "div", "div", "button", "div"];
 
 		// Make all the new DOM elements
-		var newVector   = document.createElement("div");
-		var s0          = document.createElement("div");
-		var s1          = document.createElement("div");
-		var s2          = document.createElement("div");
-		var x0          = document.createElement("div");
-		var y0          = document.createElement("div");
-		var z0          = document.createElement("div");
-		var d0          = document.createElement("button");
-		var ss          = document.createElement("div");
+		var row = document.createElement("div"   );
+		var s0  = document.createElement("div"   );
+		var s1  = document.createElement("div"   );
+		var s2  = document.createElement("div"   );
+		var x0  = document.createElement("div"   );
+		var y0  = document.createElement("div"   );
+		var z0  = document.createElement("div"   );
+		var d0  = document.createElement("button");
+		//var ss          = document.createElement("div");
 
 		// Add classes to the new DOM elements
-		newVector.classList.add("vector");
-		newVector.classList.add("deselected");
-		s0.classList.add("selectIndicator");
-		s1.classList.add("leftSpacing");
-		s2.classList.add("selectContainer");
-		x0.classList.add("coordLabel");
-		y0.classList.add("coordLabel");
-		z0.classList.add("coordLabel");
-		d0.classList.add("deleteButton");
-		ss.classList.add("scrollSpacing");
+		row.classList.add("vector"         );
+		row.classList.add("deselected"     );
+		s0 .classList.add("selectIndicator");
+		s1 .classList.add("leftSpacing"    );
+		s2 .classList.add("selectContainer");
+		x0 .classList.add("coordLabel"     );
+		y0 .classList.add("coordLabel"     );
+		z0 .classList.add("coordLabel"     );
+		d0 .classList.add("deleteButton"   );
 
 		// Set IDs
-		newVector.id = "vector" + id;
-		x0.id        = "x"      + id;
-		y0.id        = "y"      + id;
-		z0.id        = "z"      + id;
-		s0.id        = "s"      + id;
+		row.id = "vector" + id;
+		x0 .id = "x"      + id;
+		y0 .id = "y"      + id;
+		z0 .id = "z"      + id;
+		s0 .id = "s"      + id;
 
 		// Add text
 		x0.innerHTML = x;
@@ -191,29 +212,19 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 		});
 
 		// If the user clicks on a vector, we want to toggle that vector's selection
-		// (If we want to make it so that we can select a vector by clicking anywhere, uncomment these lines)
-
-		newVector.addEventListener("click", function(){toggleSelected(id)});
-		// s0.addEventListener("click", function(){toggleSelected(id)});
-		// s1.addEventListener("click", function(){toggleSelected(id)});
-		// s2.addEventListener("click", function(){toggleSelected(id)});
-		// x0.addEventListener("click", function(){toggleSelected(id)});
-		// y0.addEventListener("click", function(){toggleSelected(id)});
-		// z0.addEventListener("click", function(){toggleSelected(id)});
-		// ss.addEventListener("click", function(){toggleSelected(id)});
+		row.addEventListener("click", function(){toggleSelected(id)});
 
 		// Put everything in the new table row
-		newVector.appendChild(s1);
-		s2.appendChild(s0);
-		newVector.appendChild(s2);
-		newVector.appendChild(x0);
-		newVector.appendChild(y0);
-		newVector.appendChild(z0);
-		newVector.appendChild(d0);
-		newVector.appendChild(ss);
+		row.appendChild(s1);
+		s2 .appendChild(s0);
+		row.appendChild(s2);
+		row.appendChild(x0);
+		row.appendChild(y0);
+		row.appendChild(z0);
+		row.appendChild(d0);
 
 		// Put the new table row into the table
-		tableWindow.appendChild(newVector);
+		tableWindow.appendChild(row);
 	}
 
 // Remove the entry with ID 'id' from the list of tuples
@@ -443,10 +454,15 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 
 				case 0: // We just removed some data
 
+					// Put the data back in
 					insertData(id, x, y, z);
 					break;
+
 				case 1: // We just added some data
+
+					// Take the row out of the table
 					removeVectorFromHTML(id);
+
 					removeIDFromArray(id);
 					// var index = IDList.indexOf(id);
 					// console.log("index = " + index);
@@ -615,5 +631,20 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 			}
 		else
 			applyButton.innerHTML = "Add Data";
+	}
+
+	function addRandomPoint(){
+		//Generate random coordinates within the bounds
+		var coord = [0, 0, 0];
+		var i = 0;
+		var x = Math.round(Math.random() * (bounds[i++] - bounds[i]) + bounds[i++], 1);
+		var y = Math.round(Math.random() * (bounds[i++] - bounds[i]) + bounds[i++], 1);
+		var z = Math.round(Math.random() * (bounds[i++] - bounds[i]) + bounds[i++], 1);
+		console.log(x, y, z);
+		console.log(bounds);
+
+		addEditToHistory(1, nextID, x, y, z);
+		insertData(nextID++, x, y, z)
+
 	}
 }
