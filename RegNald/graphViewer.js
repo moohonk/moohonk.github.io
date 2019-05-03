@@ -58,17 +58,17 @@ function GraphViewer()
 		// Put the canvas onto the webpage
 		document.getElementById("viewWindow").appendChild(renderer.domElement);
 		window.onresize = function(){
-			renderer.setSize((window.innerWidth*.7), (window.innerHeight-112));
-			camera.aspect = (window.innerWidth*.7) / (window.innerHeight-112);
+			renderer.setSize((window.innerWidth*.7),  f(window.innerHeight-112));
+			camera.aspect = ( window.innerWidth*.7) / (window.innerHeight-112);
 			camera.updateProjectionMatrix();
 		};
 
-		geometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-		geometry.addAttribute('customColor', new THREE.Float32BufferAttribute(colors, 3));
-		geometry.addAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+		geometry.addAttribute(   'position', new THREE.Float32BufferAttribute(positions, 3));
+		geometry.addAttribute('customColor', new THREE.Float32BufferAttribute(   colors, 3));
+		geometry.addAttribute(       'size', new THREE.Float32BufferAttribute(    sizes, 1));
 		geometry.computeBoundingSphere();
 
-		mesh = new THREE.Points(geometry, material);
+		mesh   = new THREE.Points(geometry, material);
 		points = new THREE.Object3D();
 		points.add(mesh);
 		scene.add(points);

@@ -1,5 +1,9 @@
 function RegNald(graphViewer)
 {
+// Width and height of the window
+	var width  = 0;
+	var height = 0;
+
 // Editing history list
 	
 // List of IDs
@@ -23,10 +27,9 @@ function RegNald(graphViewer)
 				  upper, lower]
 
 // List of the current 'isSelected' state of each row
-	var selected = [];
+	var selected    = [];
 	var numSelected = 0;
-
-	var lastEdit = null;
+	var lastEdit    = null;
 
 // The container of all the data rows in the GUI table
 	var tableWindow = document.getElementById("tableWindow");
@@ -41,6 +44,9 @@ function RegNald(graphViewer)
 	var yInput      = document.getElementById("yInput");
 	var zInput      = document.getElementById("zInput");
 	var dataWindow  = document.getElementById("window2");
+
+	window.addEventListener("resize", onResize);
+	onResize();
 
 	dataWindow.style = "height: " + window.innerHeight - 245.475;
 // Add some listeners
@@ -74,6 +80,14 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 // |                        FUNCTIONS                             |
 // +==============================================================+
 
+// When 
+	function onResize()
+	{
+		width = window.width;
+		height = window.height;
+		// Fix the data div's height so the editing UI doesn't overflow
+		document.getElementById("tableWindow").style = "max-height: " + (height - 279.68);
+	}
 // Add a new data point using the values currently in the editing window
 // If one (and only one) row is selected, edit the values of that row instead
 	function addEntry()
@@ -432,7 +446,7 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 		var newEditNode = new Node(editCode, id, x, y, z);
 
 		// The history list is not empty
-		lastEdit.next = newEditNode;
+		lastEdit.next        = newEditNode;
 		newEditNode.previous = lastEdit;
 
 		lastEdit = newEditNode;
