@@ -1,5 +1,9 @@
 function RegNald(graphViewer)
 {
+// Width and height of the window
+var width  = 0;
+var height = 0;
+
 // Editing history list
 	
 // List of IDs
@@ -43,6 +47,8 @@ function RegNald(graphViewer)
 	var dataWindow  = document.getElementById("window2");
 
 	dataWindow.style = "height: " + window.innerHeight - 245.475;
+	window.addEventListener("resize", onResize);
+	onResize();
 // Add some listeners
 	selectAll  .addEventListener("click", function(){toggleSelectAll()});
 	applyButton.addEventListener("click", function(){addEntry()});
@@ -74,7 +80,13 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 // |                        FUNCTIONS                             |
 // +==============================================================+
 
-//
+function onResize()
+{
+	width = window.innerWidth;
+	height = window.innerHeight;
+	// Fix the data div's height so the editing UI doesn't overflow
+	document.getElementById("tableWindow").style = "max-height: " + (height - 279.68);
+}
 
 // Add a new data point using the values currently in the editing window
 // If one (and only one) row is selected, edit the values of that row instead

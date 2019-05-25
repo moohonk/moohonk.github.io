@@ -62,10 +62,6 @@ function GraphViewer()
 // |                        FUNCTIONS                             |
 // +==============================================================+
 	function init(){
-
-
-
-
 		// Instantiate all the things
 		scene         = new THREE.Scene();
 		renderer      = new THREE.WebGLRenderer();
