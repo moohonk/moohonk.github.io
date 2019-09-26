@@ -3,8 +3,6 @@ function RegNald(graphViewer)
 // Width and height of the window
 var width  = 0;
 var height = 0;
-
-// Editing history list
 	
 // List of IDs
 // The index of an ID is the same as that of its data (in the data list)
@@ -36,25 +34,25 @@ var height = 0;
 	var tableWindow = document.getElementById("tableWindow");
 
 // Elements that need regNald functions bound to them
-	var selectAll   = document.getElementById("selectAll");
+	var selectAll   = document.getElementById("selectAll"   );
 	var randButton  = document.getElementById("randomButton");
-	var applyButton = document.getElementById("applyButton");
-	var undoButton  = document.getElementById("undoButton");
-	var redoButton  = document.getElementById("redoButton");
-	var xInput      = document.getElementById("xInput");
-	var yInput      = document.getElementById("yInput");
-	var zInput      = document.getElementById("zInput");
-	var dataWindow  = document.getElementById("window2");
+	var applyButton = document.getElementById("applyButton" );
+	var undoButton  = document.getElementById("undoButton"  );
+	var redoButton  = document.getElementById("redoButton"  );
+	var xInput      = document.getElementById("xInput"      );
+	var yInput      = document.getElementById("yInput"      );
+	var zInput      = document.getElementById("zInput"      );
+	var dataWindow  = document.getElementById("window2"     );
 
 	dataWindow.style = "height: " + window.innerHeight - 245.475;
 	window.addEventListener("resize", onResize);
 	onResize();
 // Add some listeners
 	selectAll  .addEventListener("click", function(){toggleSelectAll()});
-	applyButton.addEventListener("click", function(){addEntry()});
-	undoButton .addEventListener("click", function(){undo()});
-	redoButton .addEventListener("click", function(){redo()});
-	randButton .addEventListener("click", function(){addRandomPoint();})
+	applyButton.addEventListener("click", function(){addEntry()       });
+	undoButton .addEventListener("click", function(){undo()           });
+	redoButton .addEventListener("click", function(){redo()           });
+	randButton .addEventListener("click", function(){addRandomPoint() });
 
 // The doubly-linked list structure for the editing history
 // Each node stores the actions needed to produce the current dataList state given the previous dataList state
@@ -75,16 +73,18 @@ function Node(editCode, id, x, y, z, xP = 0, yP = 0, zP = 0) {
   this.next = null;
 }
 
+// The root node for the editing history
 lastEdit = new Node(-1, 0, 0, 0, 0);
+
 // +==============================================================+
 // |                        FUNCTIONS                             |
 // +==============================================================+
 
 function onResize()
 {
-	width = window.innerWidth;
+	width  = window.innerWidth;
 	height = window.innerHeight;
-	// Fix the data div's height so the editing UI doesn't overflow
+	// Fix the data div's height so the editing UI doesn't get pushed off the edge
 	document.getElementById("tableWindow").style = "max-height: " + (height - 279.68);
 }
 
@@ -173,9 +173,9 @@ function onResize()
 
 		// Update the linear Regression
 		lineReg();
-
 	}
 
+// TODO
 	function truncateTableNumbers()
 	{
 		// Determine how many pixels are available for each coordinate column
@@ -265,10 +265,8 @@ TODO:
 		// Do nothing if we don't have a vector with ID 'id'
 		if(index < 0) return;
 
-		// Store a record of this delete action in the history list
-
 		// Excise the entry from the lists
-		IDList.splice(index, 1);
+		IDList  .splice(index, 1);
 		dataList.splice(index, 1);
 
 		// Update the linear regression

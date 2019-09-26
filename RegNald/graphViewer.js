@@ -277,6 +277,7 @@ function GraphViewer()
 
 	// If the camera has a possibility of being unable to see a point, zoom out until it can be seen
 	//  This might be the most complicated thing on this website
+	//  Might be able to use the bounding sphere from geometry.computeBoundingSphere()
 	function zoomToAccomodate(){return;}
 
 	function adjustAxes(newLength){
@@ -336,12 +337,12 @@ function GraphViewer()
 
 		// Reset the geometry's attributes
 		//  Not entirely sure how well this performs, but it shouldn't be too bad.
-		geometry.removeAttribute('position');
+		geometry.removeAttribute('position'   );
 		geometry.removeAttribute('customColor');
-		geometry.removeAttribute('size');
-		geometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-		geometry.addAttribute('customColor', new THREE.Float32BufferAttribute(colors, 3));
-		geometry.addAttribute('size', new THREE.Float32BufferAttribute(sizes, 1));
+		geometry.removeAttribute('size'       );
+		geometry.addAttribute('position'   , new THREE.Float32BufferAttribute(positions, 3));
+		geometry.addAttribute('customColor', new THREE.Float32BufferAttribute(colors   , 3));
+		geometry.addAttribute('size'       , new THREE.Float32BufferAttribute(sizes    , 1));
 
 		// Find out the new bounding sphere
 		geometry.computeBoundingSphere();
@@ -396,6 +397,7 @@ function GraphViewer()
 		// regLinePoints.computeBoundingSphere();
 
 	}
+
 	function animate() {
 
 		requestAnimationFrame( animate );
@@ -406,6 +408,7 @@ function GraphViewer()
 		render();
 		// stats.update();
 	}
+	
 	function zoomCamera(){
 		isZooming = false;
 		if(Math.abs(camera.position.z - targetZoom) > 2 * ZOOM_INCREMENT)
