@@ -62,7 +62,15 @@ function AudioParser(dataSize, onAudioDataDecoded) {
   function time(){
     return (performance.now() - startTime);
   }
-
+  document.querySelector('button').addEventListener('click', function() {
+    context.resume().then(() => {
+      console.log('Playback resumed successfully');
+    });
+  });
+  AudioParser.resumeAudioContext = function()
+  {
+    audioContext.resume();
+  }
   function myFunc(buffer) {
 
     offlineCtx = new OfflineAudioContext(2,number*20,number);
@@ -134,7 +142,7 @@ function AudioParser(dataSize, onAudioDataDecoded) {
       // offlineCtx.close();
     });
     
-
+    audioContext.resume();
     // analyser2.getByteFrequencyData(aBuffer);
     window.setTimeout(function(){audioContext.decodeAudioData(ArrayBuffer, onDecodeData, onError);}, 100);
     temp = aBuffer;
@@ -185,7 +193,7 @@ function AudioParser(dataSize, onAudioDataDecoded) {
     timePlaybackStarted = Date.now();
 
     audioDecodedCallback(buffer);
-
+    
   }
 
   function onError() {
