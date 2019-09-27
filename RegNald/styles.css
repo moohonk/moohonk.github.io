@@ -35,7 +35,9 @@ div{
   width: 30%;
   min-height: 100%;
   background:#111;
-  position:absolute;}
+  position:absolute;
+}
+
 #right{
   border-width: 1px;
   height: 100%;
@@ -44,27 +46,31 @@ div{
   position:relative;
   display:flex;
   flex-direction:column;
-  }
+}
 
-/*
-
-*/
 #tabs{
   background:#222;
-  text-align:center;}
+  text-align:center;
+}
+
 .tab{
   border-style:solid;
   border-width:2px;
   border-top-left-radius:7px;
   border-top-right-radius:7px;
   padding:7px;
-  width:50%;}
+  width:50%;
+}
+
 .tab.selected{
   border-color:#08949C;
-  background: #08949C;}
+  background: #08949C;
+}
+
 .tab.deselected{
   border-color:#111;
-  background:#444;}
+  background:#444;
+}
 
 #window2{
   display:flex;
@@ -72,16 +78,15 @@ div{
   background: #08949C;
   height:100%;
   flex:1;
-  z-index:1;}
-
-
-
+  z-index:1;
+}
 
 #tableWindow{
   height:1px;
   flex:1;
   overflow-y:scroll;
 }
+
 /* Track */
 ::-webkit-scrollbar-track {
     background: #08949C; 
@@ -110,43 +115,56 @@ The window on the bottom of the left side with the ability to edit the data set
   border-top-width:3px;
   display: grid;
   grid-template-columns: 1fr 25% 25% 25% 1fr;
-  grid-template-rows: 30 99fr 1fr;}
+  grid-template-rows: 30 99fr 1fr;
+}
 
 #textFields{
-
-  background:#444;}
+  background:#444;
+}
 
 #editingButtons{
-  background:#444;}
-.flexSpacing{flex:1;}
+  background:#444;
+}
+
+.flexSpacing{
+  flex:1;
+}
+
 #undoButton{
   display:flex;
   flex-direction:row;
   grid-column-start:1;
   grid-row-start:1;
   grid-row-end:5;
-  font-size:14px;}
+  font-size:14px;
+}
+
 #undoLabel{
   writing-mode:vertical-rl;
   flex:1;
   -webkit-transform: rotate(180deg);
 }
+
 #redoLabel{
   writing-mode:vertical-rl;
   flex:1;
 }
+
 #randomButton{
   grid-column-start:2;
   grid-column-end:5;
   grid-row-start:1;
 }
+
 #redoButton{
   display:flex;
   flex-direction:row;
   grid-column-start:5;
   grid-row-start:1;
   grid-row-end:5;
-  font-size:14px;}
+  font-size:14px;
+}
+
 #applyButton{
   background:#33cc33;
   border-color:#33cc33;
@@ -154,34 +172,39 @@ The window on the bottom of the left side with the ability to edit the data set
   grid-column-end:5;
   grid-row-start:3;
   grid-row-end:5;
-  font-size:20px;}
+  font-size:20px;
+}
 
 input{
-  margin:2px;}
+  margin:2px;
+}
+
 button{
   padding-left:1px;
   padding-right:1px;
   margin:2px;
-  border-radius:10px;}
+  border-radius:10px;
+}
+
 #xInput{
   grid-column-start:2;
   /*grid-column-end:3;*/
   grid-row-start:2;
-
 }
+
 #yInput{
 /*  grid-column-start:4;
   grid-column-end:5;*/
   grid-column-start:3;
   grid-row-start:2;
 }
+
 #zInput{
   /*grid-column-start:6;
   grid-column-end:7;*/
   grid-column-start:4;
   grid-row-start:2;
 }
-
 
 /*
 Headers for the data table
@@ -192,23 +215,32 @@ Headers for the data table
   border-style:solid;
   border-width:0px;
   border-bottom-width:3px;
-  border-color:#086A7B;}
+  border-color:#086A7B;
+}
+
 #selectAll{
   flex:2; 
   padding-left:5px;
   padding-top:5px;
   border:0px solid #086A7B;
-  border-right-width:2px;}
+  border-right-width:2px;
+}
+
 .dataHeader{
   flex:4;
   border:0px solid #086A7B;
   border-right-width:2px;
   padding:5px;
-  padding-bottom:7px;}
-#deleteAll{flex:1;
+
+  padding-top:7px;
+}
+
+#deleteAll{
+  flex:1;
   padding:7px;
   padding-top:5px;
-  border:0px solid #086A7B;}
+  border:0px solid #086A7B;
+}
 
 /*
 Things pertaining to one row of data (displayed in the left side)
@@ -220,10 +252,15 @@ Things pertaining to one row of data (displayed in the left side)
   border-right-width:0px;
   background:#444;
 }
-.vector.selected{background:#555;}
+
+.vector.selected{
+  background:#555;
+}
+
 .leftSpacing{
   flex:1;
 }
+
 .selectContainer{
   flex:1;
   text-align:center;
@@ -231,6 +268,7 @@ Things pertaining to one row of data (displayed in the left side)
   border-right-width:2px;
   padding-right:4.3px;
 }
+
 .selectIndicator{
   flex:1;
   margin-top:7.5px;
@@ -242,6 +280,7 @@ Things pertaining to one row of data (displayed in the left side)
   background:#333;
   height:15px;
   }
+
   .selectIndicator.selected{
     background:#777;
   }
@@ -249,15 +288,19 @@ Things pertaining to one row of data (displayed in the left side)
 .deleteButton{
   flex:1;
   margin:5px;
-  padding:0px;}
+  padding:0px;
+}
+
 .coordLabel{
   flex:4;
   border:0px solid #333;
   border-right-width:2px;
-  padding:5px;}
-.scrollSpacing{width:17px;}
+  padding:5px;
+}
 
-
+.scrollSpacing{
+  width:17px;
+}
 
 #title{
   background:#222;
@@ -272,7 +315,9 @@ The options menu
   height: 100%;
   width: 100%;
   top: 118.475px;
-  background: #08949C;}
+  background: #08949C;
+}
+
 #window1.invisible{
   z-index:0;
 }
@@ -283,7 +328,8 @@ The container for whatever 3D thing will go in here
 #viewWindow{
 width:100%;
 flex:1;
-background:#222;}
+background:#222;
+}
 
 /* 
 The bottom of the right side (below the 3d view)
@@ -294,7 +340,9 @@ The bottom of the right side (below the 3d view)
   /*position:absolute;*/
   /*bottom:1;*/
   height:112px;
-  min-width:100%;}
+  min-width:100%;
+}
+
 .controlWindow{
   border-style: solid;
   width:150px;
@@ -308,7 +356,9 @@ The bottom of the right side (below the 3d view)
   bottom:0;
   z-index:2;
   /*background:#555;*/
-  background:#08949C}
+  background:#08949C
+}
+
 #cameraControl{
   border-top-right-radius:7px;
   left:0;
@@ -319,10 +369,12 @@ The bottom of the right side (below the 3d view)
   padding-left:10px;
   padding-right:10px;
 }
+
 #cameraPresets{
   border-top-left-radius:7px;
   right:0;
-  border-right-width:0px;}
+  border-right-width:0px;
+}
 
 #camControlLabel{
   grid-row-start:1;
@@ -331,6 +383,7 @@ The bottom of the right side (below the 3d view)
   text-align: center;
   padding-top:5px;
 }
+
 #centerBackground{
   grid-row-start:3;
   grid-column-start:2;
@@ -340,19 +393,20 @@ The bottom of the right side (below the 3d view)
   padding:0px;
   display:grid;
 }
-#camControlCenter{
 
+#camControlCenter{
   background:#666;
   border:2px solid black;
   border-radius:5px;
 }
+
 .camButton{
   background:#555;
   border: 2px solid black;
   border-radius:5px;
   margin: 0px;
-
 }
+
 .camButton.up{
   grid-row-start:2;
   grid-column-start:2;
@@ -360,6 +414,7 @@ The bottom of the right side (below the 3d view)
   border-bottom-left-radius:0px;
   border-bottom-right-radius:0px;
 }
+
 .camButton.left{
   grid-row-start:3;
   grid-column-start:1;
@@ -367,6 +422,7 @@ The bottom of the right side (below the 3d view)
   border-bottom-right-radius:0px;
   border-top-right-radius:0px;
 }
+
 .camButton.right{
   grid-row-start:3;
   grid-column-start:3;
@@ -374,6 +430,7 @@ The bottom of the right side (below the 3d view)
   border-bottom-left-radius:0px;
   border-top-left-radius:0px;
 }
+
 .camButton.down{
   grid-row-start:4;
   grid-column-start:2;
@@ -381,6 +438,7 @@ The bottom of the right side (below the 3d view)
   border-top-left-radius:0px;
   border-top-right-radius:0px;
 }
+
 .zoom{
   background:#555;
   border:2px solid white;
@@ -390,9 +448,11 @@ The bottom of the right side (below the 3d view)
   border-radius:13px;
   font-style:bold;
 }
+
 .zoom.in{
   grid-row-start:2;
 }
+
 .zoom.out{
   grid-row-start:4;
 }
@@ -400,25 +460,29 @@ The bottom of the right side (below the 3d view)
 /*
 The bottom part of the right side that shows the current regression equation
 */
-
 #regInfo{
   flex:1;
   display: grid;
   grid-gap: 0px;
-  border:none;}
+  border:none;
+}
+
 #equation{
   padding:10px;
   padding-left:7%;
   padding-top:20px;
   background:#444;
   grid-column-start:1;
-  grid-row-start: 1;}
+  grid-row-start: 1;
+}
+
 #rSquared{
   padding:10px;
   padding-left:7%;
   background:#444;
   grid-column-start:1;
-  grid-row-start:2;}
+  grid-row-start:2;
+}
 
 .graphLabel{
   position:absolute;
