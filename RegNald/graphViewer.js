@@ -213,9 +213,32 @@ function GraphViewer()
 					}
 				}
 		};
+
+		// Only stop moving the camera if we release the button we originally pressed
 		window.onkeyup = function(e){
 			e = e || window.event;
-			heldButtonIndex = -1;
+			switch(e.key){
+				case "Up":
+				case "ArrowUp":
+					if(heldButtonIndex == 0)
+						heldButtonIndex = -1;
+					break;
+				case "Down":
+				case "ArrowDown":
+					if(heldButtonIndex == 1);
+						heldButtonIndex = -1;
+					break;
+				case "Left":
+				case "ArrowLeft":
+					if(heldButtonIndex == 2);
+						heldButtonIndex = -1;
+					break;
+				case "Right":
+				case "ArrowRight":
+					if(heldButtonIndex == 3);
+						heldButtonIndex = -1;
+					break;
+			}
 		};
 
 		//updateLabelLocations(-targetXRotation, targetYRotation);
@@ -408,7 +431,7 @@ function GraphViewer()
 		render();
 		// stats.update();
 	}
-	
+
 	function zoomCamera(){
 		isZooming = false;
 		if(Math.abs(camera.position.z - targetZoom) > 2 * ZOOM_INCREMENT)
