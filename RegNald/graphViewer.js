@@ -216,27 +216,30 @@ function GraphViewer()
 
 		// Only stop moving the camera if we release the button we originally pressed
 		window.onkeyup = function(e){
+			this.console.log("key up");
+			this.console.log(heldButtonIndex);
+			this.console.log(e.key);
 			e = e || window.event;
 			switch(e.key){
 				case "Up":
 				case "ArrowUp":
 					if(heldButtonIndex == 0)
-						heldButtonIndex = -1;
+						{heldButtonIndex = -1;}
 					break;
 				case "Down":
 				case "ArrowDown":
-					if(heldButtonIndex == 1);
-						heldButtonIndex = -1;
+					if(heldButtonIndex == 1)
+						{heldButtonIndex = -1;}
 					break;
 				case "Left":
 				case "ArrowLeft":
-					if(heldButtonIndex == 2);
-						heldButtonIndex = -1;
+					if(heldButtonIndex == 2)
+						{heldButtonIndex = -1;}
 					break;
 				case "Right":
 				case "ArrowRight":
-					if(heldButtonIndex == 3);
-						heldButtonIndex = -1;
+					if(heldButtonIndex == 3)
+						{heldButtonIndex = -1;}
 					break;
 			}
 		};
