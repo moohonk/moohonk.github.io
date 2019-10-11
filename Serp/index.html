@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <title>Serp</title>
+    <link rel = "stylesheet" type="text/css" href="styles.css">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:300,700' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+    <div id = "left">
+      <div id = "title"><h1>Serp</h1></div>
+      <div id = "tabs">
+        <!-- <div id = "tab0" class = "tab selected"  style = "float:left;">Data   </div> -->
+        <div id = "tab1" class = "tab selected"style = "float:left;">Options</div>
+      </div>
+      <div id="window1" class = "invisible">
+
+      </div>
+      <div id = "window2">
+        <div id = "tableHeaders">
+          <div id = "selectAll"></div>
+          <div id = "xHeader"  class = "dataHeader">X</div>
+          <div id = "yHeader"  class = "dataHeader">Y</div>
+          <div id = "zHeader"  class = "dataHeader">Z</div>
+          <div id = "deleteAll"></div>
+          <div class = "scrollSpacing"></div>
+
+        </div>
+        <div id = "tableWindow"></div>
+        <div id = "editingWindow">
+          <button id = "undoButton">
+            <div class = "flexSpacing"></div>
+            <div id = "undoLabel">Undo</div>
+            <div class = "flexSpacing"></div>
+          </button>
+          <button id = "applyButton">Add Data</button>
+          <button id = "redoButton">
+            <div class = "flexSpacing"></div>
+            <div id = "redoLabel">Redo</div>
+            <div class = "flexSpacing"></div>
+          </button>
+          <button id = "randomButton">Random Point</button>
+          <input id = "xInput" type = "number" value = "0" onclick = "this.select();"></input>
+          <input id = "yInput" type = "number" value = "0" onclick = "this.select();"></input>
+          <input id = "zInput" type = "number" value = "0" onclick = "this.select();"></input>
+        </div>
+      </div>
+    </div>
+    <div id = "right">
+      <div id = "viewWindow"></div>
+      <div id = "windowBottom" style= "border:none;">
+          <div id = "cameraControl" class = "controlWindow">
+            <div id = "camControlLabel"> Camera Controls</div>
+            <button id = "upButton"    class = "camButton up"   ></button>
+            <button id = "zoomIn"      class = "zoom in"        >+</button>
+            <button id = "leftButton"  class = "camButton left" ></button>
+            <div    id = "centerBackground">
+              <div  id = "camControlCenter"></div>
+            </div>
+            <button id = "rightButton" class = "camButton right"></button>
+            <button id = "zoomOut"     class = "zoom out"       >-</button>
+            <button id = "downButton"  class = "camButton down" ></button>
+          </div>
+          <div id = "regInfo">
+            <div id = "equation">Equation goes here</div>
+            <div id = "rSquared">R Squared goes here</div>
+          </div>
+          <div id = "cameraPresets" class = "controlWindow">CameraPresets</div>
+      </div>
+      <div id = "gX" class = "graphLabel axis">X</div>
+      <div id = "gY" class = "graphLabel axis">Y</div>
+      <div id = "gZ" class = "graphLabel axis">Z</div>
+    </div>
+
+    <script src="Serp.js"></script>
+  </body>
+</html>
