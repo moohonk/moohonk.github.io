@@ -263,7 +263,7 @@ function Serp(){
     {
         var xC = URXCoords[depth];
         var yC = URYCoords[depth];
-        colors = ['#000','#111','#222','#333','#444','#555'];
+        colors = ['#000000','#0a0a0a','#141414','#1e1e1e','#282828','#323232', '#3c3c3c', '#464646', '#505050'];
         for(var i = 0; i < xC.length; i++)
         {
             drawSquare(xC[i], yC[i], lenList[depth] / 2, colors[depth]);
