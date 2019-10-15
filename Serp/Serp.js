@@ -198,12 +198,28 @@ function Serp(){
         var xC = URXCoords[depth];
         var yC = URYCoords[depth];
         var rots = rotList[depth];
+        var newL = lenList[depth] / 4;
+
+        // Calculate offsets for the current depth
         var x00 = x0;
         var x11 = x1;
         var x22 = x2;
         var y00 = y0;
         var y11 = y1;
         var y22 = y2;
+        for(var i = 0; i < 4; i++)
+        {
+            for(var j = 0; j < 4; j++)
+            {
+                x00[i][j] = x00[i][j] * newL;
+                x11[i][j] = x11[i][j] * newL;
+                x22[i][j] = x22[i][j] * newL;
+                y00[i][j] = y00[i][j] * newL;
+                y11[i][j] = y11[i][j] * newL;
+                y22[i][j] = y22[i][j] * newL;
+
+            }
+        }
 
         URXCoords[depth+1] = [];
         URYCoords[depth+1] = [];
@@ -212,28 +228,19 @@ function Serp(){
         // Loop over all squares in the current fractal depth
         for (var i = 0; i < rots.length; i++)
         {
-            
             // Get the info for one square
             var R = rots[i];
             var X = xC[i];
             var Y = yC[i];
 
-            var newL = lenList[depth] / 4;
-
-            // console.log("X: ", X);
-            // console.log("newL: ", newL);
-            // console.log("x00: ", x00);
-            // console.log("rule: ", rule);
-            // console.log("R: ", R);
-
             // Calculate the UR corners of its children
-            var xc0 = X + newL * x00[R][rule[0]];
-            var xc1 = X + newL * x11[R][rule[1]];
-            var xc2 = X + newL * x22[R][rule[2]];
+            var xc0 = X + x00[R][rule[0]];
+            var xc1 = X + x11[R][rule[1]];
+            var xc2 = X + x22[R][rule[2]];
 
-            var yc0 = Y - newL * y00[R][rule[0]];
-            var yc1 = Y - newL * y11[R][rule[1]];
-            var yc2 = Y - newL * y22[R][rule[2]];
+            var yc0 = Y - y00[R][rule[0]];
+            var yc1 = Y - y11[R][rule[1]];
+            var yc2 = Y - y22[R][rule[2]];
 
             // Calculate the rotations of its children
             var r0 = (R + rule[0]) % 4;
