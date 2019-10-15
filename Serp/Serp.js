@@ -65,6 +65,69 @@ function Serp(){
         lenList[i] = l;
     }
     
+
+    // Called when the user clicks on a subsquare
+    //  Changes the current rule and redraws the fractal
+    function selectSubsquare(quadrant, subsquare)
+    {
+        var order = [0, 3, 1, 2];
+        console.log("quadrant", quadrant);
+        console.log("subsquare", subsquare);
+        if (rule[quadrant-1] == order[subsquare])
+            return;
+        // Find currently selected subsquare
+        for (var i = 0; i < 4; i++)
+        {
+            var sub = document.getElementById("q" + quadrant + "." + i);
+            sub.classList.remove("selected");
+        }
+        var id = "q" + (quadrant) + "." + subsquare;
+        console.log(id);
+        document.getElementById(id).classList.add("selected");
+
+        // Deselect it
+
+        // Select this subsquare
+
+        rule[quadrant-1] = order[subsquare];
+        console.log("new rule: ", rule);
+
+        onResize();
+
+        drawDepth(1);
+
+        // // Recalculate the fractal
+        // SierpIterUpTo(maxDepth);
+
+        // // Draw the fractal
+        // drawUpTo(maxDepth);
+    }
+
+    function createRuleButton(i, j)
+    {
+        var order = [3, 1, 2];
+        var subsquare = document.createElement("div");
+        subsquare.classList.add("rule");
+        if(j == 0)
+            subsquare.classList.add("selected");
+        subsquare.id = "q" + order[i] + "." + j;
+        subsquare.addEventListener("click", function(){selectSubsquare(order[i], j)});
+        var quadrant = document.getElementById("q" + (i+1));
+        quadrant.appendChild(subsquare);
+    }
+    // Create the rule UI
+    function createRuleButtons()
+    {
+        
+        for (var i = 0; i < 3; i++)
+        {
+            for (var j = 0; j < 4; j++)
+            {
+                createRuleButton(i, j);
+            }
+        }
+    }
+    
     // Given the current rotation of the square and the rule, 
     //    determine where the UR corners of child squares are
     // function getChildOffsets(R, rule, length)
@@ -115,7 +178,6 @@ function Serp(){
         var y1 = y - y % 1;
         c.fillStyle = color;
         c.fillRect(x1, y1, length, length);
-        return
     }
 
     this.drawSquare = function(x, y, length, color)
@@ -136,8 +198,6 @@ function Serp(){
         var xC = URXCoords[depth];
         var yC = URYCoords[depth];
         var rots = rotList[depth];
-        console.log("xC: ", xC);
-        console.log("yC: ", yC);
         var x00 = x0;
         var x11 = x1;
         var x22 = x2;
@@ -249,5 +309,6 @@ function Serp(){
     //  keep doing that
     window.addEventListener('load', function() {
         onResize();
+        createRuleButtons();
       }, false);
 }
