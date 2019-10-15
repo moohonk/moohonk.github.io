@@ -54,6 +54,10 @@ div{
   text-align:center;
 }
 
+#canvas{
+  height:100%;
+}
+
 .tab{
   border-style:solid;
   border-width:2px;

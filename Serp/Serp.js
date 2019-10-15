@@ -7,14 +7,14 @@ function Serp(){
     var cx = 0;
     var cy = 0;
     var len = 512;
-    var maxDepth = 4;
+    var maxDepth = 8;
     var rule = [0, 0, 0];
 
     
 
     // Lists storing all necessary information to draw any one iteration 
-    var URXCoords = [[]];
-    var URYCoords = [[]];
+    var URXCoords = [[0]];
+    var URYCoords = [[0]];
     var rotList   = [[0]];
     var lenList   = [len];
 
@@ -24,23 +24,23 @@ function Serp(){
 
     // Given the rotation of the parent square and the child square, 
     //  these lists give the offsets of the upper left corners of the child squares
-    var x0, y0, x1, y1, x2, y2;
-    x0 = [[ 0,  0,  1,  1],
+    //var x0, y0, x1, y1, x2, y2;
+    var x0 = [[ 0,  0,  1,  1],
           [ 2,  3,  3,  2],
           [ 1,  1,  0,  0],
           [-1, -2, -2, -1]];
 
-    y0 = [[-2, -3, -3, -2],
+    var y0 = [[-2, -3, -3, -2],
           [-1, -1,  0,  0],
           [ 1,  2,  2,  1],
           [ 0,  0, -1, -1]];
 
-    x1 = [[ 2,  2,  3,  3],
+    var x1 = [[ 2,  2,  3,  3],
           [ 2,  3,  3,  2],
           [-1, -1, -2, -2],
           [-1, -2, -2, -1]];
 
-    y1 = [[-2, -3, -3, -2],
+    var y1 = [[-2, -3, -3, -2],
           [ 1,  1,  2,  2],
           [ 1,  2,  2,  1],
           [-2, -2, -3, -3]];
@@ -48,12 +48,12 @@ function Serp(){
     // x2 is x0 
     // (row + 3) % 4
     // (col + 1) % 4
-    x2 = [[ 2,  2,  3,  3],
+    var x2 = [[ 2,  2,  3,  3],
           [ 0,  1,  1,  0],
           [-1, -1, -2, -2],
           [ 1,  0,  0,  1]];
 
-    y2 = [[ 0, -1, -1,  0],
+    var y2 = [[ 0, -1, -1,  0],
           [ 1,  1,  2,  2],
           [-1,  0,  0, -1],
           [-2, -2, -3, -3]];
@@ -81,8 +81,10 @@ function Serp(){
     // Called whenever the window changes size
     function onResize()
     {
-        width  = c.offsetWidth;
-        height = c.offsetHeight;
+        width  = canvas.offsetWidth;// - (canvas.offsetWidth % 512);
+        height = canvas.offsetHeight;// - (canvas.offsetHeight % 512);
+
+
 
         URXCoords[0] = [width  / 2 - len / 2];
         URYCoords[0] = [height / 2 - len / 2];
@@ -109,10 +111,17 @@ function Serp(){
 
     function drawSquare(x, y, length, color)
     {
+        var x1 = x - x % 1;
+        var y1 = y - y % 1;
         c.fillStyle = color;
-        c.fillRect(x, y, length, length);
+        c.fillRect(x1, y1, length, length);
         return
     }
+
+    this.drawSquare = function(x, y, length, color)
+    {
+        drawSquare(x, y, length, color);
+    };
 
 
     // Non-Recursive Function: Sierpinski iteration
@@ -127,14 +136,23 @@ function Serp(){
         var xC = URXCoords[depth];
         var yC = URYCoords[depth];
         var rots = rotList[depth];
+        console.log("xC: ", xC);
+        console.log("yC: ", yC);
+        var x00 = x0;
+        var x11 = x1;
+        var x22 = x2;
+        var y00 = y0;
+        var y11 = y1;
+        var y22 = y2;
 
         URXCoords[depth+1] = [];
         URYCoords[depth+1] = [];
         rotList  [depth+1] = [];
 
         // Loop over all squares in the current fractal depth
-        for (var i = 0; i < rotList.length; i++)
+        for (var i = 0; i < rots.length; i++)
         {
+            
             // Get the info for one square
             var R = rots[i];
             var X = xC[i];
@@ -142,14 +160,20 @@ function Serp(){
 
             var newL = lenList[depth] / 4;
 
-            // Calculate the UR corners of its children
-            var xc0 = X + newL * x0[R][rule[0]];
-            var xc1 = X + newL * x1[R][rule[1]];
-            var xc2 = X + newL * x2[R][rule[2]];
+            // console.log("X: ", X);
+            // console.log("newL: ", newL);
+            // console.log("x00: ", x00);
+            // console.log("rule: ", rule);
+            // console.log("R: ", R);
 
-            var yc0 = Y + newL * y0[R][rule[0]];
-            var yc1 = Y + newL * y1[R][rule[1]];
-            var yc2 = Y + newL * y2[R][rule[2]];
+            // Calculate the UR corners of its children
+            var xc0 = X + newL * x00[R][rule[0]];
+            var xc1 = X + newL * x11[R][rule[1]];
+            var xc2 = X + newL * x22[R][rule[2]];
+
+            var yc0 = Y - newL * y00[R][rule[0]];
+            var yc1 = Y - newL * y11[R][rule[1]];
+            var yc2 = Y - newL * y22[R][rule[2]];
 
             // Calculate the rotations of its children
             var r0 = (R + rule[0]) % 4;
@@ -182,7 +206,7 @@ function Serp(){
         colors = ['#000','#111','#222','#333','#444','#555'];
         for(var i = 0; i < xC.length; i++)
         {
-            drawSquare(xC[i], yC[i], lenList[depth], colors[depth]);
+            drawSquare(xC[i], yC[i], lenList[depth] / 2, colors[depth]);
         }
     }
 
