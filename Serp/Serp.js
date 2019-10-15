@@ -1,4 +1,6 @@
 function Serp(){
+
+    console.log('Serp');
     // Width and height of the window
     var width  = 0;
     var height = 0;
@@ -119,6 +121,7 @@ function Serp(){
     // Given the current fractal depth, create the next level down
     function SierpIterOnce(depth)
     {
+        console.log("Sierp depth ", depth);
 
         // Access coordinates in UR corner list
         var xC = URXCoords[depth];
