@@ -1,46 +1,60 @@
-function Serp(canvas){
+function Serp(){
     // Width and height of the window
     var width  = 0;
     var height = 0;
+    var cx = 0;
+    var cy = 0;
     var len = 512;
+    var maxDepth = 4;
+    var rule = [0, 0, 0];
 
-    var URXCoords = [[0]];
-    var URYCoords = [[0]];
+    
+
+    // Lists storing all necessary information to draw any one iteration 
+    var URXCoords = [[]];
+    var URYCoords = [[]];
     var rotList   = [[0]];
     var lenList   = [len];
+
+    // We'll draw the fractal here
+    var canvas = document.getElementById("canvas");
+    var c = canvas.getContext('2d');
+
+    // Given the rotation of the parent square and the child square, 
+    //  these lists give the offsets of the upper left corners of the child squares
     var x0, y0, x1, y1, x2, y2;
     x0 = [[ 0,  0,  1,  1],
-        [ 2,  3,  3,  2],
-        [ 1,  1,  0,  0],
-        [-1, -2, -2, -1]];
+          [ 2,  3,  3,  2],
+          [ 1,  1,  0,  0],
+          [-1, -2, -2, -1]];
 
     y0 = [[-2, -3, -3, -2],
-        [-1, -1,  0,  0],
-        [ 1,  2,  2,  1],
-        [ 0,  0, -1, -1]];
+          [-1, -1,  0,  0],
+          [ 1,  2,  2,  1],
+          [ 0,  0, -1, -1]];
 
     x1 = [[ 2,  2,  3,  3],
-        [ 2,  3,  3,  2],
-        [-1, -1, -2, -2],
-        [-1, -2, -2, -1]];
+          [ 2,  3,  3,  2],
+          [-1, -1, -2, -2],
+          [-1, -2, -2, -1]];
 
     y1 = [[-2, -3, -3, -2],
-        [ 1,  1,  2,  2],
-        [ 1,  2,  2,  1],
-        [-2, -2, -3, -3]];
+          [ 1,  1,  2,  2],
+          [ 1,  2,  2,  1],
+          [-2, -2, -3, -3]];
 
     // x2 is x0 
     // (row + 3) % 4
     // (col + 1) % 4
     x2 = [[ 2,  2,  3,  3],
-        [ 0,  1,  1,  0],
-        [-1, -1, -2, -2],
-        [ 1,  0,  0,  1]];
+          [ 0,  1,  1,  0],
+          [-1, -1, -2, -2],
+          [ 1,  0,  0,  1]];
 
     y2 = [[ 0, -1, -1,  0],
-        [ 1,  1,  2,  2],
-        [-1,  0,  0, -1],
-        [-2, -2, -3, -3]];
+          [ 1,  1,  2,  2],
+          [-1,  0,  0, -1],
+          [-2, -2, -3, -3]];
 
     var l = len;
     for (var i = 1; i < 9; i++)
@@ -48,8 +62,6 @@ function Serp(canvas){
         l = l / 2;
         lenList[i] = l;
     }
-
-    var c = canvas;
     
     // Given the current rotation of the square and the rule, 
     //    determine where the UR corners of child squares are
@@ -64,9 +76,39 @@ function Serp(canvas){
     //     dy2 = y2[R][rule[2]];
     // }
 
-    function drawSquare(x, y, length)
+    // Called whenever the window changes size
+    function onResize()
     {
-        //TODO: tell canvas to draw a square at (x, y) with side length [length] and color [color]
+        width  = c.offsetWidth;
+        height = c.offsetHeight;
+
+        URXCoords[0] = [width  / 2 - len / 2];
+        URYCoords[0] = [height / 2 - len / 2];
+
+        // Overwrite anything currently drawn on the canvas
+        c.fillStyle = '#000';
+        c.fillRect(0, 0, width, height);
+
+        // Draw the white square
+        c.fillStyle = '#FFF';
+        c.fillRect(URXCoords[0][0], URYCoords[0][0], len, len);
+
+        // Recalculate the fractal
+        SierpIterUpTo(maxDepth);
+
+        // Draw the fractal
+        drawUpTo(maxDepth);
+    }
+
+    // function drawBackground()
+    // {
+        
+    // }
+
+    function drawSquare(x, y, length, color)
+    {
+        c.fillStyle = color;
+        c.fillRect(x, y, length, length);
         return
     }
 
@@ -75,7 +117,7 @@ function Serp(canvas){
     // Accesses + Modifies a global array containing the UR corners of each successive depth level
 
     // Given the current fractal depth, create the next level down
-    function SierpIterOnce(depth, rule)
+    function SierpIterOnce(depth)
     {
 
         // Access coordinates in UR corner list
@@ -121,12 +163,12 @@ function Serp(canvas){
 
     // Given a depth and a rule, do sierpinski gasket up to that depth
     //  Store information in relevant lists
-    function SierpIterUpTo(depth, rule)
+    function SierpIterUpTo(depth)
     {
         // for each fractal depth
         for(var d = 0; d < depth; d++)
         {
-            SierpIterOnce(d, rule);
+            SierpIterOnce(d);
         }
     }
 
@@ -134,9 +176,18 @@ function Serp(canvas){
     {
         var xC = URXCoords[depth];
         var yC = URYCoords[depth];
+        colors = ['#000','#111','#222','#333','#444','#555'];
         for(var i = 0; i < xC.length; i++)
         {
-            drawSquare(xC[i], yC[i], lenList[depth]);
+            drawSquare(xC[i], yC[i], lenList[depth], colors[depth]);
+        }
+    }
+
+    function drawUpTo(depth)
+    {
+        for (var d = 0; d < depth; d++)
+        {
+            drawDepth(d);
         }
     }
 
@@ -169,4 +220,7 @@ function Serp(canvas){
     //  Start with a background color
     //  fill in top right quadrant with black
     //  keep doing that
+    window.addEventListener('load', function() {
+        onResize();
+      }, false);
 }
