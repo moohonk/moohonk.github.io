@@ -121,6 +121,13 @@ The options menu
   height:200px;
 }
 
+#ruleInputContainer{
+  width:250px;
+  margin: 0 auto;
+  display:grid;
+  grid-template-columns: auto auto auto;
+}
+
 .quadrant{
   display:grid;
   width:100%;
@@ -149,6 +156,7 @@ background:#222;
 
 input{
   margin:2px;
+  width:83px;
 }
 
 button{
@@ -164,4 +172,29 @@ button{
 
 .scrollSpacing{
   width:17px;
+}
+
+#q3-1{
+  grid-column-start:1;
+  grid-row-start:2;
+}
+#q3-2{
+  grid-column-start:2;
+  grid-row-start:2;
+}
+#q2-1{
+  grid-column-start:1;
+  grid-row-start:2;
+}
+#q2-2{
+  grid-column-start:2;
+  grid-row-start:2;
+}
+#q1-1{
+  grid-column-start:1;
+  grid-row-start:2;
+}
+#q1-2{
+  grid-column-start:2;
+  grid-row-start:2;
 }
