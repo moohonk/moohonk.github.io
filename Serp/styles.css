@@ -155,6 +155,9 @@ The options menu
 .rule{
   background:#FFF;
 }
+.rule:hover{
+  filter:brightness(.75);
+}
 /*
 The container for the Canvas
 */
