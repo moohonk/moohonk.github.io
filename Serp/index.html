@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <title>Serp</title>
+    <link rel = "stylesheet" type="text/css" href="styles.css">
+    <link href='http://fonts.googleapis.com/css?family=Roboto:300,700' rel='stylesheet' type='text/css'>
+  </head>
+  <body>
+    <div id = "left">
+      <div id = "title"><h1>Serp</h1></div>
+      <div id = "tabs">
+        <!-- <div id = "tab0" class = "tab selected"  style = "float:left;">Data   </div> -->
+        <div id = "tab1" class = "tab selected" style = "float:left;">Options</div>
+      </div>
+      <div id="window1">
+        <div id = "rule">
+          <div id = "ruleLabel">
+            <h2>Rule</h2>
+          </div>
+          <div id = "ruleButtonContainer">
+            <div id = "q0" class = "quadrant"></div>
+            <div id = "q1" class = "quadrant"></div>
+            <div id = "q2" class = "quadrant"></div>
+            <div id = "q3" class = "quadrant"></div>
+          </div>
+          <div id = "ruleInputContainer">
+              <input id = "0Input" type = "number" value = "0" onclick = "this.select();" ></input>
+              <input id = "1Input" type = "number" value = "0" onclick = "this.select();" ></input>
+              <input id = "2Input" type = "number" value = "0" onclick = "this.select();" ></input>
+          </div>
+        </div>
+        <div id = "depth">
+          <h2>Depth</h2>
+
+          </div>
+      </div>
+    </div>
+    <div id = "right">
+      <canvas id = "canvas" width = "1344" height = "937"></canvas>
+    </div>
+    <script src="Serp.js"></script>
+    <script src = "bootstrap.js"></script>
+  </body>
+</html>

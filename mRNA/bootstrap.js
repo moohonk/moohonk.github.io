@@ -84,6 +84,8 @@ window.requestAnimFrame = (function(){
         track.textContent = trackName;
       }
 
+      AudioParser.resumeAudioContext();
+
 
       // Clean up the strings so periods don't mess with the image file name
       //  Seriously, you don't want that. It kind of makes it incomprehensible.

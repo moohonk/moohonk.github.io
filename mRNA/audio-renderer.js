@@ -210,6 +210,8 @@ function AudioRenderer(theMusicRNA)
       console.log("Clear");
   };
 
+
+
   // Called for each slice of the audio that needs displaying
   this.render = function(audioData, normalizedPosition) 
   {

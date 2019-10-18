@@ -1,0 +1,47 @@
+Rule
+    The rule interface consists of a square divided into 4 quadrants
+    Each quadrant except the top left one is further divided into 4 subsquares
+    The default rule is 0, 0, 0 -- This is represented by shading the top left subsquare of each quadrant 
+    Different rules can be chosen by clicking unselected subsquares
+    Only one subsquare can be selected per quadrant -- attempting to select an additional subsquare will result in deselecting the originally-selected subsquare
+    The selection of a new subsquare automatically updates the fractal being displayed to use the newly-defined rule
+    Below the square, the rule should be displayed as three text fields
+        These fields automatically update when the rule changes by other means
+        These fields only accept integers in the range [0, 3]
+
+Depth
+    The depth of the fractal should determine how many iterations of the current rule should be displayed
+    Above the depth-manipulation UI elements, a label should exist that displays the current depth
+    Depth will be user-modifiable through various means:
+        Manipulation of a horizontal slider
+        clicking '-' and '+' buttons positioned to the left and right of the slider, respectively
+        Pressing two keyboard keys (for now, <- and ->)
+        Positioning the mouse over the slider (or slider container, to increase leniency) and scrolling with the mouse wheel
+            Scrolling up or down should increment or decrement the depth, respectively
+            To decrease ambiguity of controls, the scroll wheel should have minimal functionality besides this use
+        After holding a '+' or '-' button for [BUTTON_HOLD_THRESH] seconds, begin repeatedly activating the button at some frequency
+            (Check typing behavior when holding a keyboard key down)
+        Pressing the two keyboard keys should have identical functionality as the '+' and '-' buttons
+    Depth should have maximum and minimum values 
+    [MIN_DEPTH] should be 0, which shows a square with no quadrants taken out of it
+    The difference in the fractal between [MAX_DEPTH] - 1 and [MAX_DEPTH] should be noticable
+    [MAX_DEPTH] <= floor[log2[min(width, height)]]
+
+Fractal
+    Any area that cannot be part of the fractal should be filled with a relatively dark gray (e.g. #050505)
+    Quadrants removed over the course of the fractal should be removed by drawing a Black square over them
+    The fractal size should be X * min(width, height), 0.5 <= X <= 1
+    As the window is resized, the fractal size should automatically update
+    While the window is being resized and after the window has stopped changing size, the fractal should redraw itself every [FRAMES_TIL_FRACTAL_REDRAW_ON_RESIZE] frames (or every 60 / [FRAMES...] seconds)
+    The user should be able to toggle animation of the fractal
+        During animation, the fractal depth should increase until [MAX_DEPTH] is reached
+        The user should be able to specify the speed of animation by selecting between 'slow', 'medium', and 'fast' animation speeds
+        Once the fractal reaches [MAX_DEPTH], animation should pause for [MAX_DEPTH_PAUSE_TIME]
+        Once the fractal reaches [MAX_DEPTH], one of three outcomes should occur:
+            Depth is set back to [MIN_DEPTH] and animation continues
+            Depth is animated decreasing from [MAX_DEPTH] to [MIN_DEPTH], and bounces between those values
+            Animation stops
+        The user should be able to select between these behaviors through a radio button
+
+Any control when moused over for [TOOLTIP_MOUSEOVER_TIME] should display a tooltip at the position of the mouse
+

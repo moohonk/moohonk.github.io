@@ -1,10 +1,8 @@
 function RegNald(graphViewer)
 {
 // Width and height of the window
-	var width  = 0;
-	var height = 0;
-
-// Editing history list
+var width  = 0;
+var height = 0;
 	
 // List of IDs
 // The index of an ID is the same as that of its data (in the data list)
@@ -27,34 +25,34 @@ function RegNald(graphViewer)
 				  upper, lower]
 
 // List of the current 'isSelected' state of each row
-	var selected    = [];
+	var selected = [];
 	var numSelected = 0;
-	var lastEdit    = null;
+
+	var lastEdit = null;
 
 // The container of all the data rows in the GUI table
 	var tableWindow = document.getElementById("tableWindow");
 
 // Elements that need regNald functions bound to them
-	var selectAll   = document.getElementById("selectAll");
+	var selectAll   = document.getElementById("selectAll"   );
 	var randButton  = document.getElementById("randomButton");
-	var applyButton = document.getElementById("applyButton");
-	var undoButton  = document.getElementById("undoButton");
-	var redoButton  = document.getElementById("redoButton");
-	var xInput      = document.getElementById("xInput");
-	var yInput      = document.getElementById("yInput");
-	var zInput      = document.getElementById("zInput");
-	var dataWindow  = document.getElementById("window2");
-
-	window.addEventListener("resize", onResize);
-	onResize();
+	var applyButton = document.getElementById("applyButton" );
+	var undoButton  = document.getElementById("undoButton"  );
+	var redoButton  = document.getElementById("redoButton"  );
+	var xInput      = document.getElementById("xInput"      );
+	var yInput      = document.getElementById("yInput"      );
+	var zInput      = document.getElementById("zInput"      );
+	var dataWindow  = document.getElementById("window2"     );
 
 	dataWindow.style = "height: " + window.innerHeight - 245.475;
+	window.addEventListener("resize", onResize);
+	onResize();
 // Add some listeners
 	selectAll  .addEventListener("click", function(){toggleSelectAll()});
-	applyButton.addEventListener("click", function(){addEntry()});
-	undoButton .addEventListener("click", function(){undo()});
-	redoButton .addEventListener("click", function(){redo()});
-	randButton .addEventListener("click", function(){addRandomPoint();})
+	applyButton.addEventListener("click", function(){addEntry()       });
+	undoButton .addEventListener("click", function(){undo()           });
+	redoButton .addEventListener("click", function(){redo()           });
+	randButton .addEventListener("click", function(){addRandomPoint() });
 
 // The doubly-linked list structure for the editing history
 // Each node stores the actions needed to produce the current dataList state given the previous dataList state
@@ -75,19 +73,21 @@ function Node(editCode, id, x, y, z, xP = 0, yP = 0, zP = 0) {
   this.next = null;
 }
 
+// The root node for the editing history
 lastEdit = new Node(-1, 0, 0, 0, 0);
+
 // +==============================================================+
 // |                        FUNCTIONS                             |
 // +==============================================================+
 
-// When 
-	function onResize()
-	{
-		width = window.width;
-		height = window.height;
-		// Fix the data div's height so the editing UI doesn't overflow
-		document.getElementById("tableWindow").style = "max-height: " + (height - 279.68);
-	}
+function onResize()
+{
+	width  = window.innerWidth;
+	height = window.innerHeight;
+	// Fix the data div's height so the editing UI doesn't get pushed off the edge
+	document.getElementById("tableWindow").style = "max-height: " + (height - 279.68);
+}
+
 // Add a new data point using the values currently in the editing window
 // If one (and only one) row is selected, edit the values of that row instead
 	function addEntry()
@@ -173,7 +173,19 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 
 		// Update the linear Regression
 		lineReg();
+	}
 
+// TODO
+	function truncateTableNumbers()
+	{
+		// Determine how many pixels are available for each coordinate column
+
+		// Divide pixels available by MAX_PIXELS_PER_DIGIT, the maximum amount of pixels that a digit can take up
+		//  (To be determined through experimentation)
+
+		// Loop through all of the data in the list
+		// |	Don't round the data in the list, but set the content of the table items 
+		// |	 to be the data rounded to however many digits we can have
 	}
 
 // Add a row to the HTML list
@@ -209,7 +221,10 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 		y0 .id = "y"      + id;
 		z0 .id = "z"      + id;
 		s0 .id = "s"      + id;
-
+/*
+TODO: 
+	determine how many pixels 
+*/
 		// Add text
 		x0.innerHTML = x;
 		y0.innerHTML = y;
@@ -250,10 +265,8 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 		// Do nothing if we don't have a vector with ID 'id'
 		if(index < 0) return;
 
-		// Store a record of this delete action in the history list
-
 		// Excise the entry from the lists
-		IDList.splice(index, 1);
+		IDList  .splice(index, 1);
 		dataList.splice(index, 1);
 
 		// Update the linear regression
@@ -446,7 +459,7 @@ lastEdit = new Node(-1, 0, 0, 0, 0);
 		var newEditNode = new Node(editCode, id, x, y, z);
 
 		// The history list is not empty
-		lastEdit.next        = newEditNode;
+		lastEdit.next = newEditNode;
 		newEditNode.previous = lastEdit;
 
 		lastEdit = newEditNode;
