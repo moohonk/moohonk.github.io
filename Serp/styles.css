@@ -87,9 +87,23 @@ div{
   z-index:1;
 }
 
-#ruleLabel
-{
+.centered{text-align:center;}
+
+#currentDepth{
+  display: block;
+  font-size: 1.17em;
+  margin-block-start: 0.5em;
+  margin-block-end: 0.5em;
+  font-weight: bold;
+}
+
+#depthUI{
+  width: 200px;
   margin: 0 auto;
+}
+#upperDepthUI{
+  display:flex;
+  
 }
 
 #tableWindow{
