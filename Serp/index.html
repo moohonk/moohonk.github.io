@@ -13,7 +13,7 @@
       </div>
       <div id="window1">
         <div id = "rule">
-          <div id = "ruleLabel">
+          <div id = "ruleLabel" class = "centered">
             <h2>Rule</h2>
           </div>
           <div id = "ruleButtonContainer">
@@ -29,8 +29,21 @@
           </div>
         </div>
         <div id = "depth">
-          <h2>Depth</h2>
+          <div id = "depthLabel" class = "centered">
+            <h2>Depth</h2>
+          </div>
+          <div id = "depthUI">
+            <div id = "upperDepthUI">
+              <!-- decrement depth button -->
+              <button id = "decDepth" class = "flexSpacing">-</button>
+              <!-- Current depth label -->
+              <div id = "currentDepth" class = "flexSpacing centered">4</div>
+              <!-- Increment depth button -->
+              <button id = "incDepth" class = "flexSpacing">+</button>
+            </div>
+            <div id = "lowerDepthUI"></div>
 
+            </div>
           </div>
       </div>
     </div>

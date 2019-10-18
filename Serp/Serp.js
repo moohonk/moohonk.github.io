@@ -7,8 +7,11 @@ function Serp(){
     var cx = 0;
     var cy = 0;
     var len = 512;
-    var maxDepth = 4;
+    var MAX_DEPTH = 9;
+    var MIN_DEPTH = 0;
+
     var rule = [0, 0, 0];
+    var currentDepth = 4;
 
     // Lists storing all necessary information to draw any one iteration 
     var URXCoords = [[0]];
@@ -16,16 +19,30 @@ function Serp(){
     var rotList   = [[0]];
     var lenList   = [len];
 
+    // Get all the stuff we want from the webpage
+
     // We'll draw the fractal here
     var canvas = document.getElementById("canvas");
     var c = canvas.getContext('2d');
 
+    // The rule text fields
     var rule0 = document.getElementById("0Input");
     var rule1 = document.getElementById("1Input");
     var rule2 = document.getElementById("2Input");
+
     rule0.addEventListener("input", function(){processInput(0);});
     rule1.addEventListener("input", function(){processInput(1);});
     rule2.addEventListener("input", function(){processInput(2);});
+
+    // The depth indicator
+    var depthLabel = document.getElementById("currentDepth");
+
+    // The depth modification buttons
+    var incButt = document.getElementById("incDepth");
+    var decButt = document.getElementById("decDepth");
+
+    incButt.addEventListener("click", function(){changeDepth( 1);});
+    decButt.addEventListener("click", function(){changeDepth(-1);});
 
     // Given the rotation of the parent square and the child square, 
     //  these lists give the offsets of the upper left corners of the child squares
@@ -75,6 +92,17 @@ function Serp(){
         rule[0] = newRule[0];
         rule[1] = newRule[1];
         rule[2] = newRule[2];
+        onResize();
+    }
+
+    function changeDepth(d)
+    {
+        console.log("changing depth by " + d);
+        currentDepth = currentDepth + d;
+        if (currentDepth > MAX_DEPTH) currentDepth = 1 * MAX_DEPTH;
+        if (currentDepth < MIN_DEPTH) currentDepth = 1 * MIN_DEPTH;
+        console.log("new depth = " + currentDepth);
+        depthLabel.textContent = "" + currentDepth;
         onResize();
     }
 
@@ -160,10 +188,10 @@ function Serp(){
         c.fillRect(URXCoords[0][0], URYCoords[0][0], len, len);
 
         // Recalculate the fractal
-        SierpIterUpTo(maxDepth);
+        SierpIterUpTo(currentDepth);
 
         // Draw the fractal
-        drawUpTo(maxDepth);
+        drawUpTo(currentDepth);
     }
 
     function drawSquare(x, y, length, color)
