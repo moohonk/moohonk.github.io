@@ -1,11 +1,14 @@
 function Serp(){
-
-    console.log('Serp');
     // Width and height of the window
     var width  = 0;
     var height = 0;
     var cx = 0;
     var cy = 0;
+
+    var count = 0;
+    var shouldResize = true;
+    var sizeChanged = true;
+
     var len = 512;
     var MAX_DEPTH = 9;
     var MIN_DEPTH = 0;
@@ -81,10 +84,29 @@ function Serp(){
           [-2, -2, -3, -3]];
 
     var l = len;
-    for (var i = 1; i < 9; i++)
+    for (var i = 1; i < MAX_DEPTH; i++)
     {
         l = l / 2;
         lenList[i] = l;
+    }
+
+    URXCoords[0] = [-len / 2];
+    URYCoords[0] = [-len / 2];
+
+    function animationFrame()
+    {
+        count = count + 1;
+        // Check if the window size has changed
+        if (count % 5 == 0)
+            if (width != canvas.offsetWidth || height != canvas.offsetHeight)
+                shouldResize = true;
+
+        if(shouldResize)
+        {
+            onResize();
+            shouldResize = false;
+        }
+        window.requestAnimationFrame(function(){animationFrame();});
     }
     
     function updateRule(newRule)
@@ -92,18 +114,24 @@ function Serp(){
         rule[0] = newRule[0];
         rule[1] = newRule[1];
         rule[2] = newRule[2];
+        SierpIterUpTo(MAX_DEPTH);
         onResize();
     }
 
+    // Add [d] to [currentDepth], while keeping [currentDepth] within bounds
+    // Update the displayed depth, and redraw the fractal
     function changeDepth(d)
     {
-        console.log("changing depth by " + d);
+        // Increment and clamp currentDepth within [MIN_DEPTH, MAX_DEPTH]
         currentDepth = currentDepth + d;
         if (currentDepth > MAX_DEPTH) currentDepth = 1 * MAX_DEPTH;
         if (currentDepth < MIN_DEPTH) currentDepth = 1 * MIN_DEPTH;
-        console.log("new depth = " + currentDepth);
+        
+        // Change the displayed depth
         depthLabel.textContent = "" + currentDepth;
-        onResize();
+
+        // redraw the fractal
+        drawUpTo(currentDepth);
     }
 
     // Called when the user clicks on a subsquare
@@ -171,24 +199,44 @@ function Serp(){
     // Called whenever the window changes size
     function onResize()
     {
-        width  = canvas.offsetWidth;// - (canvas.offsetWidth % 512);
+        // Flag storing if lenList[0] has been set to a new value
+        //var sizeChanged = false;
+
+        width  = canvas.offsetWidth; // - (canvas.offsetWidth  % 512);
         height = canvas.offsetHeight;// - (canvas.offsetHeight % 512);
 
+        canvas.width = width;
+        canvas.height = height;
+
+        // Truncate the width and height so we have a midpoint with integer coordinates
         if (height % 2 == 1) height = height - 1;
+        if (width  % 2 == 1) width  = width  - 1;
 
-        URXCoords[0] = [width  / 2 - len / 2];
-        URYCoords[0] = [height / 2 - len / 2];
+        // Should we shrink the fractal?
+        if((width < lenList[0]) || (height < lenList[0]))
+        {
+            sizeChanged = true;
+            lenList[0] = lenList[0] / 2;
+            MAX_DEPTH = MAX_DEPTH - 1;
+        }
 
-        // Overwrite anything currently drawn on the canvas
-        c.fillStyle = '#000';
-        c.fillRect(0, 0, width, height);
+        // Can we grow the fractal?
+        if((lenList[0]*2 < width) && (lenList[0]*2 < height))
+        {
+            sizeChanged = true;
+            lenList[0] = lenList[0] * 2;
+            MAX_DEPTH = MAX_DEPTH + 1;
+        }
 
-        // Draw the white square
-        c.fillStyle = '#FFF';
-        c.fillRect(URXCoords[0][0], URYCoords[0][0], len, len);
-
-        // Recalculate the fractal
-        SierpIterUpTo(currentDepth);
+        // If the base length has changed, update the rest of the length list 
+        //   and recalculate the fractal 
+        if (sizeChanged)
+        {
+            sizeChanged = false;
+            for(var i = 1; i < MAX_DEPTH; i++)
+                lenList[i] = lenList[i-1] / 2;
+            SierpIterUpTo(MAX_DEPTH);
+        }
 
         // Draw the fractal
         drawUpTo(currentDepth);
@@ -271,7 +319,7 @@ function Serp(){
             var r1 = (R + rule[1]) % 4;
             var r2 = (R + rule[2]) % 4;
 
-            // Push the children onto the next fractal depth
+            // Put the children into the next fractal depth
             // Don't use .concat() -- it's around 700x slower
             var start = URXCoords[newDepth].length;
             URXCoords[newDepth][start  ] = xc0;
@@ -299,16 +347,28 @@ function Serp(){
     {
         var xC = URXCoords[depth];
         var yC = URYCoords[depth];
+
         //colors = ['#000000','#ff0000','#00ff00','#0000ff','#ffff00','#ff00ff', '#00ffff', '#ffff80', '#ff80ff', '80ffff'];
         color = '#000';
+
+        // Translate to center of screen
+        var midX = width / 2;
+        var midY = height / 2;
+
         for(var i = 0; i < xC.length; i++)
-            drawSquare(xC[i], yC[i], lenList[depth] / 2, color);//colors[depth]);
+            drawSquare(xC[i] + midX, yC[i] + midY, lenList[depth] / 2, color);//colors[depth]);
     }
 
     function drawUpTo(depth)
     {
-        // Sometimes, a line shows up at the vary bottom of the fractal
-        drawSquare(URXCoords[0][0], URYCoords[0][0]+lenList[0], lenList[0], '#000000');
+        // Overwrite anything currently drawn on the canvas
+        c.fillStyle = '#000';
+        c.fillRect(0, 0, width, height);
+
+        // Draw the white square
+        c.fillStyle = '#FFF';
+        c.fillRect(URXCoords[0][0] + width / 2, URYCoords[0][0] + height / 2, len, len);
+
         for (var d = 0; d < depth; d++)
             drawDepth(d);
     }
@@ -338,7 +398,8 @@ function Serp(){
     }
 
     window.addEventListener('load', function() {
-        onResize();
+        onResize(true);
         createRuleButtons();
       }, false);
+      window.requestAnimationFrame(function(){animationFrame();});
 }
