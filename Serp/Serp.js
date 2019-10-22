@@ -90,8 +90,8 @@ function Serp(){
         lenList[i] = l;
     }
 
-    URXCoords[0] = [-len / 2];
-    URYCoords[0] = [-len / 2];
+    URXCoords[0] = [-lenList[0] / 2];
+    URYCoords[0] = [-lenList[0] / 2];
 
     function animationFrame()
     {
@@ -199,24 +199,23 @@ function Serp(){
     // Called whenever the window changes size
     function onResize()
     {
-        // Flag storing if lenList[0] has been set to a new value
-        //var sizeChanged = false;
-
         width  = canvas.offsetWidth; // - (canvas.offsetWidth  % 512);
         height = canvas.offsetHeight;// - (canvas.offsetHeight % 512);
 
         canvas.width = width;
         canvas.height = height;
 
-        // Truncate the width and height so we have a midpoint with integer coordinates
+        // Truncate the width and height so we can have a midpoint with integer coordinates
         if (height % 2 == 1) height = height - 1;
         if (width  % 2 == 1) width  = width  - 1;
 
         // Should we shrink the fractal?
         if((width < lenList[0]) || (height < lenList[0]))
         {
+
             sizeChanged = true;
             lenList[0] = lenList[0] / 2;
+            if(currentDepth == MAX_DEPTH) changeDepth(-1);
             MAX_DEPTH = MAX_DEPTH - 1;
         }
 
@@ -233,6 +232,8 @@ function Serp(){
         if (sizeChanged)
         {
             sizeChanged = false;
+            URXCoords[0] = [-lenList[0] / 2];
+            URYCoords[0] = [-lenList[0] / 2];
             for(var i = 1; i < MAX_DEPTH; i++)
                 lenList[i] = lenList[i-1] / 2;
             SierpIterUpTo(MAX_DEPTH);
@@ -366,8 +367,7 @@ function Serp(){
         c.fillRect(0, 0, width, height);
 
         // Draw the white square
-        c.fillStyle = '#FFF';
-        c.fillRect(URXCoords[0][0] + width / 2, URYCoords[0][0] + height / 2, len, len);
+        drawSquare(URXCoords[0][0] + width / 2, URYCoords[0][0] + height / 2, lenList[0], "#fff");
 
         for (var d = 0; d < depth; d++)
             drawDepth(d);
