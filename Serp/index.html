@@ -8,7 +8,11 @@
   </head>
   <body>
     <div id = "left">
-      <div id = "title"><h1>Serp</h1></div>
+      <div id = "titleContainer">
+        <div id = "title">
+          <h1>Serp</h1>
+        </div>
+      </div>
       <div id = "tabs">
         <!-- <div id = "tab0" class = "tab selected"  style = "float:left;">Data   </div> -->
         <div id = "tab1" class = "tab selected" style = "float:left;">Options</div>
@@ -18,13 +22,13 @@
           <div id = "ruleLabel" class = "centered">
             <h2>Rule</h2>
           </div>
-          <div id = "ruleButtonContainer">
+          <div id = "ruleButtonContainer" style = "width: 200px; height: 200px;">
             <div id = "q0" class = "quadrant"></div>
             <div id = "q1" class = "quadrant"></div>
             <div id = "q2" class = "quadrant"></div>
             <div id = "q3" class = "quadrant"></div>
           </div>
-          <div id = "ruleInputContainer">
+          <div id = "ruleInputContainer" style = "width: 200px;">
               <input id = "0Input" type = "number" value = "0" onclick = "this.select();" ></input>
               <input id = "1Input" type = "number" value = "0" onclick = "this.select();" ></input>
               <input id = "2Input" type = "number" value = "0" onclick = "this.select();" ></input>
@@ -37,11 +41,11 @@
           <div id = "depthUI">
             <div id = "upperDepthUI">
               <!-- decrement depth button -->
-              <button id = "decDepth" class = "flexSpacing">-</button>
+              <button id = "decDepth" style = "grid-row-start: 3;">-</button>
               <!-- Current depth label -->
               <div id = "currentDepth" class = "flexSpacing centered">4</div>
               <!-- Increment depth button -->
-              <button id = "incDepth" class = "flexSpacing">+</button>
+              <button id = "incDepth" style = "grid-row-start:1;">+</button>
             </div>
             <div id = "lowerDepthUI"></div>
 
@@ -50,7 +54,9 @@
       </div>
     </div>
     <div id = "right">
+      <div id = "topRight"></div>
       <canvas id = "canvas" width = "1344" height = "937"></canvas>
+      <div id = "btmRight"></div>
     </div>
     <script src="Serp.js"></script>
     <script src = "bootstrap.js"></script>

@@ -8,10 +8,14 @@ function Serp(){
     var count = 0;
     var shouldResize = true;
     var sizeChanged = true;
+    var horizontal = true;
 
     var len = 512;
     var MAX_DEPTH = 9;
     var MIN_DEPTH = 0;
+
+    // How far we should go into a horizontal or vertical aspect ratio before we shuffle the UI around
+    var ASPECT_RATIO_TOLERANCE = 10;  
 
     var rule = [0, 0, 0];
     var currentDepth = 4;
@@ -199,6 +203,124 @@ function Serp(){
     // Called whenever the window changes size
     function onResize()
     {
+        /**
+         * TODO: if the window width is less than the window height (not canvas width and height),
+         *  change the style of the menu options to be more mobile-friendly:
+         * +---------------+
+         * |     Title     |
+         * +---------------+
+         * |               |
+         * |               |
+         * | fractal here  |
+         * |               |
+         * |               |
+         * |               |
+         * +---------------|
+         * |  Rule | Depth |
+         * | +-+-+ |       |
+         * | | |+| |     + |
+         * | +-+-+ |dep    |
+         * | |+|+| |    -- |
+         * | +-+-+ |       |
+         * +---------------+
+         * 
+         * objectives:
+         * 1. make fractal take up the entire width of the screen, but not the entire height
+         * 2. make the rule and depth separate from the title
+         * 3. make the rule and depth float to the bottom of the screen
+         * 4. make the rule and depth display side-by-side
+         * 5. make the depth display with the label to the left and the buttons to the right
+         * 6. make the title display above everything and take up the entire width of the screen
+         * 
+         * methods:
+         *    define the [right] width percentage in HTML, enabling JS editing
+         *      when width < height, [right] width = 100%
+         * 
+         *    [upperDepthUI]: (DONE)
+         *      when width > height, remove any HTML-defined styling
+         *      when width < height, display = grid
+         * 
+         *    create a div [lowerUI] below the canvas in [right]
+         *      hide when width > height
+         *      layout = flex
+         *    create variables referencing [rule] and [depth]
+         *    when width < height, remove [rule] and [depth] from [window1] 
+         *      place into [lowerUI]
+         *    [lowerUI] 
+         *      absolute position
+         *    make [left] invisible
+         *    make [right] take up the entire screen width
+        **/
+        var titleDiv = document.getElementById("titleContainer");
+        var ruleUI   = document.getElementById("rule");
+        var title    = document.getElementById("title");
+        var depthUI  = document.getElementById("depth");
+        var window1  = document.getElementById("window1");
+        var topRight = document.getElementById("topRight");
+        var btmRight = document.getElementById("btmRight");
+        var left     = document.getElementById("left");
+        var right    = document.getElementById("right");
+        var ruleInput = document.getElementById("ruleInputContainer");
+        var uDUI = document.getElementById("upperDepthUI");
+        // If the window's width is less than its height, we want to shuffle the UI around a bit
+        if(horizontal && (window.innerWidth < window.innerHeight + ASPECT_RATIO_TOLERANCE))
+        {
+            // We are now vertical
+            horizontal = false;
+
+            // Shift the title div into position above the canvas
+            titleDiv.removeChild(title);
+            topRight.appendChild(title);
+
+            // Shift the UI into position below the canvas
+            window1.removeChild(ruleUI);
+            window1.removeChild(depthUI);
+
+            btmRight.appendChild(ruleUI);
+            btmRight.appendChild(depthUI);
+
+            // Style changes
+            left.style = "display:none;";
+            right.style = "width:100%";
+            //btmRight.style = "height:299px;";
+            ruleInput.style = "width:200px; display:none;";
+
+            uDUI.classList.add("bigFont");
+
+            canvas.height = window.innerHeight - 5 - topRight.offsetHeight - btmRight.offsetHeight;
+
+            uDUI.style = "display:grid";
+
+        }
+
+        // TODO: define a tolerance so that slightly resizing an almost-square window doesn't result in weird flickering
+        if(!horizontal && (window.innerWidth > window.innerHeight + ASPECT_RATIO_TOLERANCE))
+        {
+            // We are now horizontal
+            horizontal = true;
+
+            topRight.removeChild(title);
+            titleDiv.appendChild(title);
+
+            btmRight.removeChild(ruleUI);
+            btmRight.removeChild(depthUI);
+
+            window1.appendChild(ruleUI);
+            window1.appendChild(depthUI);
+
+            // Revert style changes
+            left.style = "";
+            right.style = "";
+            //btmRight.style = "";
+            ruleInput.style = "width:200px;";
+
+            if(uDUI.classList.contains("bigFont"))
+                uDUI.classList.remove("bigFont");
+
+            uDUI.style = "";
+        }
+
+
         width  = canvas.offsetWidth; // - (canvas.offsetWidth  % 512);
         height = canvas.offsetHeight;// - (canvas.offsetHeight % 512);
 
@@ -212,7 +334,6 @@ function Serp(){
         // Should we shrink the fractal?
         if((width < lenList[0]) || (height < lenList[0]))
         {
-
             sizeChanged = true;
             lenList[0] = lenList[0] / 2;
             if(currentDepth == MAX_DEPTH) changeDepth(-1);
@@ -383,7 +504,7 @@ function Serp(){
         var r = inputs[i];
 
         // If someone types a new number without selecting the old number, remove the old number
-        if(r.value >  10) r.value = (1 * r.value) % 10;
+        if(r.value >= 10) r.value = (1 * r.value) % 10;
 
         // If a number is one above or one below the rule domain, loop back around
         if(r.value ==  4) r.value = 0;
