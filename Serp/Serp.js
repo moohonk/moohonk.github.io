@@ -15,7 +15,7 @@ function Serp(){
     var MIN_DEPTH = 0;
 
     // How far we should go into a horizontal or vertical aspect ratio before we shuffle the UI around
-    var ASPECT_RATIO_TOLERANCE = 10;  
+    var ASPECT_RATIO_TOLERANCE = 15;  
 
     var rule = [0, 0, 0];
     var currentDepth = 4;
