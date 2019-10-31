@@ -32,7 +32,8 @@ Fractal
     Quadrants removed over the course of the fractal should be removed by drawing a Black square over them
     The fractal size should be X * min(width, height), 0.5 <= X <= 1
     As the window is resized, the fractal size should automatically update
-    While the window is being resized and after the window has stopped changing size, the fractal should redraw itself every [FRAMES_TIL_FRACTAL_REDRAW_ON_RESIZE] frames (or every 60 / [FRAMES...] seconds)
+    While the window is being resized and after the window has stopped changing size, 
+     the fractal should redraw itself every [FRAMES_TIL_FRACTAL_REDRAW_ON_RESIZE] frames (or every 60 / [FRAMES...] seconds)
     The user should be able to toggle animation of the fractal
         During animation, the fractal depth should increase until [MAX_DEPTH] is reached
         The user should be able to specify the speed of animation by selecting between 'slow', 'medium', and 'fast' animation speeds
@@ -45,3 +46,15 @@ Fractal
 
 Any control when moused over for [TOOLTIP_MOUSEOVER_TIME] should display a tooltip at the position of the mouse
 
+As the window changes size, the fractal rendering alters to accomodate it.
+    If the canvas dimensions decrease so that the entire fractal can no longer be drawn:
+        the length should be divided by two
+        [MAX_DEPTH] should decrease by one
+    If the canvas dimensions increase enough that the side length can be safely doubled:
+        Length should be multiplied by two
+        [MAX_DEPTH] should increase by one
+    If [MAX_DEPTH] is decreased past the current depth, the current depth should decrease as well
+    The last user-defined depth value should be stored
+        If the depth decreases due to window resizing, increasing the window size again should increase up to the last user-defined depth
+If the width of the window (not the canvas) becomes less than the height:
+    the user interface should reposition itself to be below the canvas 

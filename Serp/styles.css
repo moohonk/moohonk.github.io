@@ -10,6 +10,19 @@ html, body{
   overflow:hidden;
 }
 
+h1{
+  display: block;
+  font-size: 2em;
+  margin-block-start: 0.33em;
+  margin-block-end: 0.33em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  font-weight: bold;
+}
+
+.bigFont{
+  font-size: 2em;
+}
 
 div{
   /* border-radius: 5px; */
@@ -106,6 +119,12 @@ div{
   
 }
 
+#btmRight{
+  display:grid;
+  grid-template-columns:auto auto;
+  padding-bottom: 10px;
+}
+
 #tableWindow{
   height:1px;
   flex:1;
@@ -122,7 +141,10 @@ The options menu
   top: 118.475px;
   background: #08949C;
 }
-
+.invisible
+{
+  display:none;
+}
 #window1.invisible{
   z-index:0;
 }
@@ -136,10 +158,10 @@ The options menu
 }
 
 #ruleInputContainer{
-  width:250px;
   margin: 0 auto;
-  display:grid;
-  grid-template-columns: auto auto auto;
+  margin-top: 5px;
+  display:flex;
+  margin-bottom: 5px;
 }
 
 .quadrant{
@@ -172,15 +194,21 @@ background:#222;
 }
 
 input{
+  flex:1;
   margin:2px;
-  width:83px;
+  width:33%;
 }
 
 button{
   padding-left:1px;
   padding-right:1px;
-  margin:2px;
+  /* margin:2px; */
   border-radius:10px;
+  font-size: 1.17em;
+  width: 60px;
+  /* height: 35.719px; */
+  margin: 0 auto;
+  flex:1;
 }
 
 .leftSpacing{
